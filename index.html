@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Control de Activos</title>
+    <link rel="stylesheet" href="materialize/css/materialize.min.css" type="text/css" media="screen,projection">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+    <div class="navbar-fixed">
+        <nav class="nav-extended">
+                <div class="nav-wrapper">
+                  <a href="#" class="brand-logo">Mulcon</a>
+                  <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+                  <ul id="nav-mobile" class="right hide-on-med-and-down">
+                    <li><a id="userName"></a></li>
+                    <li><a onclick="logout();">Cerrar Sesión</a></li>
+                  </ul>
+                  <ul class="side-nav" id="mobile-demo">
+                    <li><a href="sass.html">Sass</a></li>
+                    <li><a href="badges.html">Components</a></li>
+                    <li><a href="collapsible.html">JavaScript</a></li>
+                  </ul>
+                </div>
+                <div class="nav-content">
+                  <ul class="tabs tabs-transparent">
+                    <li class="tab"><a class="active" href="#actives">Activos</a></li>
+                    <li class="tab"><a href="#vehicles">Vehículos</a></li>
+                    <li class="tab"><a href="#material">Materiales</a></li>
+                    <li class="tab"><a href="#pending">PENDIENTES</a></li>
+                  </ul>
+                </div>
+              </nav>
+    </div>
+              <div id="actives" class="col s12">
+                    <br>
+                    <br>
+                    <br>
+                    <div class = "container" id="activesMainMenu">
+                        <div class="row">
+                            <a class="col s4 offset-s1 waves-effect waves-light btn-large"  onclick="actionButton('activesMainMenu','hide','newActive');">Nuevo Resguardo</a>
+                            <a class="col s4 offset-s1 waves-effect waves-light btn-large"  onclick="actionButton('actives','hide');">Trabajadores</a>
+                        </div>
+                        <div class="row">
+                            <a class="col s4 offset-s1 waves-effect waves-light btn-large"  onclick="actionButton('actives','hide');">BajaS</a>
+                            <a class="col s4 offset-s1 waves-effect waves-light btn-large"  onclick="actionButton('actives','hide');">Daños y Reparaciones</a>
+                        </div>
+                        <div class="row">
+                            <a class="col s4 offset-s1 waves-effect waves-light btn-large"  onclick="actionButton('actives','hide');">Reportes</a>
+                            <a class="col s4 offset-s1 waves-effect waves-light btn-large"  onclick="actionButton('actives','hide');">Consultas</a>
+                        </div>
+                    </div>
+                    <!-- Section showed when new active button is clicked -->
+                    <div class = "container hide" id="newActive">
+                        <div class="row">
+                            <h2 class="col s12 center-align">Nuevo Activo</h2>
+                        </div>
+                        <div class="row">
+                            <form action="" class="col s12">
+                                <div class="row">
+                                    <div class="input-field col s8">
+                                        <label for="name">Nombre:</label>
+                                        <input type="text" name="name" id="name" class="validate">
+                                    </div>
+                                    <div class="input-field col s8">
+                                        <label for="registerDate">Feha de Ingreso:</label>
+                                        <input type="text" name="registerDate" id="registerDate" class="validate">
+                                    </div>
+                                    <div class="input-field col s8">
+                                        <label for="serialNumber">Número de Serie:</label>
+                                        <input type="text" name="serialNumber" id="serialNumber" class="validate">
+                                    </div>
+                                    <div class="input-field col s8">
+                                        <label for="brand">Marca:</label>
+                                        <input type="text" name="brand" id="brand" class="validate">
+                                    </div>
+                                    <div class="input-field col s8">
+                                        <label for="model">Modelo:</label>
+                                        <input type="text" name="model" id="model" class="validate">
+                                    </div>
+                                    <div class="input-field col s8">
+                                        <label for="location">Ubicación:</label>
+                                        <input type="text" name="location" id="location" class="validate">
+                                    </div>
+                                    <div class="input-field col s8">
+                                        <label for="keeperId">Encargado:</label>
+                                        <input type="text" name="keeperId" id="keeperId" class="validate">
+                                        <a class="waves-effect waves-light btn">Seleccionar empleado</a>
+                                    </div>
+                                    <div class="col s4">
+                                            <a class="waves-effect waves-light btn">Seleccionar empleado</a>
+                                    </div>
+                                    <div class="input-field col s8">
+                                        <label for="maintenanceDate">Fecha de Matenimiento:</label>
+                                        <input type="text" name="maintenanceDate" id="maintenanceDate" class="validate">
+                                    </div>
+                                    
+                                </div>
+                            </form>
+                        </div>    
+                        <div class="row">
+                            <a class="col s3  waves-effect waves-light btn-large" onclick="registerActive();">Registrar Activo</a>
+                            <a class="col s3 offset-s4 waves-effect waves-light btn-large" onclick="actionButton('newActive','hide','activesMainMenu');">Volver al Menú de Activos</a>
+                        </div>
+                    </div>
+              </div>
+              <div id="vehicles" class="col s12">
+                    <br> <h1>DOS</h1>
+              </div>
+              <div id="material" class="col s12">
+                    <br> <h1>TRES</h1>
+              </div>
+              <div id="pending" class="col s12">
+                    <br> <h1>CUATRO</h1>
+              </div>
+<script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+<script src="js/index.js"></script>
+<script src="jquery/jquery-3.3.1.js"></script>
+<script src="materialize/js/materialize.min.js"></script>
+</body>
+</html>
