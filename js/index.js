@@ -66,16 +66,31 @@ function registerActive(){
     var registerDate = document.getElementById('registerDate').value;
     var serialNumber = document.getElementById('serialNumber').value;
 
-    firebase.database().ref('actives/' + serialNumber).set({
-        brand: brand,
-        keeperId: keeperId,
-        location: location,
-        maintenanceDate: maintenanceDate,
-        model: model,
-        name: name,
-        registerDate: registerDate
-    });
-    alert(serialNumber);
+    var promise = firebase.database().ref('actives/' + serialNumber).set({
+            brand: brand,
+            keeperId: keeperId,
+            location: location,
+            maintenanceDate: maintenanceDate,
+            model: model,
+            name: name,
+            registerDate: registerDate,
+            id: serialNumber
+        });
+
+    promise.then(function(response){
+        setModal('Registro Exitoso','El activo se registró correctamente.');
+        $('#message').modal('open').value = "";
+        document.getElementById('brand').value = "";
+        document.getElementById('keeperId').value = "Encargado: (Seleccione un Encargado de la Lista)";
+        document.getElementById('location').value = "";
+        document.getElementById('maintenanceDate').value = "";
+        document.getElementById('model').value = "";
+        document.getElementById('name').value = "";
+        document.getElementById('registerDate').value = "";
+        document.getElementById('serialNumber').value = "";
+    }, function(error){
+        console.log('bad\n'+ error);
+    })
 };
 
 function loadEmployees(path,comboBox){
@@ -107,3 +122,7 @@ function selectEmploye(employeName,employeId){
     keeper.value = 'Encargado: ' + employeName;
 };
 
+function setModal(header, message){
+    document.getElementById('modalHeader').innerText = header;
+    document.getElementById('modalMessage').innerText = message;
+};
