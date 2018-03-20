@@ -8,11 +8,18 @@
     messagingSenderId: "158922203061"
   };
   firebase.initializeApp(config);
-  
-  
+
   //Reference to the db
   var database = firebase.database();
+  var employeId;
 
+  $(document).ready(function(){
+    // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+    $('.modal').modal();
+    loadEmployees('employe');
+    document.getElementById('keeperId').value = "Encargado: (Seleccione Encargado de la Lista)";
+  });
+         
   function login(){
     var email = document.getElementById('user').value;
     email = email + "@gmail.com";
@@ -70,3 +77,33 @@ function registerActive(){
     });
     alert(serialNumber);
 };
+
+function loadEmployees(path,comboBox){
+    var employees = firebase.database().ref(path);
+        employees.on('value', function(snapshot){
+            var employeList = document.getElementById("employeList");
+
+            //Create array of options to be added
+            var employeArray = snapshot.val();
+            var cool = Object.values(employeArray);
+
+            
+            for (var element of cool){
+                var option = document.createElement('a');
+                option.value = element.name;
+                option.text = element.name;
+                option.className = 'collection-item modal-action modal-close';
+                console.log(element);
+                option.setAttribute("onclick","selectEmploye('" + element.name + "','" + element.id +"');");
+                option.href = "#!";
+                employeList.appendChild(option);
+            }
+        });
+};
+
+function selectEmploye(employeName,employeId){
+    this.employeId = employeId;
+    var keeper = document.getElementById('keeperId');
+    keeper.value = 'Encargado: ' + employeName;
+};
+
