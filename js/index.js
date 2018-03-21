@@ -108,8 +108,17 @@ function registerActive(){
         document.getElementById('name').value = "";
         document.getElementById('registerDate').value = "";
         document.getElementById('serialNumber').value = "";
+        document.getElementById('selectedBuilding').innerText= "Seleccionar Ala";
+        document.getElementById('selectedRoom').innerText= "Seleccionar Habitación";
+        this.selectedEmploye.id = "";
+        this.selectedEmploye.name = "";
+        this.selectedBuilding.id = "";
+        this.selectedBuilding.name = "";
+        this.selectedRoom.id = "";
+        this.selectedRoom.name = "";
     }, function(error){
-        console.log('bad\n'+ error);
+        setModal('Error al registrar','No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
+        $('#message').modal('open').value = "";
     })
 };
 
@@ -199,7 +208,6 @@ function selectBuilding(buildingName, buildingId){
     this.selectedBuilding.name = buildingName;
     this.selectedBuilding.id = buildingId;
     loadRooms(buildingId);
-    document.getElementById('location').removeAttribute('disabled');
     document.getElementById('selectedRoom').innerText = 'Seleccionar Habitación';
 };
 
