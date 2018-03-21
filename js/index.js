@@ -11,13 +11,32 @@
 
   //Reference to the db
   var database = firebase.database();
-  var employeId;
+  var selectedEmploye = {name: "", id:""};
+  var selectedBuilding = {name: "", id: ""};
+  var selectedRoom = {name: "", id: ""};
 
   $(document).ready(function(){
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
     loadEmployees('employe');
+    loadBuildings();
+    loadRooms('A');
     document.getElementById('keeperId').value = "Encargado: (Seleccione Encargado de la Lista)";
+    document.getElementById('location').value = "Ubicación: (Seleccione Ubicación de la Lista)";
+    document.getElementById('selectedRoom').setAttribute('disabled','');
+    $('.datepicker').pickadate({
+        selectMonths: true, // Creates a dropdown to control month
+        selectYears: 15, // Creates a dropdown of 15 years to control year,
+        today: 'Hoy',
+        clear: 'Limpiar',
+        close: 'Ok',
+        monthsFull: [ 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre' ],
+        monthsShort: [ 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic' ],
+        weekdaysFull: [ 'Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado' ],
+        weekdaysShort: [ 'Dom', 'Lun', 'Mar', 'Mie', 'Jue', 'Vie', 'Sab' ],
+        weekdaysLetter: [ 'D', 'L', 'M', 'X', 'J', 'V', 'S' ],
+        closeOnSelect: false // Close upon selecting a date,
+      });
   });
          
   function login(){
@@ -68,7 +87,8 @@ function registerActive(){
 
     var promise = firebase.database().ref('actives/' + serialNumber).set({
             brand: brand,
-            keeperId: keeperId,
+            keeperId: this.selectedEmploye.id,
+            keeperName: this.selectedEmploye.name,
             location: location,
             maintenanceDate: maintenanceDate,
             model: model,
@@ -82,7 +102,7 @@ function registerActive(){
         $('#message').modal('open').value = "";
         document.getElementById('brand').value = "";
         document.getElementById('keeperId').value = "Encargado: (Seleccione un Encargado de la Lista)";
-        document.getElementById('location').value = "";
+        document.getElementById('location').value = "Ubicación: (Seleccione Ubicación de la Lista)";
         document.getElementById('maintenanceDate').value = "";
         document.getElementById('model').value = "";
         document.getElementById('name').value = "";
@@ -99,16 +119,15 @@ function loadEmployees(path,comboBox){
             var employeList = document.getElementById("employeList");
 
             //Create array of options to be added
-            var employeArray = snapshot.val();
-            var cool = Object.values(employeArray);
+            var employeObject = snapshot.val();
+            var employeArray = Object.values(employeObject);
 
             
-            for (var element of cool){
+            for (var element of employeArray){
                 var option = document.createElement('a');
                 option.value = element.name;
                 option.text = element.name;
                 option.className = 'collection-item modal-action modal-close';
-                console.log(element);
                 option.setAttribute("onclick","selectEmploye('" + element.name + "','" + element.id +"');");
                 option.href = "#!";
                 employeList.appendChild(option);
@@ -116,8 +135,55 @@ function loadEmployees(path,comboBox){
         });
 };
 
+function loadBuildings(){
+    var building = firebase.database().ref('locations/');
+    var location, buildingArray, buildingObject;
+    var buildingList = document.getElementById("buildingList");
+
+    building.on('value', function(snapshot){
+        buildingObject = snapshot.val();
+        buildingArray = Object.values(buildingObject);
+
+        for (var element of buildingArray){
+            var listItem = document.createElement('li');
+            var option = document.createElement('a');
+            option.value = element.name;
+            option.text = element.name;
+            option.setAttribute("onclick","selectBuilding('" + element.name + "','" + element.id +"');");
+            option.href = "#!";
+            option.id = element.id
+            listItem.appendChild(option)
+            buildingList.appendChild(listItem);
+        }
+    });
+};
+
+function loadRooms(buildingId){
+    var building = firebase.database().ref('locations/' + buildingId + '/rooms');
+    var location, roomsArray, roomsObject;
+    var roomsList = document.getElementById("roomsList");
+    roomsList.innerHTML = '';
+
+    building.on('value', function(snapshot){
+        roomsObject = snapshot.val();
+        roomsArray = Object.values(roomsObject);
+        for (var element of roomsArray){
+            var listItem = document.createElement('li');
+            var option = document.createElement('a');
+            option.value = element.name;
+            option.text = element.name;
+            option.setAttribute("onclick","selectRoom('" + element.name + "','" + element.id +"');");
+            option.href = "#!";
+            option.id = element.id
+            listItem.appendChild(option)
+            roomsList.appendChild(listItem);
+        }
+    });    
+};
+
 function selectEmploye(employeName,employeId){
-    this.employeId = employeId;
+    this.selectedEmploye.id = employeId;
+    this.selectedEmploye.name = employeName
     var keeper = document.getElementById('keeperId');
     keeper.value = 'Encargado: ' + employeName;
 };
@@ -125,4 +191,21 @@ function selectEmploye(employeName,employeId){
 function setModal(header, message){
     document.getElementById('modalHeader').innerText = header;
     document.getElementById('modalMessage').innerText = message;
+};
+
+function selectBuilding(buildingName, buildingId){
+    document.getElementById('selectedRoom').removeAttribute('disabled');
+    document.getElementById('selectedBuilding').innerText = buildingName;
+    this.selectedBuilding.name = buildingName;
+    this.selectedBuilding.id = buildingId;
+    loadRooms(buildingId);
+    document.getElementById('location').removeAttribute('disabled');
+    document.getElementById('selectedRoom').innerText = 'Seleccionar Habitación';
+};
+
+function selectRoom(roomName, roomId){
+    document.getElementById('selectedRoom').innerText = roomName;
+    this.selectedRoom.name = roomName;
+    this.selectedRoom.id = roomId;
+    document.getElementById('location').value = this.selectedBuilding.name + ', ' + this.selectedRoom.name;
 };
