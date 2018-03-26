@@ -60,7 +60,7 @@
         <br>
         <br>
         <div class="container" id="activesMainMenu">
-            <h1 class="center-align">Menú Principal</h1>
+            <h1 class="center-align">Menú Activos</h1>
             <div class="row">
                 <a class="col s4 offset-s1 waves-effect waves-light btn-large" onclick="actionButton('activesMainMenu','hide','newActive');">Nuevo Resguardo</a>
                 <a class="col s4 offset-s1 waves-effect waves-light btn-large" onclick="actionButton('activesMainMenu','hide','newEmploye');">Nuevo Trabajador</a>
@@ -175,8 +175,10 @@
                             <input type="text" name="employeLastname" id="employeLastname" class="validate">
                         </div>
                         <div class="input-field col s8">
-                            <label for="employeDepartment">Departamento:</label>
-                            <input type="text" name="employeDepartment" id="employeDepartment" class="validate">
+                            <label for="employeDepartmentList">Departamento:</label><br><br>
+                            <ul id="employeDepartmentList" class="dropdown-content">
+                            </ul>
+                            <a class="btn dropdown-button col s12" href="#!" data-activates="employeDepartmentList" id="selectedDepartment">Seleccionar Departamento</a>
                         </div>
                         <div class="input-field col s8">
                             <label for="employePhone">Número Telefónico:</label>
@@ -224,7 +226,7 @@
                 <a class="col s3 offset-s2 waves-effect waves-light btn-large" onclick="actionButton('newEmploye','hide','activesMainMenu');">Volver al Menú de Activos</a>
             </div>
         </div>
-        <!-- Section showed when new employe button is clicked -->
+        <!-- Section showed when query is clicked -->
         <div class="container hide" id="query">
             <div class="row">
                 <h2 class="col s12 center-align">Consultas</h2>
@@ -239,12 +241,6 @@
                         <div class="input-field col s8">
                             <label for="employeLastname">Apellidos:</label>
                             <input type="text" name="employeLastname" id="employeLastname" class="validate">
-                        </div>
-                        <div class="input-field col s8">
-                            <label for="employeDepartmentList">lol:</label>
-                            <ul id="employeDepartmentList" class="dropdown-content">
-                            </ul>
-                            <a class="btn dropdown-button col s12" href="#!" data-activates="employeDepartmentList" id="selectedDepartment">Seleccionar Departamento</a>
                         </div>
                         <div class="input-field col s8">
                             <label for="employePhone">Número Telefónico:</label>
@@ -269,20 +265,6 @@
                         <div class="input-field col s8">
                             <label for="employeState">Estado:</label>
                             <input type="text" name="employeState" id="employeState" class="validate">
-                        </div>
-                        <div class="input-field col s8">
-                            <label for="employeWorkPlace" class="col s12">Lugar de Trabajo:</label>
-                            <br>
-                            <br>
-                            <ul id="buildingListEmploye" class="dropdown-content">
-                            </ul>
-                            <a class="btn dropdown-button col s12" href="#!" data-activates="buildingListEmploye" id="selectedBuildingEmploye">Seleccionar Ala</a>
-                            <br>
-                            <br>
-                            <br>
-                            <ul id="roomsListEmploye" class="dropdown-content">
-                            </ul>
-                            <a class="btn dropdown-button col s12" href="#!" data-activates="roomsListEmploye" id="selectedRoomEmploye">Seleccionar Habitación</a>
                         </div>
                     </div>
                 </form>

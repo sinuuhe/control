@@ -14,15 +14,17 @@
   var selectedEmploye = {name: "", id:""};
   var selectedBuilding = {name: "", id: ""};
   var selectedRoom = {name: "", id: ""};
+  var selectedDepartment = {name: "", id:""};
 
   $(document).ready(function(){
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
     loadEmployees('employe');
     loadBuildings('buildingList','roomsList','selectedRoom','selectedBuilding');
-    loadRooms('A','roomsList');
     loadBuildings('buildingListEmploye','roomsListEmploye','selectedRoomEmploye','selectedBuildingEmploye');
+    loadRooms('A','roomsList');
     loadRooms('A','roomsListEmploye');
+    loadDepartments('employeDepartmentList','selectedDepartment');
     document.getElementById('keeperId').value = "Encargado: (Seleccione Encargado de la Lista)";
     document.getElementById('location').value = "Ubicación: (Seleccione Ubicación de la Lista)";
     document.getElementById('selectedRoom').setAttribute('disabled','');
@@ -146,11 +148,32 @@ function loadEmployees(path,comboBox){
         });
 };
 
+function loadDepartments(HTMLElementId, nextHTMLElement){
+    var department = firebase.database().ref('departments/');
+    var departmentList = document.getElementById(HTMLElementId);
+
+    department.on('value', function(snapshot){
+        departmentObject = snapshot.val();
+        departmentArray = Object.values(departmentObject);
+
+        for (var element of departmentArray){
+            var listItem = document.createElement('li');
+            var option = document.createElement('a');
+            option.value = element.name;
+            option.text = element.name;
+            option.setAttribute("onclick","selectDepartment('" + element.name + "','" + element.id +"','" + nextHTMLElement + "');");
+            option.href = "#!";
+            option.id = element.id
+            listItem.appendChild(option)
+            departmentList.appendChild(listItem);
+        }
+    });
+};
 function loadBuildings(elementId, nextElementId, selectedRoomInput, selectedBuildingInput){
     var building = firebase.database().ref('locations/');
-    var location, buildingArray, buildingObject;
+    var buildingArray, buildingObject;
     var buildingList = document.getElementById(elementId);
-
+    //console.log('elemento: ' + elementId + ' next element: ' + nextElementId + ' selected romm: ' + selectedRoomInput + ' selected building: ' + selectedBuilding);
     building.on('value', function(snapshot){
         buildingObject = snapshot.val();
         buildingArray = Object.values(buildingObject);
@@ -220,10 +243,16 @@ function selectRoom(roomName, roomId, elementId){
     document.getElementById('location').value = this.selectedBuilding.name + ', ' + this.selectedRoom.name;
 };
 
+function selectDepartment(departmentName, departmentId, nextHTMLElement){
+    document.getElementById(nextHTMLElement).innerText = 'Selección: ' + departmentName;
+    this.selectedDepartment.name = departmentName;
+    this.selectedDepartment.id = departmentId;
+    
+};
 function registerEmploye(){
     var employeName = document.getElementById('employeName').value;
     var employeLastname = document.getElementById('employeLastname').value;
-    var employeDepartment = document.getElementById('employeDepartment').value;
+    var employeDepartment = this.selectedDepartment;
     var employePhone = document.getElementById('employePhone').value;
     var employeStreet = document.getElementById('employeStreet').value;
     var employeNumber = document.getElementById('employeNumber').value;
@@ -236,7 +265,8 @@ function registerEmploye(){
     var promise = firebase.database().ref('employe/').push({
             name: employeName,
             lastname: employeLastname,
-            department: employeDepartment,
+            departmentName: employeDepartment.name,
+            departmentId: employeDepartment.id,
             phone: employePhone,
             street: employeStreet,
             number: employeNumber,
@@ -252,7 +282,7 @@ function registerEmploye(){
         $('#message').modal('open').value = "";
         document.getElementById('employeName').value = "";
         document.getElementById('employeLastname').value = "";
-        document.getElementById('employeDepartment').value = "";
+        document.getElementById('selectedDepartment').value = "Seleccionar Departamento";
         document.getElementById('employePhone').value = "";
         document.getElementById('employeStreet').value = "";
         document.getElementById('employeNumber').value = "";
@@ -267,6 +297,8 @@ function registerEmploye(){
         this.selectedBuilding.name = "";
         this.selectedRoom.id = "";
         this.selectedRoom.name = "";
+        this.selectedDepartment.name = "";
+        this.selectDepartment.id = "";
         firebase.database().ref('employe/' + promise.key).update({
             id: promise.key
         });
