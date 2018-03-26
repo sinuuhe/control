@@ -19,8 +19,10 @@
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
     loadEmployees('employe');
-    loadBuildings();
-    loadRooms('A');
+    loadBuildings('buildingList','roomsList','selectedRoom','selectedBuilding');
+    loadRooms('A','roomsList');
+    loadBuildings('buildingListEmploye','roomsListEmploye','selectedRoomEmploye','selectedBuildingEmploye');
+    loadRooms('A','roomsListEmploye');
     document.getElementById('keeperId').value = "Encargado: (Seleccione Encargado de la Lista)";
     document.getElementById('location').value = "Ubicación: (Seleccione Ubicación de la Lista)";
     document.getElementById('selectedRoom').setAttribute('disabled','');
@@ -144,10 +146,10 @@ function loadEmployees(path,comboBox){
         });
 };
 
-function loadBuildings(){
+function loadBuildings(elementId, nextElementId, selectedRoomInput, selectedBuildingInput){
     var building = firebase.database().ref('locations/');
     var location, buildingArray, buildingObject;
-    var buildingList = document.getElementById("buildingList");
+    var buildingList = document.getElementById(elementId);
 
     building.on('value', function(snapshot){
         buildingObject = snapshot.val();
@@ -158,7 +160,7 @@ function loadBuildings(){
             var option = document.createElement('a');
             option.value = element.name;
             option.text = element.name;
-            option.setAttribute("onclick","selectBuilding('" + element.name + "','" + element.id +"');");
+            option.setAttribute("onclick","selectBuilding('" + element.name + "','" + element.id +"','" + nextElementId + "','" + selectedRoomInput + "','" + selectedBuildingInput + "');");
             option.href = "#!";
             option.id = element.id
             listItem.appendChild(option)
@@ -167,10 +169,10 @@ function loadBuildings(){
     });
 };
 
-function loadRooms(buildingId){
+function loadRooms(buildingId, elementId, nextElementId){
     var building = firebase.database().ref('locations/' + buildingId + '/rooms');
     var location, roomsArray, roomsObject;
-    var roomsList = document.getElementById("roomsList");
+    var roomsList = document.getElementById(elementId);
     roomsList.innerHTML = '';
 
     building.on('value', function(snapshot){
@@ -181,7 +183,7 @@ function loadRooms(buildingId){
             var option = document.createElement('a');
             option.value = element.name;
             option.text = element.name;
-            option.setAttribute("onclick","selectRoom('" + element.name + "','" + element.id +"');");
+            option.setAttribute("onclick","selectRoom('" + element.name + "','" + element.id +"','" + nextElementId + "');");
             option.href = "#!";
             option.id = element.id
             listItem.appendChild(option)
@@ -202,18 +204,74 @@ function setModal(header, message){
     document.getElementById('modalMessage').innerText = message;
 };
 
-function selectBuilding(buildingName, buildingId){
-    document.getElementById('selectedRoom').removeAttribute('disabled');
-    document.getElementById('selectedBuilding').innerText = buildingName;
+function selectBuilding(buildingName, buildingId, elementId, selectedRoomInput, selectedBuildingInput){
+    document.getElementById(selectedRoomInput).removeAttribute('disabled');
+    document.getElementById(selectedBuildingInput).innerText = "Selección: " + buildingName;
     this.selectedBuilding.name = buildingName;
     this.selectedBuilding.id = buildingId;
-    loadRooms(buildingId);
-    document.getElementById('selectedRoom').innerText = 'Seleccionar Habitación';
+    loadRooms(buildingId,elementId,selectedRoomInput);
+    document.getElementById(selectedRoomInput).innerText = 'Seleccionar Habitación';
 };
 
-function selectRoom(roomName, roomId){
-    document.getElementById('selectedRoom').innerText = roomName;
+function selectRoom(roomName, roomId, elementId){
+    document.getElementById(elementId).innerText = "Selección: " + roomName;
     this.selectedRoom.name = roomName;
     this.selectedRoom.id = roomId;
     document.getElementById('location').value = this.selectedBuilding.name + ', ' + this.selectedRoom.name;
+};
+
+function registerEmploye(){
+    var employeName = document.getElementById('employeName').value;
+    var employeLastname = document.getElementById('employeLastname').value;
+    var employeDepartment = document.getElementById('employeDepartment').value;
+    var employePhone = document.getElementById('employePhone').value;
+    var employeStreet = document.getElementById('employeStreet').value;
+    var employeNumber = document.getElementById('employeNumber').value;
+    var employeSettlement = document.getElementById('employeSettlement').value;
+    var employeCity = document.getElementById('employeCity').value;
+    var employeState = document.getElementById('employeState');
+    var buildingListEmploye = document.getElementById('buildingListEmploye').innerText;
+    var roomsListEmploye = document.getElementById('roomsListEmploye').innerText;
+
+    var promise = firebase.database().ref('employe/').push({
+            name: employeName,
+            lastname: employeLastname,
+            department: employeDepartment,
+            phone: employePhone,
+            street: employeStreet,
+            number: employeNumber,
+            settlement: employeSettlement,
+            city: employeCity,
+            state: employeState,
+            buildingWorkPlace: this.selectedBuilding.name,
+            roomWorkPlace: this.selectedRoom.name
+        });
+
+    promise.then(function(response){
+        setModal('Registro Exitoso','El Empleado se registró correctamente.');
+        $('#message').modal('open').value = "";
+        document.getElementById('employeName').value = "";
+        document.getElementById('employeLastname').value = "";
+        document.getElementById('employeDepartment').value = "";
+        document.getElementById('employePhone').value = "";
+        document.getElementById('employeStreet').value = "";
+        document.getElementById('employeNumber').value = "";
+        document.getElementById('employeSettlement').value = "";
+        document.getElementById('employeCity').value = "";
+        document.getElementById('employeState').value = "";
+        document.getElementById('selectedBuildingEmploye').innerText = "Seleccionar Ala";
+        document.getElementById('selectedRoomEmploye').innerText = "Seleccionar Habitación";
+        this.selectedEmploye.id = "";
+        this.selectedEmploye.name = "";
+        this.selectedBuilding.id = "";
+        this.selectedBuilding.name = "";
+        this.selectedRoom.id = "";
+        this.selectedRoom.name = "";
+        firebase.database().ref('employe/' + promise.key).update({
+            id: promise.key
+        });
+    }, function(error){
+        setModal('Error al registrar','No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
+        $('#message').modal('open').value = "";
+    })
 };

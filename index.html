@@ -71,7 +71,7 @@
             </div>
             <div class="row">
                 <a class="col s4 offset-s1 waves-effect waves-light btn-large" onclick="actionButton('actives','hide');">Reportes</a>
-                <a class="col s4 offset-s1 waves-effect waves-light btn-large" onclick="actionButton('actives','hide');">Consultas</a>
+                <a class="col s4 offset-s1 waves-effect waves-light btn-large" onclick="actionButton('activesMainMenu','hide','query');">Consultas</a>
             </div>
         </div>
         <!-- Section showed when new active button is clicked -->
@@ -138,18 +138,6 @@
                     <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancelar</a>
                 </div>
             </div>
-            <!-- Message Modal Structure -->
-            <div id="message" class="modal">
-                <div class="modal-content">
-                    <h4 id="modalHeader"></h4>
-                    <div class="collection">
-                        <h6 id="modalMessage"></h6>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Aceptar</a>
-                </div>
-            </div>
             <!-- Locations Modal Structure -->
             <div id="buildings" class="modal modal-fixed-footer">
                 <div class="modal-content">
@@ -195,19 +183,113 @@
                             <input type="text" name="employePhone" id="employePhone" class="validate">
                         </div>
                         <div class="input-field col s8">
-                            <label for="employeAddress">Domicilio:</label>
-                            <input type="text" name="employeAddress" id="employeAddress" class="validate">
+                            <label for="employeStreet">Calle:</label>
+                            <input type="text" name="employeStreet" id="employeStreet" class="validate">
                         </div>
                         <div class="input-field col s8">
-                            <label for="employeWorkPlace">Lugar de Trabajo:</label>
-                            <input type="text" name="employeWorkPlace" id="employeWorkPlace" class="validate">
+                            <label for="employeNumber">Número:</label>
+                            <input type="text" name="employeNumber" id="employeNumber" class="validate">
+                        </div>
+                        <div class="input-field col s8">
+                            <label for="employeSettlement">Colonia:</label>
+                            <input type="text" name="employeSettlement" id="employeSettlement" class="validate">
+                        </div>
+                        <div class="input-field col s8">
+                            <label for="employeCity">Ciudad:</label>
+                            <input type="text" name="employeCity" id="employeCity" class="validate">
+                        </div>
+                        <div class="input-field col s8">
+                            <label for="employeState">Estado:</label>
+                            <input type="text" name="employeState" id="employeState" class="validate">
+                        </div>
+                        <div class="input-field col s8">
+                            <label for="employeWorkPlace" class="col s12">Lugar de Trabajo:</label>
+                            <br>
+                            <br>
+                            <ul id="buildingListEmploye" class="dropdown-content">
+                            </ul>
+                            <a class="btn dropdown-button col s12" href="#!" data-activates="buildingListEmploye" id="selectedBuildingEmploye">Seleccionar Ala</a>
+                            <br>
+                            <br>
+                            <br>
+                            <ul id="roomsListEmploye" class="dropdown-content">
+                            </ul>
+                            <a class="btn dropdown-button col s12" href="#!" data-activates="roomsListEmploye" id="selectedRoomEmploye">Seleccionar Habitación</a>
                         </div>
                     </div>
                 </form>
             </div>
             <div class="row">
-                <a class="col s3  waves-effect waves-light btn-large" onclick="registerActive();">Registrar Activo</a>
-                <a class="col s3 offset-s4 waves-effect waves-light btn-large" onclick="actionButton('newEmploye','hide','activesMainMenu');">Volver al Menú de Activos</a>
+                <a class="col s3  waves-effect waves-light btn-large" onclick="registerEmploye();">Registrar Empleado</a>
+                <a class="col s3 offset-s2 waves-effect waves-light btn-large" onclick="actionButton('newEmploye','hide','activesMainMenu');">Volver al Menú de Activos</a>
+            </div>
+        </div>
+        <!-- Section showed when new employe button is clicked -->
+        <div class="container hide" id="query">
+            <div class="row">
+                <h2 class="col s12 center-align">Consultas</h2>
+            </div>
+            <div class="row">
+                <form action="" class="col s12">
+                    <div class="row">
+                        <div class="input-field col s8">
+                            <label for="employeName">Nombre:</label>
+                            <input type="text" name="employeName" id="employeName" class="validate">
+                        </div>
+                        <div class="input-field col s8">
+                            <label for="employeLastname">Apellidos:</label>
+                            <input type="text" name="employeLastname" id="employeLastname" class="validate">
+                        </div>
+                        <div class="input-field col s8">
+                            <label for="employeDepartmentList">lol:</label>
+                            <ul id="employeDepartmentList" class="dropdown-content">
+                            </ul>
+                            <a class="btn dropdown-button col s12" href="#!" data-activates="employeDepartmentList" id="selectedDepartment">Seleccionar Departamento</a>
+                        </div>
+                        <div class="input-field col s8">
+                            <label for="employePhone">Número Telefónico:</label>
+                            <input type="text" name="employePhone" id="employePhone" class="validate">
+                        </div>
+                        <div class="input-field col s8">
+                            <label for="employeStreet">Calle:</label>
+                            <input type="text" name="employeStreet" id="employeStreet" class="validate">
+                        </div>
+                        <div class="input-field col s8">
+                            <label for="employeNumber">Número:</label>
+                            <input type="text" name="employeNumber" id="employeNumber" class="validate">
+                        </div>
+                        <div class="input-field col s8">
+                            <label for="employeSettlement">Colonia:</label>
+                            <input type="text" name="employeSettlement" id="employeSettlement" class="validate">
+                        </div>
+                        <div class="input-field col s8">
+                            <label for="employeCity">Ciudad:</label>
+                            <input type="text" name="employeCity" id="employeCity" class="validate">
+                        </div>
+                        <div class="input-field col s8">
+                            <label for="employeState">Estado:</label>
+                            <input type="text" name="employeState" id="employeState" class="validate">
+                        </div>
+                        <div class="input-field col s8">
+                            <label for="employeWorkPlace" class="col s12">Lugar de Trabajo:</label>
+                            <br>
+                            <br>
+                            <ul id="buildingListEmploye" class="dropdown-content">
+                            </ul>
+                            <a class="btn dropdown-button col s12" href="#!" data-activates="buildingListEmploye" id="selectedBuildingEmploye">Seleccionar Ala</a>
+                            <br>
+                            <br>
+                            <br>
+                            <ul id="roomsListEmploye" class="dropdown-content">
+                            </ul>
+                            <a class="btn dropdown-button col s12" href="#!" data-activates="roomsListEmploye" id="selectedRoomEmploye">Seleccionar Habitación</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                <a class="col s3  waves-effect waves-light btn-large" onclick="registerEmploye();">Registrar Empleado</a>
+                <a class="col s3 offset-s2 waves-effect waves-light btn-large" onclick="actionButton('newEmploye','hide','activesMainMenu');">Volver al Menú de Activos</a>
             </div>
         </div>
         <div id="vehicles" class="col s12">
@@ -224,6 +306,18 @@
         <div id="pending" class="col s12">
             <br>
             <h1>CUATRO</h1>
+        </div>
+        <!-- Message Modal Structure -->
+        <div id="message" class="modal">
+            <div class="modal-content">
+                <h4 id="modalHeader"></h4>
+                <div class="collection">
+                    <h6 id="modalMessage"></h6>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Aceptar</a>
+            </div>
         </div>
         <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
         <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
