@@ -42,7 +42,7 @@
     }];
   $(document).ready(function(){
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
-    query('actives',activeFields);
+    query('actives',activeFields,'activesTable');
     $('.modal').modal();
     loadEmployees('employe');
     loadBuildings('buildingList','roomsList','selectedRoom','selectedBuilding');
@@ -337,18 +337,39 @@ function registerEmploye(){
     })
 };
 
-function query(findablePath,fieldsArray){
+function query(findablePath,fieldsArray,tableId){
     var result = firebase.database().ref(findablePath + '/');
-    var resultArray
+    var resultArray;
+    var table = document.getElementById(tableId);
+    var title, tableHead, headTr, headTd, tableBody, bodyTr, bodyTd;
+
+    tableHead = document.createElement('thead');
+    headTr = document.createElement('tr');
+    tableBody = document.createElement('tbody');
+    bodyTr = document.createElement('tr');
     result.on('value', function(snapshot){
         resultObject = snapshot.val();
         resultArray = Object.values(resultObject);
 
         for (var element of resultArray){
             for (var field of fieldsArray){
+                headTd = document.createElement('td');
+                headTd.value = field.title;
+                headTd.text = field.title;
+                headTr.appendChild(headTd);
+                tableHead.appendChild(headTr);
+
+                bodyTd = document.createElement('td');
+                bodyTd.value = element[field.propertie];
+                bodyTd.text = element[field.propertie];
+                bodyTd.id = element['id'];
+                bodyTr.appendChild(bodyTd);
+                tableBody.appendChild(bodyTr);
                 console.log(field.title + ' ' + element[field.propertie]);
             };
-            console.log('\n');
         }
-    });  
+        table.appendChild(tableHead);
+        table.appendChild(tableBody);
+    });
+    
 };
