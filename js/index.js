@@ -40,9 +40,30 @@
         propertie: 'location',
         title: 'Ubicación'
     }];
+
+    var employeFields = [
+        {
+            propertie: 'name',
+            title: 'Nombre'
+        },
+        {
+            propertie: 'lastname',
+            title: 'Apellidos'
+        },
+        {
+            propertie: 'buildingWorkPlace',
+            title: 'Ala'
+        },
+        {
+            propertie: 'roomWorkPlace',
+            title: 'Habitación'
+        },
+        {
+            propertie: 'phone',
+            title: 'Teléfono'
+        }];
   $(document).ready(function(){
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
-    query('actives',activeFields,'activesTable');
     $('.modal').modal();
     loadEmployees('employe');
     loadBuildings('buildingList','roomsList','selectedRoom','selectedBuilding');
@@ -104,6 +125,11 @@ function actionButton(buttonId, classToSet, elementToShow){
     document.getElementById(elementToShow).classList.remove('hide');
 };
 
+function showQuery(buttonId, classToSet, elementToShow,findablePath,fieldsArray,tableId){
+    query(findablePath,fieldsArray,tableId);
+    document.getElementById(buttonId).classList.add(classToSet);
+    document.getElementById(elementToShow).classList.remove('hide');
+};
 function registerActive(){
     var brand = document.getElementById('brand').value;
     var keeperId = document.getElementById('keeperId').value;
@@ -167,8 +193,8 @@ function loadEmployees(path,comboBox){
             
             for (var element of employeArray){
                 var option = document.createElement('a');
-                option.value = element.name;
-                option.text = element.name;
+                option.value = element.name + ' ' + element.lastname;
+                option.text = element.name + ' ' + element.lastname;
                 option.className = 'collection-item modal-action modal-close';
                 option.setAttribute("onclick","selectEmploye('" + element.name + "','" + element.id +"');");
                 option.href = "#!";
@@ -341,35 +367,31 @@ function query(findablePath,fieldsArray,tableId){
     var result = firebase.database().ref(findablePath + '/');
     var resultArray;
     var table = document.getElementById(tableId);
-    var title, tableHead, headTr, headTd, tableBody, bodyTr, bodyTd;
+    table.innerHTML = "";
+    var tableHead, tableBody;
 
-    tableHead = document.createElement('thead');
-    headTr = document.createElement('tr');
-    tableBody = document.createElement('tbody');
-    bodyTr = document.createElement('tr');
+    tableHead = "<thead><tr>"
+    tableBody = "<tbody>"
+
     result.on('value', function(snapshot){
         resultObject = snapshot.val();
         resultArray = Object.values(resultObject);
 
+        for (var field of fieldsArray){
+            tableHead += "<th>" + field.title + "</th>";
+            //console.log(field.title + ' ' + element[field.propertie]);
+        };
+        tableHead += "</tr></thead>"
         for (var element of resultArray){
+            tableBody += '<tr>';
             for (var field of fieldsArray){
-                headTd = document.createElement('td');
-                headTd.value = field.title;
-                headTd.text = field.title;
-                headTr.appendChild(headTd);
-                tableHead.appendChild(headTr);
-
-                bodyTd = document.createElement('td');
-                bodyTd.value = element[field.propertie];
-                bodyTd.text = element[field.propertie];
-                bodyTd.id = element['id'];
-                bodyTr.appendChild(bodyTd);
-                tableBody.appendChild(bodyTr);
-                console.log(field.title + ' ' + element[field.propertie]);
+                tableBody += "<td>" + element[field.propertie] + "</td>";
             };
+            tableBody += '</tr>';
         }
-        table.appendChild(tableHead);
-        table.appendChild(tableBody);
+        tableBody += "</tbody>";
+        table.innerHTML = tableHead + tableBody;
+        
     });
     
 };
