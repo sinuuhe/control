@@ -15,9 +15,34 @@
   var selectedBuilding = {name: "", id: ""};
   var selectedRoom = {name: "", id: ""};
   var selectedDepartment = {name: "", id:""};
-
+  var activeFields = [
+    {
+        propertie: 'name',
+        title: 'Nombre'
+    },
+    {
+        propertie: 'model',
+        title: 'Modelo'
+    },
+    {
+        propertie: 'sn',
+        title: 'Número de Serie'
+    },
+    {
+        propertie: 'keeperName',
+        title: 'Responsable'
+    },
+    {
+        propertie: 'status',
+        title: 'Estado'
+    },
+    {
+        propertie: 'location',
+        title: 'Ubicación'
+    }];
   $(document).ready(function(){
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
+    query('actives',activeFields);
     $('.modal').modal();
     loadEmployees('employe');
     loadBuildings('buildingList','roomsList','selectedRoom','selectedBuilding');
@@ -89,7 +114,7 @@ function registerActive(){
     var registerDate = document.getElementById('registerDate').value;
     var serialNumber = document.getElementById('serialNumber').value;
 
-    var promise = firebase.database().ref('actives/' + serialNumber).set({
+    var promise = firebase.database().ref('actives/').push({
             brand: brand,
             keeperId: this.selectedEmploye.id,
             keeperName: this.selectedEmploye.name,
@@ -98,7 +123,8 @@ function registerActive(){
             model: model,
             name: name,
             registerDate: registerDate,
-            id: serialNumber
+            sn: serialNumber,
+            status: 'Active'
         });
 
     promise.then(function(response){
@@ -120,6 +146,9 @@ function registerActive(){
         this.selectedBuilding.name = "";
         this.selectedRoom.id = "";
         this.selectedRoom.name = "";
+        firebase.database().ref('actives/' + promise.key).update({
+            id: promise.key
+        });
     }, function(error){
         setModal('Error al registrar','No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
         $('#message').modal('open').value = "";
@@ -306,4 +335,20 @@ function registerEmploye(){
         setModal('Error al registrar','No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
         $('#message').modal('open').value = "";
     })
+};
+
+function query(findablePath,fieldsArray){
+    var result = firebase.database().ref(findablePath + '/');
+    var resultArray
+    result.on('value', function(snapshot){
+        resultObject = snapshot.val();
+        resultArray = Object.values(resultObject);
+
+        for (var element of resultArray){
+            for (var field of fieldsArray){
+                console.log(field.title + ' ' + element[field.propertie]);
+            };
+            console.log('\n');
+        }
+    });  
 };
