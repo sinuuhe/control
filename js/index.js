@@ -74,6 +74,10 @@
     document.getElementById('keeperId').value = "Encargado: (Seleccione Encargado de la Lista)";
     document.getElementById('location').value = "Ubicación: (Seleccione Ubicación de la Lista)";
     document.getElementById('selectedRoom').setAttribute('disabled','');
+    //document.getElementById('search').addEventListener('keyup', (event) => {
+    //     var search = document.getElementById('search').value;
+    //  });
+      
     $('.datepicker').pickadate({
         selectMonths: true, // Creates a dropdown to control month
         selectYears: 15, // Creates a dropdown of 15 years to control year,
@@ -125,8 +129,7 @@ function actionButton(buttonId, classToSet, elementToShow){
     document.getElementById(elementToShow).classList.remove('hide');
 };
 
-function showQuery(buttonId, classToSet, elementToShow,findablePath,fieldsArray,tableId){
-    query(findablePath,fieldsArray,tableId);
+function showQuery(buttonId, classToSet, elementToShow){
     document.getElementById(buttonId).classList.add(classToSet);
     document.getElementById(elementToShow).classList.remove('hide');
 };
@@ -394,4 +397,30 @@ function query(findablePath,fieldsArray,tableId){
         
     });
     
+};
+
+function selectFindableType(findablePath,findableName, comboBoxId, sectionToShow,sectionToHide,fieldsArray,tableId){
+    query(findablePath,fieldsArray,tableId);
+    document.getElementById(comboBoxId).innerText = findableName;
+    showSearch(sectionToShow, sectionToHide);
+};
+
+function showSearch(sectionToShow,sectionToHide){
+    document.getElementById(sectionToShow).classList.remove('hide');
+    document.getElementById(sectionToHide).classList.remove('hide');
+    document.getElementById(sectionToHide).classList.add('hide');
+};
+
+function checkboxChecked(checkboxId, propertieId, inputId){
+    if(!document.getElementById(checkboxId).checked){
+        document.getElementById(inputId).setAttribute('disabled','');
+        document.getElementById(inputId).value = "";
+        document.getElementById(inputId).innerText = "Seleccionar";
+    }else{
+        document.getElementById(inputId).removeAttribute('disabled');  
+    }
+};
+
+function selectStatus(status,selectedStatus){
+    document.getElementById(selectedStatus).innerText = status;
 };
