@@ -15,6 +15,8 @@
   var selectedBuilding = {name: "", id: ""};
   var selectedRoom = {name: "", id: ""};
   var selectedDepartment = {name: "", id:""};
+  var activeFilters = {};
+  var employeFilters = {};
   var activeFields = [
     {
         propertie: 'name',
@@ -27,6 +29,10 @@
     {
         propertie: 'sn',
         title: 'Número de Serie'
+    },
+    {
+        propertie: 'brand',
+        title: 'Marca'
     },
     {
         propertie: 'keeperName',
@@ -82,7 +88,7 @@
         selectMonths: true, // Creates a dropdown to control month
         selectYears: 15, // Creates a dropdown of 15 years to control year,
         today: 'Hoy',
-        clear: 'Limpiar',
+        clear: 'Borrar',
         close: 'Ok',
         monthsFull: [ 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre' ],
         monthsShort: [ 'Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic' ],
@@ -199,7 +205,7 @@ function loadEmployees(path,comboBox){
                 option.value = element.name + ' ' + element.lastname;
                 option.text = element.name + ' ' + element.lastname;
                 option.className = 'collection-item modal-action modal-close';
-                option.setAttribute("onclick","selectEmploye('" + element.name + "','" + element.id +"');");
+                option.setAttribute("onclick","selectEmploye('" + element.name + " " + element.lastname + "','" + element.id +"');");
                 option.href = "#!";
                 employeList.appendChild(option);
             }
@@ -366,12 +372,13 @@ function registerEmploye(){
     })
 };
 
-function query(findablePath,fieldsArray,tableId){
+function query(findablePath,fieldsArray,tableId,filters){
     var result = firebase.database().ref(findablePath + '/');
     var resultArray;
     var table = document.getElementById(tableId);
     table.innerHTML = "";
     var tableHead, tableBody;
+
 
     tableHead = "<thead><tr>"
     tableBody = "<tbody>"
@@ -379,24 +386,51 @@ function query(findablePath,fieldsArray,tableId){
     result.on('value', function(snapshot){
         resultObject = snapshot.val();
         resultArray = Object.values(resultObject);
-
-        for (var field of fieldsArray){
-            tableHead += "<th>" + field.title + "</th>";
-            //console.log(field.title + ' ' + element[field.propertie]);
-        };
-        tableHead += "</tr></thead>"
-        for (var element of resultArray){
-            tableBody += '<tr>';
+        
+        if(filters == undefined || jQuery.isEmptyObject(filters)){
+            console.log('1');
             for (var field of fieldsArray){
-                tableBody += "<td>" + element[field.propertie] + "</td>";
+                tableHead += "<th>" + field.title + "</th>";
+                //console.log(field.title + ' ' + element[field.propertie]);
             };
-            tableBody += '</tr>';
+            tableHead += "</tr></thead>"
+            for (var element of resultArray){
+                tableBody += '<tr>';
+                for (var field of fieldsArray){
+                    tableBody += "<td>" + element[field.propertie] + "</td>";
+                };
+                tableBody += '</tr>';
+            }
+            tableBody += "</tbody>";
+            table.innerHTML = tableHead + tableBody;
+            
+        }else{
+            console.log('2');
+            var _filters = Object.values(filters);
+            for (var field of fieldsArray){
+                tableHead += "<th>" + field.title + "</th>";
+                //console.log(field.title + ' ' + element[field.propertie]);
+            };
+            tableHead += "</tr></thead>"
+
+            for (var element of resultArray){
+                tableBody += '<tr>';
+                for (var field of fieldsArray){
+                    for (filter of _filters){
+                        if(element[filter] == 'TMAL'){
+                            console.log('element[filter] ' + element[filter]);
+                            tableBody += "<td>" + element[field.propertie] + "</td>";
+                        }
+                    };
+                };
+                tableBody += '</tr>';
+            }
+            tableBody += "</tbody>";
+            table.innerHTML = tableHead + tableBody;
+            
         }
-        tableBody += "</tbody>";
-        table.innerHTML = tableHead + tableBody;
         
     });
-    
 };
 
 function selectFindableType(findablePath,findableName, comboBoxId, sectionToShow,sectionToHide,fieldsArray,tableId){
@@ -411,16 +445,30 @@ function showSearch(sectionToShow,sectionToHide){
     document.getElementById(sectionToHide).classList.add('hide');
 };
 
-function checkboxChecked(checkboxId, propertieId, inputId){
-    if(!document.getElementById(checkboxId).checked){
+function checkboxChecked(checkboxId, propertieId, inputId,filters){
+    var _filters = this[filters];
+        if(!document.getElementById(checkboxId).checked){
+        delete _filters[propertieId];
+        console.log(this[filters]);
         document.getElementById(inputId).setAttribute('disabled','');
         document.getElementById(inputId).value = "";
         document.getElementById(inputId).innerText = "Seleccionar";
     }else{
         document.getElementById(inputId).removeAttribute('disabled');  
+        _filters[propertieId] = {
+            name: propertieId,
+            search: ""
+        };
+        console.log(this[filters]);
     }
 };
 
 function selectStatus(status,selectedStatus){
     document.getElementById(selectedStatus).innerText = status;
+};
+
+function fillSearchInput(HTMLElementId, filters, propertie){
+    var _filters = this[filters];
+    _filters[propertie].search = document.getElementById(HTMLElementId).value;
+    console.log(this[filters]);
 };

@@ -247,32 +247,32 @@
             <div id="activesFilter" class="hide">
                 <div class="row">
                     <div class="col s5">
-                        <input type="checkbox" id="activeName" class="filled-in" onclick="checkboxChecked('activeName','name','activeNameInput');"/>
+                        <input type="checkbox" id="activeName" class="filled-in" onclick="checkboxChecked('activeName','name','activeNameInput','activeFilters');"/>
                         <label for="activeName">Nombre</label>
-                        <input type="text" name="" id="activeNameInput" placeholder="Buscar..." disabled>
+                        <input type="text" name="" id="activeNameInput" placeholder="Buscar..." disabled onkeyup="fillSearchInput('activeNameInput', 'activeFilters', 'name')">
                     </div>
                     
                     <div class="col s5">
-                        <input type="checkbox" id="activeBrand" class="filled-in" onclick="checkboxChecked('activeBrand','brand','activeBrandInput');"/>
+                        <input type="checkbox" id="activeBrand" class="filled-in" onclick="checkboxChecked('activeBrand','brand','activeBrandInput','activeFilters');"/>
                         <label for="activeBrand">Marca</label>
-                        <input type="text" name="" id="activeBrandInput" placeholder="Buscar..." disabled>
+                        <input type="text" name="" id="activeBrandInput" placeholder="Buscar..." onkeyup="fillSearchInput('activeBrandInput', 'activeFilters', 'brand')"disabled>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col s5">
-                        <input type="checkbox" id="activeKeeper" class="filled-in" onclick="checkboxChecked('activeKeeper','keeperName','activeKeeperInput');"/>
+                        <input type="checkbox" id="activeKeeper" class="filled-in" onclick="checkboxChecked('activeKeeper','keeperName','activeKeeperInput','activeFilters');"/>
                         <label for="activeKeeper">Responsable</label>
-                        <input type="text" name="" id="activeKeeperInput" placeholder="Buscar..." disabled>
+                        <input type="text" name="" id="activeKeeperInput" placeholder="Buscar..." disabled onkeyup="fillSearchInput('activeKeeperInput', 'activeFilters', 'keeperName')">
                     </div>
                     <div class="col s5">
-                        <input type="checkbox" id="activeModel" class="filled-in" onclick="checkboxChecked('activeModel','model','activeModelInput');"/>
+                        <input type="checkbox" id="activeModel" class="filled-in" onclick="checkboxChecked('activeModel','model','activeModelInput','activeFilters');"/>
                         <label for="activeModel">Modelo</label>
-                        <input type="text" name="" id="activeModelInput" placeholder="Buscar..." disabled>
+                        <input type="text" name="" id="activeModelInput" placeholder="Buscar..." disabled onkeyup="fillSearchInput('activeModelInput', 'activeFilters', 'model')">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col s5">
-                        <input type="checkbox" id="activeStatus" class="filled-in" onclick="checkboxChecked('activeStatus','status','selectedStatus');" />
+                        <input type="checkbox" id="activeStatus" class="filled-in" onclick="checkboxChecked('activeStatus','status','selectedStatus','activeFilters');" />
                         <label for="activeStatus">Status</label>
                         <ul id="statusSelect" class="dropdown-content ">
                                 <li>
@@ -287,32 +287,36 @@
                 </div>
                 <div class="row">
                     <div class="col s12">
-                        <input type="checkbox" id="activeDate" class="filled-in" onclick="checkboxChecked('activeDate','registerDate','activeDateInput');"/>
+                        <input type="checkbox" id="activeDate" class="filled-in" onclick="checkboxChecked('activeDate','registerDate','activeDateInput','activeFilters');"/>
                         <label for="activeDate">Fecha</label>
                         <input type="text" name="" id="activeDateInput" placeholder="Buscar..." disabled>
                     </div>
+                </div>
+                <div class="row">
+                    <a class="col s8 offset-s2 waves-effect waves-light btn-large" onclick="query('actives',activeFields,'resultsTable','activeFilters');">Buscar Activos</a>
                 </div>
             </div>
             <div id="employeFilter" class="hide">
                             <div class="row">
                                 <div class="col s5">
-                                    <input type="checkbox" id="employeNameCheckbox" class="filled-in" onclick="checkboxChecked('employeNameCheckbox','name','employeNameCheckboxInput');"/>
+                                    <input type="checkbox" id="employeNameCheckbox" class="filled-in" onclick="checkboxChecked('employeNameCheckbox','name','employeNameCheckboxInput','employeFilters');"/>
                                     <label for="employeNameCheckbox">Nombre</label>
-                                    <input type="text" name="" id="employeNameCheckboxInput" placeholder="Buscar..." disabled>
+                                    <input type="text" name="" id="employeNameCheckboxInput" placeholder="Buscar..." disabled onkeyup="fillSearchInput('employeNameCheckboxInput', 'employeFilters', 'name')">
                                 </div>   
                                 <div class="col s5">
-                                    <input type="checkbox" id="employeLastnameCheckbox" class="filled-in" onclick="checkboxChecked('employeLastnameCheckbox','lastname','employeLastnameCheckboxInput');"/>
+                                    <input type="checkbox" id="employeLastnameCheckbox" class="filled-in" onclick="checkboxChecked('employeLastnameCheckbox','lastname','employeLastnameCheckboxInput','employeFilters');"/>
                                     <label for="employeLastnameCheckbox">Apellido</label>
-                                    <input type="text" name="" id="employeLastnameCheckboxInput" placeholder="Buscar..." disabled>
+                                    <input type="text" name="" id="employeLastnameCheckboxInput" placeholder="Buscar..." disabled onkeyup="fillSearchInput('employeLastnameCheckboxInput', 'employeFilters', 'lastname')">
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col s5">
-                                    <input type="checkbox" id="employeBuildingWorkPlaceCheckbox" class="filled-in" onclick="checkboxChecked('employeBuildingWorkPlaceCheckbox','buildingWorkPlace','employeBuildingWorkPlaceCheckboxInput');"/>
+                                    <input type="checkbox" id="employeBuildingWorkPlaceCheckbox" class="filled-in" onclick="checkboxChecked('employeBuildingWorkPlaceCheckbox','buildingWorkPlace','employeBuildingWorkPlaceCheckboxInput','employeFilters');"/>
                                     <label for="employeBuildingWorkPlaceCheckbox">Ala</label>
-                                    <input type="text" name="" id="employeBuildingWorkPlaceCheckboxInput" placeholder="Buscar..." disabled>
+                                    <input type="text" name="" id="employeBuildingWorkPlaceCheckboxInput" placeholder="Buscar..." disabled onkeyup="fillSearchInput('employeBuildingWorkPlaceCheckboxInput','employeFilters','buildingWorkPlace');">
                                 </div>
-                            </div>                
+                            </div>              
+                            <a class="col s8 offset-s2 waves-effect waves-light btn-large" onclick="query('employe',employeFields,'resultsTable',employeFilters);">Buscar empleados</a>  
             </div>
             <div class="row">
                 <table class="striped" id="resultsTable"></table>
