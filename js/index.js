@@ -379,7 +379,7 @@ function query(findablePath,fieldsArray,tableId,filters){
     table.innerHTML = "";
     var tableHead, tableBody;
 
-
+    console.log(filters);
     tableHead = "<thead><tr>"
     tableBody = "<tbody>"
 
@@ -405,6 +405,8 @@ function query(findablePath,fieldsArray,tableId,filters){
             table.innerHTML = tableHead + tableBody;
             
         }else{
+            var found = 0;
+            var filteredResults = [];
             console.log('2');
             var _filters = Object.values(filters);
             for (var field of fieldsArray){
@@ -414,20 +416,26 @@ function query(findablePath,fieldsArray,tableId,filters){
             tableHead += "</tr></thead>"
 
             for (var element of resultArray){
+                for (var filter of _filters){
+                    if(element[filter.name] == filter.search){
+                        found ++;
+                    }else{
+                        found --;
+                    }
+                };
+                if(found == _filters.length) filteredResults.push(element);
+                found = 0;
+            };    
+
+            for (var element of filteredResults){
                 tableBody += '<tr>';
                 for (var field of fieldsArray){
-                    for (filter of _filters){
-                        if(element[filter] == 'TMAL'){
-                            console.log('element[filter] ' + element[filter]);
-                            tableBody += "<td>" + element[field.propertie] + "</td>";
-                        }
-                    };
+                    tableBody += "<td>" + element[field.propertie] + "</td>";
                 };
                 tableBody += '</tr>';
             }
             tableBody += "</tbody>";
-            table.innerHTML = tableHead + tableBody;
-            
+            table.innerHTML = tableHead + tableBody;            
         }
         
     });
