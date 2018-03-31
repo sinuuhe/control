@@ -119,7 +119,7 @@
         window.location.pathname = "Users/sinuhe/Documents/controlActivos/login.html";
     }else{
         var userId = firebase.auth().currentUser.uid;
-        var userName = firebase.database().ref('users/' + userId + '/name');
+        var userName = database.ref('users/' + userId + '/name');
         userName.on('value', function(snapshot){
             document.getElementById('userName').innerText = 'Usuario: ' + snapshot.val(); 
         });
@@ -144,22 +144,26 @@ function registerActive(){
     var keeperId = document.getElementById('keeperId').value;
     var location = document.getElementById('location').value;
     var maintenanceDate = document.getElementById('maintenanceDate').value;
+    var integerMaintenanceDate = formatDate(maintenanceDate);
     var model = document.getElementById('model').value;
     var name = document.getElementById('name').value;
     var registerDate = document.getElementById('registerDate').value;
+    var integerRegisterDate = formatDate(registerDate);
     var serialNumber = document.getElementById('serialNumber').value;
 
-    var promise = firebase.database().ref('actives/').push({
+    var promise = database.ref('actives/').push({
             brand: brand,
             keeperId: this.selectedEmploye.id,
             keeperName: this.selectedEmploye.name,
             location: location,
             maintenanceDate: maintenanceDate,
+            integerMaintenanceDate: integerMaintenanceDate,
             model: model,
             name: name,
             registerDate: registerDate,
+            integerRegisterDate: integerRegisterDate,
             sn: serialNumber,
-            status: 'Active'
+            status: 'Activo'
         });
 
     promise.then(function(response){
@@ -181,7 +185,7 @@ function registerActive(){
         this.selectedBuilding.name = "";
         this.selectedRoom.id = "";
         this.selectedRoom.name = "";
-        firebase.database().ref('actives/' + promise.key).update({
+        database.ref('actives/' + promise.key).update({
             id: promise.key
         });
     }, function(error){
@@ -191,7 +195,7 @@ function registerActive(){
 };
 
 function loadEmployees(path,comboBox){
-    var employees = firebase.database().ref(path);
+    var employees = database.ref(path);
         employees.on('value', function(snapshot){
             var employeList = document.getElementById("employeList");
 
@@ -213,7 +217,7 @@ function loadEmployees(path,comboBox){
 };
 
 function loadDepartments(HTMLElementId, nextHTMLElement){
-    var department = firebase.database().ref('departments/');
+    var department = database.ref('departments/');
     var departmentList = document.getElementById(HTMLElementId);
 
     department.on('value', function(snapshot){
@@ -234,10 +238,9 @@ function loadDepartments(HTMLElementId, nextHTMLElement){
     });
 };
 function loadBuildings(elementId, nextElementId, selectedRoomInput, selectedBuildingInput){
-    var building = firebase.database().ref('locations/');
+    var building = database.ref('locations/');
     var buildingArray, buildingObject;
     var buildingList = document.getElementById(elementId);
-    //console.log('elemento: ' + elementId + ' next element: ' + nextElementId + ' selected romm: ' + selectedRoomInput + ' selected building: ' + selectedBuilding);
     building.on('value', function(snapshot){
         buildingObject = snapshot.val();
         buildingArray = Object.values(buildingObject);
@@ -257,7 +260,7 @@ function loadBuildings(elementId, nextElementId, selectedRoomInput, selectedBuil
 };
 
 function loadRooms(buildingId, elementId, nextElementId){
-    var building = firebase.database().ref('locations/' + buildingId + '/rooms');
+    var building = database.ref('locations/' + buildingId + '/rooms');
     var location, roomsArray, roomsObject;
     var roomsList = document.getElementById(elementId);
     roomsList.innerHTML = '';
@@ -326,7 +329,7 @@ function registerEmploye(){
     var buildingListEmploye = document.getElementById('buildingListEmploye').innerText;
     var roomsListEmploye = document.getElementById('roomsListEmploye').innerText;
 
-    var promise = firebase.database().ref('employe/').push({
+    var promise = database.ref('employe/').push({
             name: employeName,
             lastname: employeLastname,
             departmentName: employeDepartment.name,
@@ -363,7 +366,7 @@ function registerEmploye(){
         this.selectedRoom.name = "";
         this.selectedDepartment.name = "";
         this.selectDepartment.id = "";
-        firebase.database().ref('employe/' + promise.key).update({
+        database.ref('employe/' + promise.key).update({
             id: promise.key
         });
     }, function(error){
@@ -373,13 +376,11 @@ function registerEmploye(){
 };
 
 function query(findablePath,fieldsArray,tableId,filters){
-    var result = firebase.database().ref(findablePath + '/');
+    var result = database.ref(findablePath + '/');
     var resultArray;
     var table = document.getElementById(tableId);
     table.innerHTML = "";
     var tableHead, tableBody;
-
-    console.log(filters);
     tableHead = "<thead><tr>"
     tableBody = "<tbody>"
 
@@ -388,10 +389,8 @@ function query(findablePath,fieldsArray,tableId,filters){
         resultArray = Object.values(resultObject);
         
         if(filters == undefined || jQuery.isEmptyObject(filters)){
-            console.log('1');
             for (var field of fieldsArray){
                 tableHead += "<th>" + field.title + "</th>";
-                //console.log(field.title + ' ' + element[field.propertie]);
             };
             tableHead += "</tr></thead>"
             for (var element of resultArray){
@@ -399,6 +398,10 @@ function query(findablePath,fieldsArray,tableId,filters){
                 for (var field of fieldsArray){
                     tableBody += "<td>" + element[field.propertie] + "</td>";
                 };
+                if(element.buildingWorkPlace == undefined){
+                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn green'>Reparar</a>  </td>";
+                }
                 tableBody += '</tr>';
             }
             tableBody += "</tbody>";
@@ -407,17 +410,15 @@ function query(findablePath,fieldsArray,tableId,filters){
         }else{
             var found = 0;
             var filteredResults = [];
-            console.log('2');
             var _filters = Object.values(filters);
             for (var field of fieldsArray){
                 tableHead += "<th>" + field.title + "</th>";
-                //console.log(field.title + ' ' + element[field.propertie]);
             };
             tableHead += "</tr></thead>"
 
             for (var element of resultArray){
                 for (var filter of _filters){
-                    if(element[filter.name] == filter.search){
+                    if(element[filter.name].toLowerCase().indexOf(filter.search) > -1){
                         found ++;
                     }else{
                         found --;
@@ -429,15 +430,18 @@ function query(findablePath,fieldsArray,tableId,filters){
 
             for (var element of filteredResults){
                 tableBody += '<tr>';
-                for (var field of fieldsArray){
+                for (var field of fieldsArray){//here we check the status so we can put the buttons
                     tableBody += "<td>" + element[field.propertie] + "</td>";
                 };
+                if(element.buildingWorkPlace == undefined){
+                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a></td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn green'>Reparar</a>  </td>";
+                }
                 tableBody += '</tr>';
             }
             tableBody += "</tbody>";
             table.innerHTML = tableHead + tableBody;            
-        }
-        
+        }     
     });
 };
 
@@ -457,7 +461,6 @@ function checkboxChecked(checkboxId, propertieId, inputId,filters){
     var _filters = this[filters];
         if(!document.getElementById(checkboxId).checked){
         delete _filters[propertieId];
-        console.log(this[filters]);
         document.getElementById(inputId).setAttribute('disabled','');
         document.getElementById(inputId).value = "";
         document.getElementById(inputId).innerText = "Seleccionar";
@@ -467,7 +470,6 @@ function checkboxChecked(checkboxId, propertieId, inputId,filters){
             name: propertieId,
             search: ""
         };
-        console.log(this[filters]);
     }
 };
 
@@ -477,6 +479,40 @@ function selectStatus(status,selectedStatus){
 
 function fillSearchInput(HTMLElementId, filters, propertie){
     var _filters = this[filters];
-    _filters[propertie].search = document.getElementById(HTMLElementId).value;
-    console.log(this[filters]);
+    _filters[propertie].search = document.getElementById(HTMLElementId).value.toLowerCase();
+};
+
+function formatDate(date){
+    var spaMonth = [ 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+    var enMonth = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var res = date.split(" ");
+    res = res[1].slice(0,res[1].indexOf(","));
+    var monthIndex = spaMonth.indexOf(res);
+    var newDate = date.replace(res,enMonth[monthIndex]);
+    var formattedDate = Date.parse(newDate);
+    return formattedDate;
+};
+
+function confirmUnsubscribing(activeId, modalId, path, fields){
+    var active  = database.ref(path + '/' + activeId);
+    active.on('value', function(snapshot){
+        var _active = snapshot.val();
+        if(_active != null){
+            document.getElementById(modalId).innerHTML = "<ul><li>NOMBRE: " + _active.name + "</li><li>MODELO: " + _active.model + "</li><li>NUÚMERO DE SERIE: " + _active.sn + "</li><li>MARCA: " + _active.brand + "</li><li>RESPONSABLE: " + _active.keeperName + "</li><li>UBICACIÓN: " + _active.location + "</li></ul>";
+            document.getElementById('deleteButton').setAttribute("onclick","deleteElement('" + _active.id + "','" + path + "', '" + fields + "');");
+        }
+    });
+};
+
+function deleteElement(id,path,fields){   
+    var promise = database.ref(path + '/' + id + "/status").set('Baja');
+    promise.then(function(response){
+        query(path,this[fields],'resultsTable');
+        setModal('Baja Correcta','La baja del activo se realizó correctamente.');
+        $('#message').modal('open').value = "";
+    }, function(error){
+        setModal('Error al hacer la baja','No se pudo llevar a cabo la baja. Por favor inténtelo de nuevo.');
+        $('#message').modal('open').value = "";
+    })  
+    
 };
