@@ -17,6 +17,7 @@
   var selectedDepartment = {name: "", id:""};
   var activeFilters = {};
   var employeFilters = {};
+  var useDate;
   var activeFields = [
     {
         propertie: 'name',
@@ -385,35 +386,77 @@ function query(findablePath,fieldsArray,tableId,filters){
     result.on('value', function(snapshot){
         resultObject = snapshot.val();
         resultArray = Object.values(resultObject);
-        
-        if(filters == undefined || jQuery.isEmptyObject(filters)){
-            for (var field of fieldsArray){
-                tableHead += "<th>" + field.title + "</th>";
-            };
-            tableHead += "</tr></thead>"
-            for (var element of resultArray){
-                tableBody += '<tr>';
-                for (var field of fieldsArray){
-                    tableBody += "<td>" + element[field.propertie] + "</td>";
-                };
-                if(element.buildingWorkPlace == undefined){
-                    if(element.status == 'Baja'){
-                        tableBody += "<td><a class='waves-effect waves-light btn red'disabled>Baja</a>  </td>";
-                        tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
+        if(this.useDate == undefined){
+            if(filters == undefined || jQuery.isEmptyObject(filters)){
+                    for (var field of fieldsArray){
+                        tableHead += "<th>" + field.title + "</th>";
+                    };
+                    tableHead += "</tr></thead>"
+                    for (var element of resultArray){
+                        tableBody += '<tr>';
+                        for (var field of fieldsArray){
+                            tableBody += "<td>" + element[field.propertie] + "</td>";
+                        };
+                        if(element.buildingWorkPlace == undefined){
+                            if(element.status == 'Baja'){
+                                tableBody += "<td><a class='waves-effect waves-light btn red'disabled>Baja</a>  </td>";
+                                tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
+                            }
+                            else{ 
+                                tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                                tableBody += "<td><a class='waves-effect waves-light btn green'>Reparar</a>  </td>";
+                            }
+                        }
+                        tableBody += '</tr>';
                     }
-                    else{ 
-                        tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
-                        tableBody += "<td><a class='waves-effect waves-light btn green'>Reparar</a>  </td>";
+                    tableBody += "</tbody>";
+                    table.innerHTML = tableHead + tableBody;
+                    
+                }else{
+                    var found = 0;
+                    var filteredResults = [];
+                    var _filters = Object.values(filters);
+                    for (var field of fieldsArray){
+                        tableHead += "<th>" + field.title + "</th>";
+                    };
+                    tableHead += "</tr></thead>"
+
+                    for (var element of resultArray){
+                        for (var filter of _filters){
+                            if(element[filter.name].toLowerCase().indexOf(filter.search) > -1){
+                                found ++;
+                            }else{
+                                found --;
+                            }
+                        };
+                        if(found == _filters.length) filteredResults.push(element);
+                        found = 0;
+                    };    
+
+                    for (var element of filteredResults){
+                        tableBody += '<tr>';
+                        for (var field of fieldsArray){//here we check the status so we can put the buttons
+                            tableBody += "<td>" + element[field.propertie] + "</td>";
+                        };
+                        if(element.buildingWorkPlace == undefined){
+                            if(element.status == 'Baja'){
+                                tableBody += "<td><a class='waves-effect waves-light btn red'disabled>Baja</a>  </td>";
+                                tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
+                            }
+                            else{ 
+                                tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                                tableBody += "<td><a class='waves-effect waves-light btn green'>Reparar</a>  </td>";
+                            }
+                        }
+                        tableBody += '</tr>';
                     }
-                }
-                tableBody += '</tr>';
-            }
-            tableBody += "</tbody>";
-            table.innerHTML = tableHead + tableBody;
-            
-        }else{
+                    tableBody += "</tbody>";
+                    table.innerHTML = tableHead + tableBody;            
+                } 
+        } else{// searching with dates
             var found = 0;
             var filteredResults = [];
+            var dateFilteredResults = [];
             var _filters = Object.values(filters);
             for (var field of fieldsArray){
                 tableHead += "<th>" + field.title + "</th>";
@@ -422,17 +465,35 @@ function query(findablePath,fieldsArray,tableId,filters){
 
             for (var element of resultArray){
                 for (var filter of _filters){
-                    if(element[filter.name].toLowerCase().indexOf(filter.search) > -1){
-                        found ++;
+                    if(element[filter.name] != undefined){
+                        if(element[filter.name].toLowerCase().indexOf(filter.search) > -1){
+                            found ++;
+                        }else{
+                            found --;
+                        }
                     }else{
-                        found --;
+                        filteredResults.push(element);
                     }
                 };
                 if(found == _filters.length) filteredResults.push(element);
                 found = 0;
             };    
-
+            
+            console.log('before the last filter');
+            console.log(filteredResults);
             for (var element of filteredResults){
+                for (var filter of _filters){
+                    if(verifyDate(filter,element)){
+                        console.log('inNNNNNNN');
+                        dateFilteredResults.push(element);
+                    }
+                };
+                found = 0;
+            };  
+
+            console.log('after  de LAST filter');
+            console.log(dateFilteredResults);
+            for (var element of dateFilteredResults){
                 tableBody += '<tr>';
                 for (var field of fieldsArray){//here we check the status so we can put the buttons
                     tableBody += "<td>" + element[field.propertie] + "</td>";
@@ -450,8 +511,9 @@ function query(findablePath,fieldsArray,tableId,filters){
                 tableBody += '</tr>';
             }
             tableBody += "</tbody>";
-            table.innerHTML = tableHead + tableBody;            
-        }     
+            table.innerHTML = tableHead + tableBody;   
+        }   
+        
     });
     
 };
@@ -540,6 +602,7 @@ function useDates(checkboxId, inputsDivId){
         document.getElementById(inputsDivId).classList.add('hide');
         var inputs = ['dateBeforeInput','dateAfterInput','dateBetweenInput'];
         var properties = ['dateBefore','dateAfter','dateBetween'];
+        this.useDate = undefined;
 
         for (var i = 0; i < inputs.length; i++){
             document.getElementById(inputs[i]).setAttribute('disabled','');
@@ -556,6 +619,7 @@ function useDates(checkboxId, inputsDivId){
         document.getElementById('dateAfterInput').innerText = "Seleccionar Fecha...";
         document.getElementById('dateBetweenInput').value = "";
         document.getElementById('dateBetweenInput').innerText = "Seleccionar Fecha...";
+        this.useDate = true;
     }
 };
 
@@ -584,4 +648,23 @@ function addDateToFilters(inputId, propertie, filters){
         name: propertie,
         search: formatDate(document.getElementById(inputId).value)
     };
+};
+
+function verifyDate(filter,element){
+    console.log('element on verifyDate');
+    console.log(element);
+    switch(filter.name){
+        case 'dateBefore':
+            console.log('busk ' + filter.search);
+            console.log('elem ' + element.integerRegisterDate);
+            if(filter.search > element.integerRegisterDate) return true;
+        break;
+        case 'dateAfter':
+            if(filter.search < element.integerRegisterDate) return true;
+        break;
+        case 'dateBetween':
+        if(filter.search[0] < element.integerRegisterDate && element.integerRegisterDate > filter.search[1]) return true;
+        break;
+    };
+    return false;
 };
