@@ -7,6 +7,7 @@
     <title>Control de Activos</title>
     <link rel="stylesheet" href="materialize/css/materialize.min.css" type="text/css" media="screen,projection">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body id="body" >
     <div class="navbar-fixed">
@@ -276,21 +277,40 @@
                         <label for="activeStatus">Status</label>
                         <ul id="statusSelect" class="dropdown-content ">
                                 <li>
-                                    <a class="collection-item " onclick="selectStatus('activo','selectedStatus');">Activo</a>
+                                    <a class="collection-item " onclick="selectStatus('status','activo','selectedStatus','activeFilters');">Activo</a>
                                 </li>
                                 <li>
-                                    <a class="collection-item " onclick="selectStatus('reparacion','selectedStatus');">Reparacioón</a>
+                                    <a class="collection-item " onclick="selectStatus('status','reparacion','selectedStatus','activeFilters');">Reparacioón</a>
+                                </li>
+                                <li>
+                                    <a class="collection-item " onclick="selectStatus('status','baja','selectedStatus','activeFilters');">Baja</a>
                                 </li>
                             </ul>
                             <a class="btn dropdown-button col s12" href="#!" data-activates="statusSelect" id="selectedStatus" disabled>Seleccionar Status</a>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col s12">
-                        <input type="checkbox" id="activeDate" class="filled-in" onclick="checkboxChecked('activeDate','registerDate','activeDateInput','activeFilters');"/>
-                        <label for="activeDate">Fecha</label>
-                        <input type="text" name="" id="activeDateInput" placeholder="Buscar..." disabled>
-                    </div>
+                        <div class="col s5">
+                                <input type="checkbox" id="activeDate" class="filled-in" onclick="useDates('activeDate','dateInputs');"/>
+                                <label for="activeDate">Usar Fechas</label>
+                            </div>
+                </div>
+                <div class="row hide" id="dateInputs">
+                        <div class="col s5">
+                                <input type="radio" id="dateBefore" class="filled-in" name="group1" onclick="checkboxCheckedDate('dateBefore','dateBefore','dateBeforeInput','activeFilters');" />
+                                <label for="dateBefore">Antes de: </label>
+                                <input type="text" name="" id="dateBeforeInput" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addDateToFilters('dateBeforeInput','dateBefore', 'activeFilters');">
+                            </div>
+                            <div class="col s5">
+                                    <input type="radio" id="dateAfter" class="filled-in" name="group1"  onclick="checkboxCheckedDate('dateAfter','dateAfter','dateAfterInput','activeFilters');"/>
+                                    <label for="dateAfter">Después de: </label>
+                                    <input type="text" name="" id="dateAfterInput" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addDateToFilters('dateAfterInput','dateAfter', 'activeFilters');">
+                                </div>
+                                <div class="col s5">
+                                        <input type="radio" id="dateBetween" class="filled-in" name="group1"  onclick="checkboxCheckedDate('dateBetween','dateBetween','dateBetweenInput','activeFilters');"/>
+                                        <label for="dateBetween">Entre fechas: </label>
+                                        <input type="text" name="" id="dateBetweenInput" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addDateToFilters('dateBetweenInput','dateBetween', 'activeFilters');">
+                                    </div>
                 </div>
                 <div class="row">
                     <a class="col s8 offset-s2 waves-effect waves-light btn-large" onclick="query('actives',activeFields,'resultsTable',activeFilters);">Buscar Activos</a>
@@ -325,6 +345,9 @@
                 <a class="col s3 offset-s2 waves-effect waves-light btn-large" onclick="actionButton('query','hide','activesMainMenu');">Volver al Menú de Activos</a>
             </div>
         </div>
+    </div>
+    
+        
         <div id="vehicles" class="col s12">
             <br>
             <br>

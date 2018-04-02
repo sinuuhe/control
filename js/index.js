@@ -68,6 +68,7 @@
             propertie: 'phone',
             title: 'Teléfono'
         }];
+
   $(document).ready(function(){
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
@@ -80,9 +81,6 @@
     document.getElementById('keeperId').value = "Encargado: (Seleccione Encargado de la Lista)";
     document.getElementById('location').value = "Ubicación: (Seleccione Ubicación de la Lista)";
     document.getElementById('selectedRoom').setAttribute('disabled','');
-    //document.getElementById('search').addEventListener('keyup', (event) => {
-    //     var search = document.getElementById('search').value;
-    //  });
       
     $('.datepicker').pickadate({
         selectMonths: true, // Creates a dropdown to control month
@@ -376,7 +374,7 @@ function registerEmploye(){
 };
 
 function query(findablePath,fieldsArray,tableId,filters){
-    var result = database.ref(findablePath + '/');
+    var result = database.ref(findablePath + '/').orderByChild('name');
     var resultArray;
     var table = document.getElementById(tableId);
     table.innerHTML = "";
@@ -399,8 +397,14 @@ function query(findablePath,fieldsArray,tableId,filters){
                     tableBody += "<td>" + element[field.propertie] + "</td>";
                 };
                 if(element.buildingWorkPlace == undefined){
-                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn green'>Reparar</a>  </td>";
+                    if(element.status == 'Baja'){
+                        tableBody += "<td><a class='waves-effect waves-light btn red'disabled>Baja</a>  </td>";
+                        tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
+                    }
+                    else{ 
+                        tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                        tableBody += "<td><a class='waves-effect waves-light btn green'>Reparar</a>  </td>";
+                    }
                 }
                 tableBody += '</tr>';
             }
@@ -434,8 +438,14 @@ function query(findablePath,fieldsArray,tableId,filters){
                     tableBody += "<td>" + element[field.propertie] + "</td>";
                 };
                 if(element.buildingWorkPlace == undefined){
-                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a></td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn green'>Reparar</a>  </td>";
+                    if(element.status == 'Baja'){
+                        tableBody += "<td><a class='waves-effect waves-light btn red'disabled>Baja</a>  </td>";
+                        tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
+                    }
+                    else{ 
+                        tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                        tableBody += "<td><a class='waves-effect waves-light btn green'>Reparar</a>  </td>";
+                    }
                 }
                 tableBody += '</tr>';
             }
@@ -443,7 +453,10 @@ function query(findablePath,fieldsArray,tableId,filters){
             table.innerHTML = tableHead + tableBody;            
         }     
     });
+    
 };
+
+
 
 function selectFindableType(findablePath,findableName, comboBoxId, sectionToShow,sectionToHide,fieldsArray,tableId){
     query(findablePath,fieldsArray,tableId);
@@ -473,8 +486,14 @@ function checkboxChecked(checkboxId, propertieId, inputId,filters){
     }
 };
 
-function selectStatus(status,selectedStatus){
+function selectStatus(propertie,status,selectedStatus, filters){
+    var _filters = this[filters];
+    _filters[propertie] = {
+        name: propertie,
+        search: status
+    };
     document.getElementById(selectedStatus).innerText = status;
+
 };
 
 function fillSearchInput(HTMLElementId, filters, propertie){
@@ -514,5 +533,55 @@ function deleteElement(id,path,fields){
         setModal('Error al hacer la baja','No se pudo llevar a cabo la baja. Por favor inténtelo de nuevo.');
         $('#message').modal('open').value = "";
     })  
-    
+};
+
+function useDates(checkboxId, inputsDivId){
+    if(!document.getElementById(checkboxId).checked){
+        document.getElementById(inputsDivId).classList.add('hide');
+        var inputs = ['dateBeforeInput','dateAfterInput','dateBetweenInput'];
+        var properties = ['dateBefore','dateAfter','dateBetween'];
+
+        for (var i = 0; i < inputs.length; i++){
+            document.getElementById(inputs[i]).setAttribute('disabled','');
+            document.getElementById(inputs[i]).value = "";
+            document.getElementById(inputs[i]).innerText = "Seleccionar Fecha";
+            delete this.activeFilters[properties[i]];
+            document.getElementById(inputs[i]).removeAttribute('disabled');  
+        };
+    }else{
+        document.getElementById(inputsDivId).classList.remove('hide');
+        document.getElementById('dateBeforeInput').value = "";
+        document.getElementById('dateBeforeInput').innerText = "Seleccionar Fecha...";
+        document.getElementById('dateAfterInput').value = "";
+        document.getElementById('dateAfterInput').innerText = "Seleccionar Fecha...";
+        document.getElementById('dateBetweenInput').value = "";
+        document.getElementById('dateBetweenInput').innerText = "Seleccionar Fecha...";
+    }
+};
+
+function checkboxCheckedDate(checkboxId, propertie, inputId,filters){
+    var inputValue = document.getElementById(inputId).value;
+    var _filters = this[filters];
+
+    var inputs = ['dateBeforeInput','dateAfterInput','dateBetweenInput'];
+    var properties = ['dateBefore','dateAfter','dateBetween'];
+
+    for (var i = 0; i < inputs.length; i++){
+        if(inputs[i] != inputId){
+            document.getElementById(inputs[i]).setAttribute('disabled','');
+            document.getElementById(inputs[i]).value = "";
+            document.getElementById(inputs[i]).innerText = "Seleccionar Fecha";
+            delete _filters[properties[i]];
+        }else{
+            document.getElementById(inputs[i]).removeAttribute('disabled');  
+        }
+    }; 
+};
+
+function addDateToFilters(inputId, propertie, filters){
+    var _filters = this[filters];
+    _filters[propertie] = {
+        name: propertie,
+        search: formatDate(document.getElementById(inputId).value)
+    };
 };
