@@ -229,6 +229,11 @@
             </div>
         </div>
         <!-- Section showed when query is clicked -->
+        <div id="repairing" class="container hide">
+            <h2>Reparación Activo</h2>
+            <a id="acceptRepairing" class="col s3 offset-s2 waves-effect waves-light btn-large">Aceptar</a>
+            <a  class="col s3 offset-s2 waves-effect waves-light btn-large">Cancelar</a>
+        </div>
         <div class="container hide" id="query">
             <div class="row">
                 <h2 class="col s12 center-align">Consultas</h2>
@@ -309,7 +314,8 @@
                                 <div class="col s5">
                                         <input type="radio" id="dateBetween" class="filled-in" name="group1"  onclick="checkboxCheckedDate('dateBetween','dateBetween','dateBetweenInput','activeFilters');"/>
                                         <label for="dateBetween">Entre fechas: </label>
-                                        <input type="text" name="" id="dateBetweenInput" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addDateToFilters('dateBetweenInput','dateBetween', 'activeFilters');">
+                                        <input type="text" name="" id="dateBetweenInputA" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addBetweenDateToFilters('dateBetweenInputA','dateBetween', 'activeFilters');">
+                                        <input type="text" name="" id="dateBetweenInputB" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addBetweenDateToFilters('dateBetweenInputB','dateBetween', 'activeFilters');">
                                     </div>
                 </div>
                 <div class="row">
@@ -375,6 +381,8 @@
                 <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Aceptar</a>
             </div>
         </div>
+
+       
 
         <!-- Unsubscribe Modal Structure -->
         <div id="unsubscribe" class="modal">

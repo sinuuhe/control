@@ -404,7 +404,7 @@ function query(findablePath,fieldsArray,tableId,filters){
                             }
                             else{ 
                                 tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
-                                tableBody += "<td><a class='waves-effect waves-light btn green'>Reparar</a>  </td>";
+                                tableBody += "<td><a class='waves-effect waves-light btn green'  onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
                             }
                         }
                         tableBody += '</tr>';
@@ -479,20 +479,15 @@ function query(findablePath,fieldsArray,tableId,filters){
                 found = 0;
             };    
             
-            console.log('before the last filter');
-            console.log(filteredResults);
             for (var element of filteredResults){
                 for (var filter of _filters){
                     if(verifyDate(filter,element)){
-                        console.log('inNNNNNNN');
                         dateFilteredResults.push(element);
                     }
                 };
                 found = 0;
             };  
 
-            console.log('after  de LAST filter');
-            console.log(dateFilteredResults);
             for (var element of dateFilteredResults){
                 tableBody += '<tr>';
                 for (var field of fieldsArray){//here we check the status so we can put the buttons
@@ -566,12 +561,14 @@ function fillSearchInput(HTMLElementId, filters, propertie){
 function formatDate(date){
     var spaMonth = [ 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     var enMonth = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    var res = date.split(" ");
-    res = res[1].slice(0,res[1].indexOf(","));
-    var monthIndex = spaMonth.indexOf(res);
-    var newDate = date.replace(res,enMonth[monthIndex]);
-    var formattedDate = Date.parse(newDate);
-    return formattedDate;
+    if(date != undefined){
+        var res = date.split(" ");
+        res = res[1].slice(0,res[1].indexOf(","));
+        var monthIndex = spaMonth.indexOf(res);
+        var newDate = date.replace(res,enMonth[monthIndex]);
+        var formattedDate = Date.parse(newDate);
+        return formattedDate;
+}
 };
 
 function confirmUnsubscribing(activeId, modalId, path, fields){
@@ -582,6 +579,47 @@ function confirmUnsubscribing(activeId, modalId, path, fields){
             document.getElementById(modalId).innerHTML = "<ul><li>NOMBRE: " + _active.name + "</li><li>MODELO: " + _active.model + "</li><li>NUÚMERO DE SERIE: " + _active.sn + "</li><li>MARCA: " + _active.brand + "</li><li>RESPONSABLE: " + _active.keeperName + "</li><li>UBICACIÓN: " + _active.location + "</li></ul>";
             document.getElementById('deleteButton').setAttribute("onclick","deleteElement('" + _active.id + "','" + path + "', '" + fields + "');");
         }
+    });
+};
+
+function repairActive(activeId, HTMLElementId, path, fields){
+    var active  = database.ref(path + '/' + activeId);
+    document.getElementById('query').classList.add('hide');
+    document.getElementById(HTMLElementId).classList.remove('hide');
+    active.on('value', function(snapshot){
+        var _active = snapshot.val();
+        if(_active != null){
+            document.getElementById(HTMLElementId).innerHTML = "<form><h6>Nombre: " + _active.name + "</h6><h6>Número de serie: " + _active.sn + "</h6><div><label>Fecha de reparación</label><input type='date' id='repairingBeginingDate' ></div><label>Fecha de Entrega: </label><input type='date'  id='repairingFinishDate'><label>Costo de la Reparación</label><input type='text' class='validate' id='repairingCost'><label>Lugar de Reparación</label><input type='text' class='validate' id='repairingPlace'></form>";
+           // document.getElementById('acceptRepairing').setAttribute("onclick","newRepairing('" + _active.id + "','repairingBeginingDate','repairingFinishDate','repairingCost','repairingPlace');");
+        }
+    });
+};
+
+function newRepairing(active,repairingBeginingDateInputId,repairingFinishDateInputId,repairingCostInputId,repairingPlaceInputId){
+    var repairingBeginingDate = document.getElementById(repairingBeginingDateInputId);
+    var repairingFinishDate = document.getElementById(repairingFinishDateInputId).value; 
+    var repairingCost = document.getElementById(repairingCostInputId).value;
+    var repairingPlace = document.getElementById(repairingPlaceInputId).value;
+
+    database.ref('actives/' + active).update({
+        status: 'Reparacion'
+    });
+
+    var promise = database.ref('repairingActives/').push({
+        repairingBeginingDate: repairingBeginingDate,
+        repairingFinishDateInputId: repairingFinishDate,
+        cost: repairingCost,
+        place: repairingPlace
+    });
+
+    promise.then(function(response){
+        setModal('Registro Exitoso','El activo se ha enviado a reparar.');
+        $('#message').modal('open').value = "";
+        document.getElementById(repairingBeginingDateInputId).value = "";
+        document.getElementById(repairingFinishDateInputId).value = "";
+        document.getElementById(repairingCostInputId).value = "";
+        document.getElementById(repairingPlaceInputId).value = "";
+        query('actives',activeFields,'resultsTable',activeFilters);
     });
 };
 
@@ -600,7 +638,7 @@ function deleteElement(id,path,fields){
 function useDates(checkboxId, inputsDivId){
     if(!document.getElementById(checkboxId).checked){
         document.getElementById(inputsDivId).classList.add('hide');
-        var inputs = ['dateBeforeInput','dateAfterInput','dateBetweenInput'];
+        var inputs = ['dateBeforeInput','dateAfterInput','dateBetweenInputA','dateBetweenInputB'];
         var properties = ['dateBefore','dateAfter','dateBetween'];
         this.useDate = undefined;
 
@@ -617,19 +655,32 @@ function useDates(checkboxId, inputsDivId){
         document.getElementById('dateBeforeInput').innerText = "Seleccionar Fecha...";
         document.getElementById('dateAfterInput').value = "";
         document.getElementById('dateAfterInput').innerText = "Seleccionar Fecha...";
-        document.getElementById('dateBetweenInput').value = "";
-        document.getElementById('dateBetweenInput').innerText = "Seleccionar Fecha...";
+        document.getElementById('dateBetweenInputA').value = "";
+        document.getElementById('dateBetweenInputA').innerText = "Seleccionar Fecha...";
+        document.getElementById('dateBetweenInputB').value = "";
+        document.getElementById('dateBetweenInputB').innerText = "Seleccionar Fecha...";
         this.useDate = true;
     }
 };
 
 function checkboxCheckedDate(checkboxId, propertie, inputId,filters){
-    var inputValue = document.getElementById(inputId).value;
     var _filters = this[filters];
-
-    var inputs = ['dateBeforeInput','dateAfterInput','dateBetweenInput'];
+    
+    var inputs = ['dateBeforeInput','dateAfterInput','dateBetweenInputA','dateBetweenInputB'];
     var properties = ['dateBefore','dateAfter','dateBetween'];
-
+    if(inputId == 'dateBetweenInput'){
+        
+        for (var i = 0; i < inputs.length; i++){
+            if(inputs[i] != 'dateBetweenInputA' && inputs[i] != 'dateBetweenInputB'){
+                document.getElementById(inputs[i]).setAttribute('disabled','');
+                document.getElementById(inputs[i]).value = "";
+                document.getElementById(inputs[i]).innerText = "Seleccionar Fecha";
+                delete _filters[properties[i]];
+            }else{
+                document.getElementById(inputs[i]).removeAttribute('disabled');  
+            }
+        }; 
+    }else{
     for (var i = 0; i < inputs.length; i++){
         if(inputs[i] != inputId){
             document.getElementById(inputs[i]).setAttribute('disabled','');
@@ -640,6 +691,7 @@ function checkboxCheckedDate(checkboxId, propertie, inputId,filters){
             document.getElementById(inputs[i]).removeAttribute('disabled');  
         }
     }; 
+}
 };
 
 function addDateToFilters(inputId, propertie, filters){
@@ -650,20 +702,42 @@ function addDateToFilters(inputId, propertie, filters){
     };
 };
 
+function addBetweenDateToFilters(inputId, propertie, filters){
+    var _filters = this[filters];
+    if(_filters[propertie] == undefined){
+        var searchArray = [];
+        if(inputId == 'dateBetweenInputA')
+            searchArray[0] = (formatDate(document.getElementById(inputId).value));
+        else 
+            searchArray[1] = (formatDate(document.getElementById(inputId).value));
+        _filters[propertie] = {
+            name: propertie,
+            search: searchArray
+        };
+    }else{
+        var searchArray = _filters[propertie].search;
+        if(inputId == 'dateBetweenInputA')
+            searchArray[0] = (formatDate(document.getElementById(inputId).value));
+        else 
+            searchArray[1] = (formatDate(document.getElementById(inputId).value));
+        _filters[propertie] = {
+            name: propertie,
+            search: searchArray
+        };
+    }
+    
+};
+
 function verifyDate(filter,element){
-    console.log('element on verifyDate');
-    console.log(element);
     switch(filter.name){
         case 'dateBefore':
-            console.log('busk ' + filter.search);
-            console.log('elem ' + element.integerRegisterDate);
             if(filter.search > element.integerRegisterDate) return true;
         break;
         case 'dateAfter':
             if(filter.search < element.integerRegisterDate) return true;
         break;
         case 'dateBetween':
-        if(filter.search[0] < element.integerRegisterDate && element.integerRegisterDate > filter.search[1]) return true;
+            if(filter.search[0] <= element.integerRegisterDate && element.integerRegisterDate <= filter.search[1]) return true;
         break;
     };
     return false;
