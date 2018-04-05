@@ -230,9 +230,17 @@
         </div>
         <!-- Section showed when query is clicked -->
         <div id="repairing" class="container hide">
-            <h2>Reparación Activo</h2>
-            <a id="acceptRepairing" class="col s3 offset-s2 waves-effect waves-light btn-large">Aceptar</a>
-            <a  class="col s3 offset-s2 waves-effect waves-light btn-large">Cancelar</a>
+            <div id="repairingHeader"></div>
+                <div class='input-field'>
+                        <label for= 'repairingBeginingDate'>Fecha de reparación</label>
+                        <input type='text' class='datepicker' id='repairingBeginingDate' >
+                    </div>
+                    <div class='input-field'>
+                        <label>Fecha de Entrega: </label>
+                        <input type='text' class='datepicker'  id='repairingFinishDate'>
+                    </div>
+            <div id="repairingContent">
+            </div>
         </div>
         <div class="container hide" id="query">
             <div class="row">
@@ -285,7 +293,7 @@
                                     <a class="collection-item " onclick="selectStatus('status','activo','selectedStatus','activeFilters');">Activo</a>
                                 </li>
                                 <li>
-                                    <a class="collection-item " onclick="selectStatus('status','reparacion','selectedStatus','activeFilters');">Reparacioón</a>
+                                    <a class="collection-item " onclick="selectStatus('status','reparacion','selectedStatus','activeFilters');">Reparación</a>
                                 </li>
                                 <li>
                                     <a class="collection-item " onclick="selectStatus('status','baja','selectedStatus','activeFilters');">Baja</a>

@@ -129,8 +129,8 @@ function logout(){
     firebase.auth().signOut();
   };
 
-function actionButton(buttonId, classToSet, elementToShow){
-    document.getElementById(buttonId).classList.add(classToSet);
+function actionButton(elementtoHide, classToSet, elementToShow){
+    document.getElementById(elementtoHide).classList.add(classToSet);
     document.getElementById(elementToShow).classList.remove('hide');
 };
 
@@ -402,9 +402,13 @@ function query(findablePath,fieldsArray,tableId,filters){
                                 tableBody += "<td><a class='waves-effect waves-light btn red'disabled>Baja</a>  </td>";
                                 tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
                             }
-                            else{ 
+                            if(element.status == 'Activo'){ 
                                 tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
-                                tableBody += "<td><a class='waves-effect waves-light btn green'  onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
+                                tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
+                            }
+                            if(element.status == 'Reparacion'){ 
+                                tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                                tableBody += "<td><a class='waves-effect waves-light btn yellow' onclick = 'viewStatus( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Ver Detalle</a>  </td>";
                             }
                         }
                         tableBody += '</tr>';
@@ -443,9 +447,13 @@ function query(findablePath,fieldsArray,tableId,filters){
                                 tableBody += "<td><a class='waves-effect waves-light btn red'disabled>Baja</a>  </td>";
                                 tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
                             }
-                            else{ 
+                            if(element.status == 'Activo'){ 
                                 tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
-                                tableBody += "<td><a class='waves-effect waves-light btn green'>Reparar</a>  </td>";
+                                tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
+                            }
+                            if(element.status == 'Reparacion'){ 
+                                tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                                tableBody += "<td><a class='waves-effect waves-light btn yellow' onclick = 'viewStatus( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Ver Detalle</a>  </td>";
                             }
                         }
                         tableBody += '</tr>';
@@ -498,9 +506,13 @@ function query(findablePath,fieldsArray,tableId,filters){
                         tableBody += "<td><a class='waves-effect waves-light btn red'disabled>Baja</a>  </td>";
                         tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
                     }
-                    else{ 
+                    if(element.status == 'Activo'){ 
                         tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
-                        tableBody += "<td><a class='waves-effect waves-light btn green'>Reparar</a>  </td>";
+                        tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
+                    }
+                    if(element.status == 'Reparacion'){ 
+                        tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                        tableBody += "<td><a class='waves-effect waves-light btn yellow' onclick = 'viewStatus( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Ver Detalle</a>  </td>";
                     }
                 }
                 tableBody += '</tr>';
@@ -589,14 +601,15 @@ function repairActive(activeId, HTMLElementId, path, fields){
     active.on('value', function(snapshot){
         var _active = snapshot.val();
         if(_active != null){
-            document.getElementById(HTMLElementId).innerHTML = "<form><h6>Nombre: " + _active.name + "</h6><h6>Número de serie: " + _active.sn + "</h6><div><label>Fecha de reparación</label><input type='date' id='repairingBeginingDate' ></div><label>Fecha de Entrega: </label><input type='date'  id='repairingFinishDate'><label>Costo de la Reparación</label><input type='text' class='validate' id='repairingCost'><label>Lugar de Reparación</label><input type='text' class='validate' id='repairingPlace'></form>";
-           // document.getElementById('acceptRepairing').setAttribute("onclick","newRepairing('" + _active.id + "','repairingBeginingDate','repairingFinishDate','repairingCost','repairingPlace');");
+            document.getElementById('repairingHeader').innerHTML = "<h2>Reparación Activo</h2><h5>Nombre del Activo: " + _active.name + "</h5><h5>Número de serie: " + _active.sn + "</h5>";
+            document.getElementById('repairingContent').innerHTML = "<form><div class='input-field'><label>Costo de la Reparación</label><input type='text' class='validate' id='repairingCost'></div><div class='input-field'><label>Lugar de Reparación</label><input type='text' class='validate' id='repairingPlace'></div></form><a id='acceptRepairing' class='col s3 offset-s2 waves-effect waves-light btn-large'>Aceptar</a><a  class='col s3 offset-s2 waves-effect waves-light btn-large' id='cancelRepairing' onclick='actionButton(&quot;repairing&quot;, &quot;hide&quot;, &quot;query&quot;);'>Cancelar</a>";
+            document.getElementById('acceptRepairing').setAttribute("onclick","newRepairing('" + _active.id + "','repairingBeginingDate','repairingFinishDate','repairingCost','repairingPlace');");
         }
     });
 };
 
 function newRepairing(active,repairingBeginingDateInputId,repairingFinishDateInputId,repairingCostInputId,repairingPlaceInputId){
-    var repairingBeginingDate = document.getElementById(repairingBeginingDateInputId);
+    var repairingBeginingDate = document.getElementById(repairingBeginingDateInputId).value;
     var repairingFinishDate = document.getElementById(repairingFinishDateInputId).value; 
     var repairingCost = document.getElementById(repairingCostInputId).value;
     var repairingPlace = document.getElementById(repairingPlaceInputId).value;
@@ -607,7 +620,9 @@ function newRepairing(active,repairingBeginingDateInputId,repairingFinishDateInp
 
     var promise = database.ref('repairingActives/').push({
         repairingBeginingDate: repairingBeginingDate,
-        repairingFinishDateInputId: repairingFinishDate,
+        integerRepairingBeginingDate: formatDate(repairingBeginingDate),
+        repairingFinishDate: repairingFinishDate,
+        integerRepairingFinishDate: formatDate(repairingFinishDate),
         cost: repairingCost,
         place: repairingPlace
     });
@@ -620,6 +635,7 @@ function newRepairing(active,repairingBeginingDateInputId,repairingFinishDateInp
         document.getElementById(repairingCostInputId).value = "";
         document.getElementById(repairingPlaceInputId).value = "";
         query('actives',activeFields,'resultsTable',activeFilters);
+        actionButton('repairing', 'hide', 'query');
     });
 };
 
