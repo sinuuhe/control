@@ -1,3 +1,4 @@
+
   // Initialize Firebase
   var config = {
     apiKey: "AIzaSyATQCwO8PQELnDXilRBPIwi1-g0CI6lDz8",
@@ -132,6 +133,7 @@ function logout(){
 function actionButton(elementtoHide, classToSet, elementToShow){
     document.getElementById(elementtoHide).classList.add(classToSet);
     document.getElementById(elementToShow).classList.remove('hide');
+    document.getElementById('printReport').classList.add('hide');
 };
 
 function showQuery(buttonId, classToSet, elementToShow){
@@ -375,6 +377,10 @@ function registerEmploye(){
 };
 
 function query(findablePath,fieldsArray,tableId,filters){
+    var printBtn = document.getElementById('printReport');
+    printBtn.classList.remove('hide');
+    printBtn.setAttribute("onclick","makePDF();");
+
     var result = database.ref(findablePath + '/').orderByChild('name');
     var resultArray;
     var table = document.getElementById(tableId);
@@ -415,7 +421,7 @@ function query(findablePath,fieldsArray,tableId,filters){
                     }
                     tableBody += "</tbody>";
                     table.innerHTML = tableHead + tableBody;
-                    cleanActiveInputs();
+                    
                 }else{//with filters
                     var found = 0;
                     var filteredResults = [];
@@ -462,7 +468,7 @@ function query(findablePath,fieldsArray,tableId,filters){
                     }
                     tableBody += "</tbody>";
                     table.innerHTML = tableHead + tableBody;     
-                    cleanActiveInputs();       
+                    cleanActiveInputs("" + filters);       
                 } 
         } else{// searching with dates
             var found = 0;
@@ -522,7 +528,7 @@ function query(findablePath,fieldsArray,tableId,filters){
             }
             tableBody += "</tbody>";
             table.innerHTML = tableHead + tableBody;   
-            cleanActiveInputs();
+            cleanActiveInputs("" + filters);
         }           
     });
 };
@@ -793,4 +799,13 @@ function cleanActiveInputs(){
 document.getElementById('activeNameInput').text = "";
 document.getElementById('activeNameInput').value = "";
 
+};
+
+function makePDF(){
+    
+    var doc = new jsPDF('p', 'pt');
+    var elem = document.getElementById("resultsTable");
+    var res = doc.autoTableHtmlToJson(elem);
+    doc.autoTable(res.columns, res.data);
+    doc.save("table.pdf");
 };
