@@ -176,7 +176,7 @@
                             <br>
                             <ul id="employeDepartmentList" class="dropdown-content">
                             </ul>
-                            <a class="btn dropdown-button col s12" href="#!" data-activates="employeDepartmentList" id="">Seleccionar Departamento</a>
+                            <a class="btn dropdown-button col s12" href="#!" data-activates="employeDepartmentList" id="selectedDepartment">Seleccionar Departamento</a>
                         </div>
                         <div class="input-field col s8">
                             <label for="employePhone">Número Telefónico:</label>
@@ -451,25 +451,6 @@
                         <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancelar</a>
                     </div>
                 </div>
-                <!-- Locations Modal Structure -->
-                <div id="buildings" class="modal modal-fixed-footer">
-                    <div class="modal-content">
-                        <h4 id="buildingHeader">Seleccionar Ubicación</h4>
-                        <div class="container">
-                            <div class="row">
-                                <ul id="buildingList" class="dropdown-content">
-                                </ul>
-                                <a class="btn dropdown-button col s5" href="#!" data-activates="buildingList" id="selectedBuilding">Seleccionar Ala</a>
-                                <ul id="roomsList" class="dropdown-content">
-                                </ul>
-                                <a class="btn dropdown-button col s5 offset-s1" href="#!" data-activates="roomsList" id="selectedRoom">Seleccionar Habitación</a>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Aceptar</a>
-                    </div>
-                </div>
             </div>
             <!-- Section showed when new driver button is clicked -->
             <div class="container hide" id="newDriver">
@@ -524,17 +505,17 @@
                 </div>
             </div>
             <!-- Section showed when repairing is clicked -->
-            <div id="repairing" class="container hide">
-                <div id="repairingHeader"></div>
+            <div id="repairingVehicle" class="container hide">
+                <div id="repairingHeaderVehicle"></div>
                 <div class='input-field'>
-                    <label for='repairingBeginingDate'>Fecha de reparación</label>
-                    <input type='text' class='datepicker' id='repairingBeginingDate'>
+                    <label for='repairingBeginingDateVehicle'>Fecha de reparación</label>
+                    <input type='text' class='datepicker' id='repairingBeginingDateVehicle'>
                 </div>
                 <div class='input-field'>
                     <label>Fecha de Entrega: </label>
-                    <input type='text' class='datepicker' id='repairingFinishDate'>
+                    <input type='text' class='datepicker' id='repairingFinishDateVehicle'>
                 </div>
-                <div id="repairingContent">
+                <div id="repairingContentVehicle">
                 </div>
             </div>
             <div class="container hide" id="queryVehicles">
@@ -551,30 +532,30 @@
                             <a class="collection-item " onclick="selectFindableType('drivers','Conductores','selectedFindableVehicles','driversFilter','vehiclesFilter',driversFields,'resultsTableVehicles');">Conductores</a>
                         </li>
                     </ul>
-                    <a class="btn dropdown-button col s12" href="#!" data-activates="findableSelect" id="selectedFindableVehicles">Seleccionar Elemento a buscar</a>
+                    <a class="btn dropdown-button col s12" href="#!" data-activates="findableSelectVehicles" id="selectedFindableVehicles">Seleccionar Elemento a buscar</a>
                 </div>
                 <div id="vehiclesFilter" class="hide">
                     <div class="row">
                         <div class="col s5">
-                            <input type="checkbox" id="activeName" class="filled-in" onclick="checkboxChecked('activeName','name','activeNameInput','activesFilters');"
+                            <input type="checkbox" id="activeNameVehicles" class="filled-in" onclick="checkboxChecked('activeName','name','activeNameInput','activesFilters');"
                             />
-                            <label for="activeName">Nombre</label>
-                            <input type="text" name="" id="activeNameInput" placeholder="Buscar..." disabled onkeyup="fillSearchInput('activeNameInput', 'activesFilters', 'name')">
+                            <label for="activeNameVehicles">Nombre</label>
+                            <input type="text" name="" id="activeNameInputVehicles" placeholder="Buscar..." disabled onkeyup="fillSearchInput('activeNameInput', 'activesFilters', 'name')">
                         </div>
     
                         <div class="col s5">
-                            <input type="checkbox" id="activeBrand" class="filled-in" onclick="checkboxChecked('activeBrand','brand','activeBrandInput','activesFilters');"
+                            <input type="checkbox" id="activeBrandVehicles" class="filled-in" onclick="checkboxChecked('activeBrand','brand','activeBrandInput','activesFilters');"
                             />
                             <label for="activeBrand">Marca</label>
-                            <input type="text" name="" id="activeBrandInput" placeholder="Buscar..." onkeyup="fillSearchInput('activeBrandInput', 'activesFilters', 'brand')"
+                            <input type="text" name="" id="activeBrandInputVehicles" placeholder="Buscar..." onkeyup="fillSearchInput('activeBrandInput', 'activesFilters', 'brand')"
                                 disabled>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col s5">
-                            <input type="checkbox" id="activeKeeper" class="filled-in" onclick="checkboxChecked('activeKeeper','keeperName','activeKeeperInput','activesFilters');"
+                            <input type="checkbox" id="activeKeeperVehicles" class="filled-in" onclick="checkboxChecked('activeKeeper','keeperName','activeKeeperInput','activesFilters');"
                             />
-                            <label for="activeKeeper">Responsable</label>
+                            <label for="activeKeeperVehicles">Responsable</label>
                             <input type="text" name="" id="activeKeeperInput" placeholder="Buscar..." disabled onkeyup="fillSearchInput('activeKeeperInput', 'activesFilters', 'keeperName')">
                         </div>
                         <div class="col s5">
@@ -586,10 +567,10 @@
                     </div>
                     <div class="row">
                         <div class="col s5">
-                            <input type="checkbox" id="activeStatus" class="filled-in" onclick="checkboxChecked('activeStatus','status','selectedStatus','activesFilters');"
+                            <input type="checkbox" id="activeStatusVehicles" class="filled-in" onclick="checkboxChecked('activeStatus','status','selectedStatus','activesFilters');"
                             />
-                            <label for="activeStatus">Status</label>
-                            <ul id="statusSelect" class="dropdown-content ">
+                            <label for="activeStatusVehicles">Status</label>
+                            <ul id="statusSelectVehicles" class="dropdown-content ">
                                 <li>
                                     <a class="collection-item " onclick="selectStatus('status','activo','selectedStatus','activesFilters');">Activo</a>
                                 </li>
@@ -600,74 +581,53 @@
                                     <a class="collection-item " onclick="selectStatus('status','baja','selectedStatus','activesFilters');">Baja</a>
                                 </li>
                             </ul>
-                            <a class="btn dropdown-button col s12" href="#!" data-activates="statusSelect" id="selectedStatus" disabled>Seleccionar Status</a>
+                            <a class="btn dropdown-button col s12" href="#!" data-activates="statusSelectVehicles" id="selectedStatusVehicles" disabled>Seleccionar Status</a>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col s5">
-                            <input type="checkbox" id="activeDate" class="filled-in" onclick="useDates('activeDate','dateInputs');" />
-                            <label for="activeDate">Usar Fechas</label>
+                            <input type="checkbox" id="activeDateVehicles" class="filled-in" onclick="useDates('activeDateVehicles','dateInputsVehicles');" />
+                            <label for="activeDateVehicles">Usar Fechas</label>
                         </div>
                     </div>
-                    <div class="row hide" id="dateInputs">
+                    <div class="row hide" id="dateInputsVehicles">
                         <div class="col s5">
-                            <input type="radio" id="dateBefore" class="filled-in" name="group1" onclick="checkboxCheckedDate('dateBefore','dateBefore','dateBeforeInput','activesFilters');"
+                            <input type="radio" id="dateBefore" class="filled-in" name="group2" onclick="checkboxCheckedDate('dateBefore','dateBefore','dateBeforeInput','activesFilters');"
                             />
-                            <label for="dateBefore">Antes de: </label>
-                            <input type="text" name="" id="dateBeforeInput" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addDateToFilters('dateBeforeInput','dateBefore', 'activesFilters');">
+                            <label for="dateBeforeVehicles">Antes de: </label>
+                            <input type="text" name="" id="dateBeforeInputVehicles" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addDateToFilters('dateBeforeInput','dateBefore', 'activesFilters');">
                         </div>
                         <div class="col s5">
-                            <input type="radio" id="dateAfter" class="filled-in" name="group1" onclick="checkboxCheckedDate('dateAfter','dateAfter','dateAfterInput','activesFilters');"
+                            <input type="radio" id="dateAfterVehicles" class="filled-in" name="group2" onclick="checkboxCheckedDate('dateAfter','dateAfter','dateAfterInput','activesFilters');"
                             />
-                            <label for="dateAfter">Después de: </label>
-                            <input type="text" name="" id="dateAfterInput" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addDateToFilters('dateAfterInput','dateAfter', 'activesFilters');">
+                            <label for="dateAfterVehicles">Después de: </label>
+                            <input type="text" name="" id="dateAfterInputVehicles" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addDateToFilters('dateAfterInput','dateAfter', 'activesFilters');">
                         </div>
                         <div class="col s5">
-                            <input type="radio" id="dateBetween" class="filled-in" name="group1" onclick="checkboxCheckedDate('dateBetween','dateBetween','dateBetweenInput','activesFilters');"
+                            <input type="radio" id="dateBetweenVehicles" class="filled-in" name="group2" onclick="checkboxCheckedDate('dateBetween','dateBetween','dateBetweenInput','activesFilters');"
                             />
-                            <label for="dateBetween">Entre fechas: </label>
-                            <input type="text" name="" id="dateBetweenInputA" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addBetweenDateToFilters('dateBetweenInputA','dateBetween', 'activesFilters');">
-                            <input type="text" name="" id="dateBetweenInputB" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addBetweenDateToFilters('dateBetweenInputB','dateBetween', 'activesFilters');">
+                            <label for="dateBetweenVehicles">Entre fechas: </label>
+                            <input type="text" name="" id="dateBetweenInputAVehicles" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addBetweenDateToFilters('dateBetweenInputA','dateBetween', 'activesFilters');">
+                            <input type="text" name="" id="dateBetweenInputBVehicles" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addBetweenDateToFilters('dateBetweenInputB','dateBetween', 'activesFilters');">
                         </div>
                     </div>
                     <div class="row">
-                        <a class="col s8 offset-s2 waves-effect waves-light btn-large" onclick="query('actives',activeFields,'resultsTable',activesFilters);">Buscar Activos</a>
+                        <a class="col s8 offset-s2 waves-effect waves-light btn-large" onclick="query('actives',activeFields,'resultsTable',activesFilters);">Buscar Vehiculos</a>
                     </div>
                 </div>
                 <div id="driversFilter" class="hide">
                     <div class="row">
                         <div class="col s5">
-                            <input type="checkbox" id="employeNameCheckbox" class="filled-in" onclick="checkboxChecked('employeNameCheckbox','name','employeNameCheckboxInput','employeFilters');"
+                            <input type="checkbox" id="driverNameCheckbox" class="filled-in" onclick="checkboxChecked('employeNameCheckbox','name','employeNameCheckboxInput','employeFilters');"
                             />
-                            <label for="employeNameCheckbox">Nombre</label>
-                            <input type="text" name="" id="employeNameCheckboxInput" placeholder="Buscar..." disabled onkeyup="fillSearchInput('employeNameCheckboxInput', 'employeFilters', 'name')">
+                            <label for="driverNameCheckbox">Nombre</label>
+                            <input type="text" name="" id="driverNameCheckboxInput" placeholder="Buscar..." disabled onkeyup="fillSearchInput('employeNameCheckboxInput', 'employeFilters', 'name')">
                         </div>
                         <div class="col s5">
-                            <input type="checkbox" id="employeLastnameCheckbox" class="filled-in" onclick="checkboxChecked('employeLastnameCheckbox','lastname','employeLastnameCheckboxInput','employeFilters');"
+                            <input type="checkbox" id="driverLastnameCheckbox" class="filled-in" onclick="checkboxChecked('employeLastnameCheckbox','lastname','employeLastnameCheckboxInput','employeFilters');"
                             />
-                            <label for="employeLastnameCheckbox">Apellido</label>
-                            <input type="text" name="" id="employeLastnameCheckboxInput" placeholder="Buscar..." disabled onkeyup="fillSearchInput('employeLastnameCheckboxInput', 'employeFilters', 'lastname')">
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col s5">
-                            <input type="checkbox" id="employeBuildingWorkPlaceCheckbox" class="filled-in" onclick="checkboxChecked('employeBuildingWorkPlaceCheckbox','buildingWorkPlace','employeBuildingWorkPlaceCheckboxInput','employeFilters');"
-                            />
-                            <label for="employeBuildingWorkPlaceCheckbox">Ala</label>
-                            <ul id="buildingSelect" class="dropdown-content ">
-                                <li>
-                                    <a class="collection-item " onclick="selectStatus('buildingWorkPlace','Ala A','employeBuildingWorkPlaceCheckboxInput','employeFilters');">Ala A</a>
-                                </li>
-                                <li>
-                                    <a class="collection-item " onclick="selectStatus('buildingWorkPlace','Ala B','employeBuildingWorkPlaceCheckboxInput','employeFilters');">Ala B</a>
-                                </li>
-                                <li>
-                                    <a class="collection-item " onclick="selectStatus('buildingWorkPlace','Ala C','employeBuildingWorkPlaceCheckboxInput','employeFilters');">Ala C</a>
-                                </li>
-                            </ul>
-                            <a class="btn dropdown-button col s12" href="#!" data-activates="buildingSelect" id="employeBuildingWorkPlaceCheckboxInput"
-                                disabled>Seleccionar Ala</a>
-    
+                            <label for="driverLastnameCheckbox">Apellido</label>
+                            <input type="text" name="" id="driverLastnameCheckboxInput" placeholder="Buscar..." disabled onkeyup="fillSearchInput('employeLastnameCheckboxInput', 'employeFilters', 'lastname')">
                         </div>
                     </div>
                     <a class="col s8 offset-s2 waves-effect waves-light btn-large" onclick="query('employe',employeFields,'resultsTable',employeFilters);">Buscar empleados</a>
@@ -675,9 +635,9 @@
                 <div class="row">
                     <a class="col s8 offset-s2 waves-effect waves-light btn-large hide" id="printReport" onclick="makePDF();">Imprimir Reporte</a>
                 </div>
-                <div id="toPrint">
+                <div id="toPrintVehicles">
                     <div class="row">
-                        <table class="striped" id="resultsTable"></table>
+                        <table class="striped" id="resultsTableVehicles"></table>
                     </div>
                 </div>
                 <div class="row">
