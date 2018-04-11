@@ -365,7 +365,7 @@
                             <a class="col s8 offset-s2 waves-effect waves-light btn-large" onclick="query('employe',employeFields,'resultsTable',employeFilters);">Buscar empleados</a>  
             </div>
             <div class="row">
-                    <a class="col s8 offset-s2 waves-effect waves-light btn-large hide" id="printReport" onclick="callme();">Imprimir Reporte</a>  
+                    <a class="col s8 offset-s2 waves-effect waves-light btn-large hide" id="printReport" onclick="makePDF();">Imprimir Reporte</a>  
             </div>
             <div id="toPrint">
             <div class="row">
@@ -439,6 +439,7 @@
         <script src="materialize/js/materialize.min.js"></script>
         <script src="js/index.js"></script>
         <script src="js/jspdf.debug.js"></script>
+        <script src="js/autotable.js"></script>
 </body>
 
 </html>
