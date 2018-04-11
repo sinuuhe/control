@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <div id="toPrint">
+        <table >
+            
+            <thead>
+                <tr class='warning'>
+                    <th>Country</th>
+                    <th>Population</th>
+                    <th>Date</th>
+                    <th>Age</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a class="waves-effect waves-light btn red modal-trigger"  onclick="confirmUnsubscribing( '-L8cG_4uRCgT0mOPTy-S','unsubscribeModalMessage','actives','activeFields');">Baja</a>  </td>
+                    <td>1,363,480,000</td>
+                    <td>March 24, 2014</td>
+                    <td>19.1</td>
+                </tr>
+                <tr>
+                    <td id="indi">India</td>
+                    <td>1,241,900,000</td>
+                    <td>March 24, 2014</td>
+                    <td>17.4</td>
+                </tr>
+                <tr>
+                    <td class="eee">United States</td>
+                    <td>317,746,000</td>
+                    <td>March 24, 2014</td>
+                    <td class="equis" >4.44</td>
+                </tr>
+                <tr>
+                    <td>Indonesia</td>
+                    <td>249,866,000</td>
+                    <td>July 1, 2013</td>
+                    <td>3.49</td>
+                </tr>
+                <tr>
+                    <td>Brazil</td>
+                    <td>201,032,714</td>
+                    <td>July 1, 2013</td>
+                    <td>2.81</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div>
+        <table  id="otra">
+                <colgroup>
+                    <col width="14%">
+                    <col width="14%">
+                    <col width="14%">
+                    <col width="14%">
+                    <col width="14%">
+                    <col width="14%">
+                    <col width="14%">
+                </colgroup>
+        <thead>
+            <tr class="warning">
+            <th>Nombre</th>
+            <th>Modelo</th>
+            <th>Número de Serie</th>
+            <th>Marca</th>
+            <th>Responsable</th>
+            <th>Estado</th>
+            <th>Ubicación</th>
+            <th></th>
+            <th></th>
+        </tr></thead>
+        <tbody>
+            <tr>
+            <td>Sopa</td>
+            <td>ADE</td>
+            <td>4d6as4d645as6546ds</td>
+            <td>Sony</td>
+            <td>Sinuhe</td>
+            <td>Activo</td>
+            <td>Ala A, Pintura electrostática</td>
+            <td>
+                <a id="tableButton" class="waves-effect waves-light btn red modal-trigger" href="#unsubscribe" onclick="confirmUnsubscribing( '-L8_3BYSYUiVXsSEEBk5','unsubscribeModalMessage','actives','activeFields');">Baja</a>  </td>
+                <td><a id="tableButton" class="waves-effect waves-light btn green" onclick="repairActive( '-L8_3BYSYUiVXsSEEBk5','repairing','actives','activeFields');">Reparar</a>  </td></tr>
+                <tr>
+                    <td>you</td>
+                    <td>klñ</td>
+                    <td>iop</td>
+                    <td>gfd</td>
+                    <td>Rogelio Isaac</td>
+                    <td>Baja</td>
+                    <td>Ala B, Horno de Pintado</td><td><a  id="tableButton" class="waves-effect waves-light btn red" disabled>Baja</a>  </td>
+                    <td><a class="waves-effect waves-light btn green"  id="tableButton" >Reparar</a>  </td></tr>
+        </tbody></table>
+    </div>
+    <button onclick="makePDF();">PDF</button>
+    <script src="../jquery/jquery-3.3.1.js"></script>
+        <script src="jspdf.debug.js"></script>
+        <script src="autotable.js"></script>
+        <script>
+        function makePDF(){
+   jsPDF.autoTableSetDefaults({headerStyles: {fillColor: [62, 39, 35]}});
+  var doc = new jsPDF('l', 'pt');
+
+var res = doc.autoTableHtmlToJson(document.getElementById("otra"));
+var cols = [res.columns[0],res.columns[1],res.columns[2],res.columns[3],res.columns[4],res.columns[5]];
+//doc.autoTable(cols, res.data, {margin: {top: 80}});
+var header = function(data) {
+  doc.setFontSize(18);
+  doc.setTextColor(40);
+  doc.setFontStyle('normal');
+  //doc.addImage(headerImgData, 'JPEG', data.settings.margin.left, 20, 50, 50);
+  doc.text("Reporte", data.settings.margin.left, 20);
+};
+
+var options = {
+    theme: 'grid',
+  addPageContent: header,
+  margin: {
+    top: 100
+  },
+  startY: doc.autoTableEndPosY() + 40
+};
+
+doc.autoTable(cols, res.data, options);
+
+doc.save("table.pdf");
+};</script>
+</body>
+</html>

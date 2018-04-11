@@ -365,11 +365,13 @@
                             <a class="col s8 offset-s2 waves-effect waves-light btn-large" onclick="query('employe',employeFields,'resultsTable',employeFilters);">Buscar empleados</a>  
             </div>
             <div class="row">
-                    <a class="col s8 offset-s2 waves-effect waves-light btn-large hide" id="printReport">Imprimir Reporte</a>  
+                    <a class="col s8 offset-s2 waves-effect waves-light btn-large hide" id="printReport" onclick="callme();">Imprimir Reporte</a>  
             </div>
+            <div id="toPrint">
             <div class="row">
                 <table class="striped" id="resultsTable"></table>
             </div>
+        </div>
             <div class="row">
                 <a class="col s3 offset-s2 waves-effect waves-light btn-large" onclick="actionButton('query','hide','activesMainMenu');">Volver al Menú de Activos</a>
             </div>
@@ -436,10 +438,7 @@
         <script src="jquery/jquery-3.3.1.js"></script>
         <script src="materialize/js/materialize.min.js"></script>
         <script src="js/index.js"></script>
-        <script src="js/jspdf.js"></script>
-        <script src="js/standard_fonts_metrics.js"></script>
-        <script src="js/jspdf.plugin.autotable.js"></script>
-        
+        <script src="js/jspdf.debug.js"></script>
 </body>
 
 </html>

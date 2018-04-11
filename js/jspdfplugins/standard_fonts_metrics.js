@@ -33,7 +33,9 @@ MIT license.
 # only 'uncompress' function is featured lower as JavaScript
 # if you want to unit test "roundtrip", just transcribe the reference
 # 'compress' function from Python into JavaScript
+
 def compress(data):
+
 	keys =   '0123456789abcdef'
 	values = 'klmnopqrstuvwxyz'
 	mapping = dict(zip(keys, values))
@@ -46,6 +48,7 @@ def compress(data):
 		except:
 			keystring = key.join(["'","'"])
 			#print('Keystring is %s' % keystring)
+
 		try:
 			if value < 0:
 				valuestring = hex(value)[3:]
@@ -59,29 +62,41 @@ def compress(data):
 				valuestring = compress(value)
 			else:
 				raise Exception("Don't know what to do with value type %s" % type(value))
+
 		vals.append(keystring+valuestring)
 	
 	return '{' + ''.join(vals) + '}'
+
 def uncompress(data):
+
 	decoded = '0123456789abcdef'
 	encoded = 'klmnopqrstuvwxyz'
 	mapping = dict(zip(encoded, decoded))
+
 	sign = +1
 	stringmode = False
 	stringparts = []
+
 	output = {}
+
 	activeobject = output
 	parentchain = []
+
 	keyparts = ''
 	valueparts = ''
+
 	key = None
+
 	ending = set(encoded)
+
 	i = 1
 	l = len(data) - 1 # stripping starting, ending {}
 	while i != l: # stripping {}
 		# -, {, }, ' are special.
+
 		ch = data[i]
 		i += 1
+
 		if ch == "'":
 			if stringmode:
 				# end of string mode
@@ -94,6 +109,7 @@ def uncompress(data):
 		elif stringmode == True:
 			#print("Adding %s to stringpart" % ch)
 			stringparts.append(ch)
+
 		elif ch == '{':
 			# start of object
 			parentchain.append( [activeobject, key] )
@@ -107,6 +123,7 @@ def uncompress(data):
 			key = None
 			activeobject = parent
 			#DEBUG = False
+
 		elif ch == '-':
 			sign = -1
 		else:
@@ -132,8 +149,11 @@ def uncompress(data):
 					valueparts = ''
 				else:
 					valueparts += ch
+
 			#debug(activeobject)
+
 	return output
+
 */
 
 /**
@@ -264,7 +284,9 @@ var encodingBlock = {
 Resources:
 Font metrics data is reprocessed derivative of contents of
 "Font Metrics for PDF Core 14 Fonts" package, which exhibits the following copyright and license:
+
 Copyright (c) 1989, 1990, 1991, 1992, 1993, 1997 Adobe Systems Incorporated. All Rights Reserved.
+
 This file and the 14 PostScript(R) AFM files it accompanies may be used,
 copied, and distributed for any purpose and without charge, with or without
 modification, provided that all copyright notices are retained; that the AFM
@@ -272,6 +294,7 @@ files are not distributed without this file; that all modifications to this
 file or any of the AFM files are prominently noted in the modified file(s);
 and that this paragraph is not modified. Adobe Systems has no responsibility
 or obligation to support the use of the AFM files.
+
 */
 , fontMetrics = {'Unicode':{
 	// all sizing numbers are n/fontMetricsFractionOf = one font size unit
