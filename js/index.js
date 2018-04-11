@@ -70,7 +70,24 @@ var employeFields = [
         propertie: 'phone',
         title: 'Teléfono'
     }];
-
+var vehiclesFields = [
+    {
+        propertie: 'model',
+        title: 'Modelo'
+    },
+    {
+        protertie:'brand',
+        title: 'Marca'
+    },
+    {
+        protertie:'engineType',
+        title: 'Tipo de Motor'
+    },
+    {
+        protertie:'status',
+        title: 'Estado'
+    }
+];
 $(document).ready(function () {
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
@@ -395,7 +412,7 @@ function query(findablePath, fieldsArray, tableId, filters) {
         resultArray = Object.values(resultObject);
         if (this.useDate == undefined) {
             if (filters == undefined || jQuery.isEmptyObject(filters)) {
-                console.log('sin flitros ' + filters);//without filters
+                //without filters
                 for (var field of fieldsArray) {
                     tableHead += "<th>" + field.title + "</th>";
                 };
@@ -425,7 +442,6 @@ function query(findablePath, fieldsArray, tableId, filters) {
                 table.innerHTML += tableHead + tableBody;
 
             } else {//with filters
-                console.log('con filtros');
                 var found = 0;
                 var filteredResults = [];
                 var _filters = Object.values(filters);
@@ -436,19 +452,19 @@ function query(findablePath, fieldsArray, tableId, filters) {
 
                 for (var element of resultArray) {
                     for (var filter of _filters) {
-                        console.log('esto ' + element[filter.name].toLowerCase() + ' vs ' + filter.search.toLowerCase());
+                        
                         if (element[filter.name].toLowerCase().indexOf(filter.search.toLowerCase()) > -1) {
                             found++;
-                            console.log('found');
+                            
                         } else {
                             found--;
-                            console.log('not fous');
+                            
                         }
                     };
                     if (found == _filters.length) filteredResults.push(element);
                     found = 0;
                 };
-                console.log(filteredResults);
+                
                 for (var element of filteredResults) {
                     tableBody += '<tr>';
                     for (var field of fieldsArray) {
@@ -458,17 +474,17 @@ function query(findablePath, fieldsArray, tableId, filters) {
                     };
                     if (element.buildingWorkPlace == undefined) {
                         if (element.status.toLowerCase() == 'baja') {
-                            console.log('BAJA');
+                            
                             tableBody += "<td><a class='waves-effect waves-light btn red'disabled>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'activo') {
-                            console.log('ACTIVO');
+                            
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'reparacion') {
-                            console.log('REPARACION');
+                            
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;repairingActives&quot;);'>Ver Detalle</a>  </td>";
                         }
@@ -477,12 +493,12 @@ function query(findablePath, fieldsArray, tableId, filters) {
                 }
                 tableBody += "</tbody>";
                 table.innerHTML += tableHead + tableBody;
-                console.log('BODY', tableBody);
-                console.log('HEAD', tableHead);
+                
+                
                 cleanActiveInputs(findablePath + "Filters");
             }
         } else {
-            console.log('con fechas');// searching with dates
+            // searching with dates
             var found = 0;
             var filteredResults = [];
             var dateFilteredResults = [];
@@ -561,9 +577,9 @@ function showSearch(sectionToShow, sectionToHide) {
 };
 
 function checkboxChecked(checkboxId, propertieId, inputId, filters) {
-    console.log('lol', filters);
+    
     if (filters != undefined) {
-        console.log('aqui ando' + filters)
+        
         var _filters = this[filters];
         if (!document.getElementById(checkboxId).checked) {
             delete _filters[propertieId];
@@ -591,7 +607,7 @@ function selectStatus(propertie, status, selectedStatus, filters) {
 };
 
 function fillSearchInput(HTMLElementId, filters, propertie) {
-    console.log('siono');
+    
     var _filters = this[filters];
     _filters[propertie].search = document.getElementById(HTMLElementId).value.toLowerCase();
 };
@@ -852,4 +868,81 @@ function makePDF() {
     doc.autoTable(cols, res.data, options);
 
     doc.save("reporte" + date.toLocaleDateString() + ".pdf");
+};
+
+function selectEngine(engineType,selectedEngineButton){
+    document.getElementById(selectedEngineButton).innerText = engineType;
+};
+
+function registerVehicle(){
+    var brand = document.getElementById('vehicleBrand').value;
+    var model = document.getElementById('vehicleModel').value;
+    var engineType = document.getElementById('selectedEngineType').innerText;
+
+    var promise = database.ref('vehicles/').push({
+        brand: brand,
+        model: model,
+engineType: engineType,
+status:"activo"
+    });
+
+    promise.then(function (response) {
+        setModal('Registro Exitoso', 'El vehículo se registró correctamente.');
+        $('#message').modal('open').value = "";
+        document.getElementById('vehicleModel').value = "";
+        document.getElementById('vehicleBrand').value = "";
+        document.getElementById('selectedEngineType').innerText = "Seleccionar Tipo de Motor";
+        
+        database.ref('vehicles/' + promise.key).update({
+            id: promise.key
+        });
+    }, function (error) {
+        setModal('Error al registrar el vehículo', 'No se pudo llevar a cabo el registro del Vehículo. Por favor inténtelo de nuevo.');
+        $('#message').modal('open').value = "";
+    })
+};
+
+function registerDriver() {
+    var driverName = document.getElementById('driverName').value;
+    var driverLastname = document.getElementById('driverLastname').value;
+    var driverPhone = document.getElementById('driverPhone').value;
+    var driverStreet = document.getElementById('driverStreet').value;
+    var driverNumber = document.getElementById('driverNumber').value;
+    var driverSettlement = document.getElementById('driverSettlement').value;
+    var driverCity = document.getElementById('driverCity').value;
+    var driverState = document.getElementById('driverState');
+    var driverLicenceExpired = document.getElementById('driverLicenceExpired').value;
+
+    var promise = database.ref('drivers/').push({
+        name: driverName,
+        lastname: driverLastname,
+        phone: driverPhone,
+        street: driverStreet,
+        number: driverNumber,
+        settlement: driverSettlement,
+        city: driverCity,
+        state: driverState,
+        driverLicenceExpired: driverLicenceExpired
+    });
+
+    promise.then(function (response) {
+        setModal('Registro Exitoso', 'El Conductor se registró correctamente.');
+        $('#message').modal('open').value = "";
+        document.getElementById('driverName').value = "";
+        document.getElementById('driverLastname').value = "";
+        document.getElementById('driverPhone').value = "";
+        document.getElementById('driverStreet').value = "";
+        document.getElementById('driverNumber').value = "";
+        document.getElementById('driverSettlement').value = "";
+        document.getElementById('driverCity').value = "";
+        document.getElementById('driverState').value = "";
+        document.getElementById('driverLicenceExpired').value = "";
+
+        database.ref('drivers/' + promise.key).update({
+            id: promise.key
+        });
+    }, function (error) {
+        setModal('Error al registrar', 'No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
+        $('#message').modal('open').value = "";
+    })
 };
