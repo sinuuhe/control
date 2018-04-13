@@ -91,6 +91,21 @@
                             <input type="text" name="serialNumber" id="serialNumber" class="validate">
                         </div>
                         <div class="input-field col s8">
+                                <label for="selectedActiveCategory">Categoría:</label>
+                                <br>
+                                <br>
+                                <a class="btn dropdown-button col s12" href="#!" data-activates="activeCategory" id="selectedActiveCategory">Seleccionar Categoría</a>
+                                <ul id="activeCategory" class="dropdown-content">
+                                    <li  onclick="selectCategory('Herramientas', 'selectedActiveCategory');">Herramientas</li>
+                                    <li  onclick="selectCategory('Máquinas Eléctricas', 'selectedActiveCategory');">Máquinas Eléctricas</li>
+                                    <li  onclick="selectCategory('Maquinaria Pesada', 'selectedActiveCategory');">Maquinaria Pesada</li>
+                                    <li  onclick="selectCategory('Herramienta Especializada', 'selectedActiveCategory');">Herramienta Especializada</li>
+                                    <li  onclick="selectCategory('Equipo de Cómputo', 'selectedActiveCategory');">Equipo de Cómputo</li>
+                                    <li  onclick="selectCategory('Equipo de Oficina', 'selectedActiveCategory');">Equipo de Oficina</li>
+                                    <li  onclick="selectCategory('Mobiliario', 'selectedActiveCategory');">Mobiliario</li>
+                                </ul>
+                            </div>
+                        <div class="input-field col s8">
                             <label for="brand">Marca:</label>
                             <input type="text" name="brand" id="brand" class="validate">
                         </div>

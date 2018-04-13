@@ -80,6 +80,7 @@ $(document).ready(function () {
     loadRooms('A', 'roomsList');
     loadRooms('A', 'roomsListEmploye');
     loadDepartments('employeDepartmentList', 'selectedDepartment');
+    setCurrentDate('registerDate');
     document.getElementById('keeperId').value = "Encargado: (Seleccione Encargado de la Lista)";
     document.getElementById('location').value = "Ubicación: (Seleccione Ubicación de la Lista)";
     document.getElementById('selectedRoom').setAttribute('disabled', '');
@@ -151,6 +152,7 @@ function registerActive() {
     var registerDate = document.getElementById('registerDate').value;
     var integerRegisterDate = formatDate(registerDate);
     var serialNumber = document.getElementById('serialNumber').value;
+    var category = document.getElementById('selectedActiveCategory').innerText;
 
     var promise = database.ref('actives/').push({
         brand: brand,
@@ -164,7 +166,8 @@ function registerActive() {
         registerDate: registerDate,
         integerRegisterDate: integerRegisterDate,
         sn: serialNumber,
-        status: 'Activo'
+        status: 'Activo',
+        category: category
     });
 
     promise.then(function (response) {
@@ -186,6 +189,7 @@ function registerActive() {
         this.selectedBuilding.name = "";
         this.selectedRoom.id = "";
         this.selectedRoom.name = "";
+        document.getElementById('selectedActiveCategory').innerText = "Seleccionar Categoría"
         database.ref('actives/' + promise.key).update({
             id: promise.key
         });
@@ -852,4 +856,23 @@ function makePDF() {
     doc.autoTable(cols, res.data, options);
 
     doc.save("reporte" + date.toLocaleDateString() + ".pdf");
+};
+function selectCategory(categoryName, nextHTMLElement) {
+    document.getElementById(nextHTMLElement).innerText = categoryName;
+};
+
+function setCurrentDate(dateInputId) {
+    var today = new Date();
+    var day = today.getDate();
+    var month = today.getMonth(); //January is 0!
+    var year = today.getFullYear();
+    document.getElementById(dateInputId).value = formatDateToSpanish(day, month, year);
+};
+
+function formatDateToSpanish(day, month, year){
+    var formatedDate;
+    var spaMonth = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+    formatedDate = day + ' ' + spaMonth[month] + ', ' + year;
+    return formatedDate
 };
