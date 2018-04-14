@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Control de Activos</title>
     <link rel="stylesheet" href="materialize/css/materialize.min.css" type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="css/colors.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
@@ -91,6 +92,10 @@
                             <input type="text" name="serialNumber" id="serialNumber" class="validate">
                         </div>
                         <div class="input-field col s8">
+                                <label for="activeQuantity">Cantidad:</label>
+                                <input type="number" step="1" min="1" name="activeQuantity" id="activeQuantity" class="validate" required pattern="[0-9]">
+                            </div>
+                        <div class="input-field col s8">
                                 <label for="selectedActiveCategory">Categoría:</label>
                                 <br>
                                 <br>
@@ -130,6 +135,10 @@
                             <label for="maintenanceDate">Fecha de Matenimiento:</label>
                             <input type="text" class="datepicker" id="maintenanceDate">
                         </div>
+                        <div class="input-field col s8">
+                                <label for="warantyDate">Feha Vencimiento de Garantía:</label>
+                                <input type="text" class="datepicker" id="warantyDate">
+                            </div>
 
                     </div>
                 </form>
@@ -444,6 +453,19 @@
             <a href="#!" class="modal-action modal-close waves-effect waves-green green btn-flat" id="repairingDoneButton">Reparación Terminada</a>
         </div>
     </div>
+    <!-- Modal ChangeKeeperStructure -->
+    <div id="changeKeeper" class="modal">
+            <div class="modal-content">
+                <h5>Cambiar Responsable</h5>
+                <h6 id="newKeeper" class=" orange-text text-darken-4"></h6>
+                <div class="collection" id="changeKeeperModalContent">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green orange btn-flat">Cerrar</a>
+                <a href="#!" class="modal-action modal-close waves-effect waves-green green btn-flat" id="confirmChange">Confirmar cambio</a>
+            </div>
+        </div>
     <!-- Unsubscribe Modal Structure -->
     <div id="unsubscribe" class="modal">
         <div class="modal-content">

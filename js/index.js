@@ -1,4 +1,3 @@
-
 // Initialize Firebase
 var config = {
     apiKey: "AIzaSyATQCwO8PQELnDXilRBPIwi1-g0CI6lDz8",
@@ -47,6 +46,14 @@ var activeFields = [
     {
         propertie: 'location',
         title: 'Ubicación'
+    },
+    {
+        propertie: 'quantity',
+        title: 'Cantidad'
+    },
+    {
+        propertie: 'warantyDate',
+        title: 'Fecha garantía'
     }];
 
 var employeFields = [
@@ -74,7 +81,7 @@ var employeFields = [
 $(document).ready(function () {
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
-    loadEmployees('employe');
+    loadEmployees('employe', 'employeList');
     loadBuildings('buildingList', 'roomsList', 'selectedRoom', 'selectedBuilding');
     loadBuildings('buildingListEmploye', 'roomsListEmploye', 'selectedRoomEmploye', 'selectedBuildingEmploye');
     loadRooms('A', 'roomsList');
@@ -153,6 +160,8 @@ function registerActive() {
     var integerRegisterDate = formatDate(registerDate);
     var serialNumber = document.getElementById('serialNumber').value;
     var category = document.getElementById('selectedActiveCategory').innerText;
+    var quantity = document.getElementById('activeQuantity').value;
+    var warantyDate = document.getElementById('warantyDate').value;
 
     var promise = database.ref('actives/').push({
         brand: brand,
@@ -167,7 +176,9 @@ function registerActive() {
         integerRegisterDate: integerRegisterDate,
         sn: serialNumber,
         status: 'Activo',
-        category: category
+        category: category,
+        quantity: quantity,
+        warantyDate: warantyDate
     });
 
     promise.then(function (response) {
@@ -183,6 +194,8 @@ function registerActive() {
         document.getElementById('serialNumber').value = "";
         document.getElementById('selectedBuilding').innerText = "Seleccionar Ala";
         document.getElementById('selectedRoom').innerText = "Seleccionar Habitación";
+        var quantity = document.getElementById('activeQuantity').value = "1";
+        var warantyDate = document.getElementById('warantyDate').value = "";
         this.selectedEmploye.id = "";
         this.selectedEmploye.name = "";
         this.selectedBuilding.id = "";
@@ -199,10 +212,10 @@ function registerActive() {
     })
 };
 
-function loadEmployees(path, comboBox) {
+function loadEmployees(path, comboBoxId) {
     var employees = database.ref(path);
     employees.on('value', function (snapshot) {
-        var employeList = document.getElementById("employeList");
+        var employeList = document.getElementById(comboBoxId);
 
         //Create array of options to be added
         var employeObject = snapshot.val();
@@ -215,6 +228,27 @@ function loadEmployees(path, comboBox) {
             option.text = element.name + ' ' + element.lastname;
             option.className = 'collection-item modal-action modal-close';
             option.setAttribute("onclick", "selectEmploye('" + element.name + " " + element.lastname + "','" + element.id + "');");
+            option.href = "#!";
+            employeList.appendChild(option);
+        }
+    });
+};
+function loadEmployeesChange(path, comboBoxId) {
+    var employees = database.ref(path);
+    employees.on('value', function (snapshot) {
+        var employeList = document.getElementById(comboBoxId);
+
+        //Create array of options to be added
+        var employeObject = snapshot.val();
+        var employeArray = Object.values(employeObject);
+
+
+        for (var element of employeArray) {
+            var option = document.createElement('a');
+            option.value = element.name + ' ' + element.lastname;
+            option.text = element.name + ' ' + element.lastname;
+            option.className = 'collection-item';
+            option.setAttribute("onclick", "selectEmployeChange('" + element.name + " " + element.lastname + "');");
             option.href = "#!";
             employeList.appendChild(option);
         }
@@ -294,6 +328,11 @@ function selectEmploye(employeName, employeId) {
     keeper.value = 'Encargado: ' + employeName;
 };
 
+function selectEmployeChange(employeName) {
+    document.getElementById('newKeeper').innerText = "Nuevo Responsable: " + employeName;
+};
+
+
 function setModal(header, message) {
     document.getElementById('modalHeader').innerText = header;
     document.getElementById('modalMessage').innerText = message;
@@ -333,6 +372,7 @@ function registerEmploye() {
     var employeState = document.getElementById('employeState');
     var buildingListEmploye = document.getElementById('buildingListEmploye').innerText;
     var roomsListEmploye = document.getElementById('roomsListEmploye').innerText;
+
 
     var promise = database.ref('employe/').push({
         name: employeName,
@@ -407,7 +447,11 @@ function query(findablePath, fieldsArray, tableId, filters) {
                 for (var element of resultArray) {
                     tableBody += '<tr>';
                     for (var field of fieldsArray) {
-                        tableBody += "<td>" + element[field.propertie] + "</td>";
+                        if (element[field.propertie] == undefined) {
+                            tableBody += "<td>NA</td>"
+                        } else {
+                            tableBody += "<td>" + element[field.propertie] + "</td>";
+                        }
                     };
                     if (element.buildingWorkPlace == undefined) {
                         if (element.status.toLowerCase() == 'baja') {
@@ -415,10 +459,12 @@ function query(findablePath, fieldsArray, tableId, filters) {
                             tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'activo') {
+                            tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'reparacion') {
+                            tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;repairingActives&quot;);'>Ver Detalle</a>  </td>";
                         }
@@ -443,10 +489,8 @@ function query(findablePath, fieldsArray, tableId, filters) {
                         console.log('esto ' + element[filter.name].toLowerCase() + ' vs ' + filter.search.toLowerCase());
                         if (element[filter.name].toLowerCase().indexOf(filter.search.toLowerCase()) > -1) {
                             found++;
-                            console.log('found');
                         } else {
                             found--;
-                            console.log('not fous');
                         }
                     };
                     if (found == _filters.length) filteredResults.push(element);
@@ -457,8 +501,11 @@ function query(findablePath, fieldsArray, tableId, filters) {
                     tableBody += '<tr>';
                     for (var field of fieldsArray) {
                         //here we check the status so we can put the buttons
-
-                        tableBody += "<td>" + element[field.propertie] + "</td>";
+                        if (element[field.propertie] == undefined) {
+                            tableBody += "<td>NA</td>"
+                        } else {
+                            tableBody += "<td>" + element[field.propertie] + "</td>";
+                        }
                     };
                     if (element.buildingWorkPlace == undefined) {
                         if (element.status.toLowerCase() == 'baja') {
@@ -468,11 +515,13 @@ function query(findablePath, fieldsArray, tableId, filters) {
                         }
                         if (element.status.toLowerCase() == 'activo') {
                             console.log('ACTIVO');
+                            tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'reparacion') {
                             console.log('REPARACION');
+                            tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;repairingActives&quot;);'>Ver Detalle</a>  </td>";
                         }
@@ -524,7 +573,11 @@ function query(findablePath, fieldsArray, tableId, filters) {
             for (var element of dateFilteredResults) {
                 tableBody += '<tr>';
                 for (var field of fieldsArray) {//here we check the status so we can put the buttons
-                    tableBody += "<td>" + element[field.propertie] + "</td>";
+                    if (element[field.propertie] == undefined) {
+                        tableBody += "<td>NA</td>"
+                    } else {
+                        tableBody += "<td>" + element[field.propertie] + "</td>";
+                    }
                 };
                 if (element.buildingWorkPlace == undefined) {
                     if (element.status.toLowerCase() == 'baja') {
@@ -532,10 +585,12 @@ function query(findablePath, fieldsArray, tableId, filters) {
                         tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
                     }
                     if (element.status.toLowerCase() == 'activo') {
+                        tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                         tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                         tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
                     }
                     if (element.status.toLowerCase() == 'reparacion') {
+                        tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                         tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                         tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;repairingActives&quot;);'>Ver Detalle</a>  </td>";
                     }
@@ -618,8 +673,9 @@ function confirmUnsubscribing(activeId, modalId, path, fields) {
     active.on('value', function (snapshot) {
         var _active = snapshot.val();
         if (_active != null) {
-            document.getElementById(modalId).innerHTML = "<ul><li>NOMBRE: " + _active.name + "</li><li>MODELO: " + _active.model + "</li><li>NUÚMERO DE SERIE: " + _active.sn + "</li><li>MARCA: " + _active.brand + "</li><li>RESPONSABLE: " + _active.keeperName + "</li><li>UBICACIÓN: " + _active.location + "</li></ul>";
-            document.getElementById('deleteButton').setAttribute("onclick", "deleteElement('" + _active.id + "','" + path + "', '" + fields + "');");
+            var quantity = _active.quantity;
+            document.getElementById(modalId).innerHTML = "<ul><li>NOMBRE: " + _active.name + "</li><li>MODELO: " + _active.model + "</li><li>NUÚMERO DE SERIE: " + _active.sn + "</li><li>MARCA: " + _active.brand + "</li><li>RESPONSABLE: " + _active.keeperName + "</li><li>UBICACIÓN: " + _active.location + "</li><li>CANTIDAD: " + _active.quantity + "</li><br><br><label>Cantidad a dar de baja:</label><input type='number' step='1' min='1' max='" + _active.quantity + "'name='activeQuantityConfirm' id='activeQuantityConfirm' class='validate' required pattern='[0-9]'></ul>";
+            document.getElementById('deleteButton').setAttribute("onclick", "deleteElement('" + _active.id + "','" + path + "', '" + fields + "'," + _active.quantity + ",'activeQuantityConfirm');");
         }
     });
 };
@@ -670,16 +726,38 @@ function newRepairing(active, activeSN, repairingBeginingDateInputId, repairingF
     });
 };
 
-function deleteElement(id, path, fields) {
-    var promise = database.ref(path + '/' + id + "/status").set('Baja');
-    promise.then(function (response) {
-        query(path, this[fields], 'resultsTable');
-        setModal('Baja Correcta', 'La baja del activo se realizó correctamente.');
+function deleteElement(id, path, fields, currentQuantity, newQuantity) {
+    var promise;
+    console.log('new Qu ' + newQuantity);
+    var newQuantity = document.getElementById(newQuantity).value;
+    if (newQuantity > currentQuantity) {
+        console.log("1 " + currentQuantity + " " + newQuantity)
+        setModal('Error', 'Ha intentado dar de baja un número de piezas mayor al existente');
         $('#message').modal('open').value = "";
-    }, function (error) {
-        setModal('Error al hacer la baja', 'No se pudo llevar a cabo la baja. Por favor inténtelo de nuevo.');
-        $('#message').modal('open').value = "";
-    })
+    }
+    if (newQuantity < currentQuantity) {//normal
+        console.log("2 " + currentQuantity + " " + newQuantity)
+        promise = database.ref(path + '/' + id).update({
+            quantity: (currentQuantity - newQuantity)
+        });
+    };
+    if (newQuantity == currentQuantity) {//delete
+        console.log("3 " + currentQuantity + " " + newQuantity)
+        promise = database.ref(path + '/' + id).update({
+            status: 'Baja',
+            quantity: 0
+        });
+    };
+    if (promise != undefined) {
+        promise.then(function (response) {
+            query(path, this[fields], 'resultsTable');
+            setModal('Baja Correcta', 'La baja del activo se realizó correctamente.');
+            $('#message').modal('open').value = "";
+        }, function (error) {
+            setModal('Error al hacer la baja', 'No se pudo llevar a cabo la baja. Por favor inténtelo de nuevo.');
+            $('#message').modal('open').value = "";
+        })
+    }
 };
 
 function useDates(checkboxId, inputsDivId) {
@@ -798,6 +876,11 @@ function viewStatus(modalContentId, activeId, path) {
     });
 };
 
+function changeKeeper(modalContentId, activeId, fields) {
+    loadEmployeesChange('employe', modalContentId);
+    document.getElementById('confirmChange').setAttribute("onclick", "confirmChange('" + activeId + "','" + fields + "');");
+};
+
 function confirmRepairing(activeId) {
     var promise = database.ref('actives' + '/' + activeId + '/status').set('Activo');
     promise.then(function (response) {
@@ -809,6 +892,25 @@ function confirmRepairing(activeId) {
         $('#message').modal('open').value = "";
     })
     var prom = database.ref('repairingActives/' + activeId).set(null);
+};
+
+function confirmChange(activeId,fields) {
+    var keeperName = document.getElementById('newKeeper').innerText;
+    //RECORTAR LA STRING
+    keeperName = keeperName.slice(18,keeperName.length);
+    console.log(keeperName);
+    var promise = database.ref('actives' + '/' + activeId).update({
+        keeperName: keeperName,
+        keeperId: keeperId
+    });
+    promise.then(function (response) {
+        query(fields, this['activeFields'], 'resultsTable');
+        setModal('Cambio de responsable exitoso', 'El activo ha cambiado de responsable.');
+        $('#message').modal('open').value = "";
+    }, function (error) {
+        setModal('Error al hacer la reparacion', 'No se pudo llevar a cabo la reparacion. Por favor inténtelo de nuevo.');
+        $('#message').modal('open').value = "";
+    })
 };
 
 function cleanActiveInputs(filtersName) {
@@ -869,7 +971,7 @@ function setCurrentDate(dateInputId) {
     document.getElementById(dateInputId).value = formatDateToSpanish(day, month, year);
 };
 
-function formatDateToSpanish(day, month, year){
+function formatDateToSpanish(day, month, year) {
     var formatedDate;
     var spaMonth = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
