@@ -948,8 +948,12 @@ function confirmChange(activeId,fields) {
 
 function cleanActiveInputs(filtersName) {
     this[filtersName] = {};
-    var checkboxes = ['activeName', 'activeBrand', 'activeModel', 'activeStatus', 'activeDate','activeKeeperFilter','activeCategoryFilterCheckbox'];
-    var inputs = ['activeNameInput', 'activeBrandInput', 'activeModelInput', 'selectedStatus','selectedActiveCategoryFilter','selectedActiveKeeperFilter'];
+    var checkboxes = ['activeName', 'activeBrand', 'activeModel', 'activeStatus', 'activeDate','activeKeeperFilter','activeCategoryFilterCheckbox','employeNameCheckbox',
+    'employeLastnameCheckbox',
+    'employeBuildingWorkPlaceCheckbox'];
+    var inputs = ['activeNameInput', 'activeBrandInput', 'activeModelInput', 'selectedStatus','selectedActiveCategoryFilter','selectedActiveKeeperFilter','employeNameCheckboxInput',
+    'employeLastnameCheckboxInput',
+    'employeBuildingWorkPlaceCheckboxInput'];
 
     for (var check = 0; check < checkboxes.length; check++) {
 
