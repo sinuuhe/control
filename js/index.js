@@ -29,7 +29,7 @@ var activeFields = [
     },
     {
         propertie: 'sn',
-        title: 'Número de Serie'
+        title: 'N.S.'
     },
     {
         propertie: 'brand',
@@ -54,6 +54,10 @@ var activeFields = [
     {
         propertie: 'warantyDate',
         title: 'Fecha garantía'
+    },
+    {
+        propertie: 'category',
+        title: 'Categoría'
     }];
 
 var employeFields = [
@@ -82,6 +86,7 @@ $(document).ready(function () {
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
     loadEmployees('employe', 'employeList');
+    loadEmployeesFilter('employe','activeKeeperFilterSelect');
     loadBuildings('buildingList', 'roomsList', 'selectedRoom', 'selectedBuilding');
     loadBuildings('buildingListEmploye', 'roomsListEmploye', 'selectedRoomEmploye', 'selectedBuildingEmploye');
     loadRooms('A', 'roomsList');
@@ -251,6 +256,30 @@ function loadEmployeesChange(path, comboBoxId) {
             option.setAttribute("onclick", "selectEmployeChange('" + element.name + " " + element.lastname + "');");
             option.href = "#!";
             employeList.appendChild(option);
+        }
+    });
+};
+
+function loadEmployeesFilter(path, comboBoxId) {
+    var employees = database.ref(path);
+    employees.on('value', function (snapshot) {
+        var employeList = document.getElementById(comboBoxId);
+
+        //Create array of options to be added
+        var employeObject = snapshot.val();
+        var employeArray = Object.values(employeObject);
+
+
+        for (var element of employeArray) {
+            var item = document.createElement('li');
+            var option = document.createElement('a');
+            option.value = element.name + ' ' + element.lastname;
+            option.text = element.name + ' ' + element.lastname;
+            option.className = 'collection-item';
+            option.setAttribute("onclick", "selectEmployeFilter('selectedActiveKeeperFilter','activesFilters','" + element.name + " " + element.lastname + "','keeperName');");
+            option.href = "#!";
+            item.appendChild(option);
+            employeList.appendChild(item);
         }
     });
 };
@@ -439,7 +468,7 @@ function query(findablePath, fieldsArray, tableId, filters) {
         resultArray = Object.values(resultObject);
         if (this.useDate == undefined) {
             if (filters == undefined || jQuery.isEmptyObject(filters)) {
-                console.log('sin flitros ' + filters);//without filters
+                //without filters
                 for (var field of fieldsArray) {
                     tableHead += "<th>" + field.title + "</th>";
                 };
@@ -475,7 +504,7 @@ function query(findablePath, fieldsArray, tableId, filters) {
                 table.innerHTML += tableHead + tableBody;
 
             } else {//with filters
-                console.log('con filtros');
+                
                 var found = 0;
                 var filteredResults = [];
                 var _filters = Object.values(filters);
@@ -486,7 +515,6 @@ function query(findablePath, fieldsArray, tableId, filters) {
 
                 for (var element of resultArray) {
                     for (var filter of _filters) {
-                        console.log('esto ' + element[filter.name].toLowerCase() + ' vs ' + filter.search.toLowerCase());
                         if (element[filter.name].toLowerCase().indexOf(filter.search.toLowerCase()) > -1) {
                             found++;
                         } else {
@@ -496,7 +524,7 @@ function query(findablePath, fieldsArray, tableId, filters) {
                     if (found == _filters.length) filteredResults.push(element);
                     found = 0;
                 };
-                console.log(filteredResults);
+                
                 for (var element of filteredResults) {
                     tableBody += '<tr>';
                     for (var field of fieldsArray) {
@@ -509,18 +537,18 @@ function query(findablePath, fieldsArray, tableId, filters) {
                     };
                     if (element.buildingWorkPlace == undefined) {
                         if (element.status.toLowerCase() == 'baja') {
-                            console.log('BAJA');
+                            
                             tableBody += "<td><a class='waves-effect waves-light btn red'disabled>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'activo') {
-                            console.log('ACTIVO');
+                            
                             tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'reparacion') {
-                            console.log('REPARACION');
+                            
                             tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;repairingActives&quot;);'>Ver Detalle</a>  </td>";
@@ -530,12 +558,12 @@ function query(findablePath, fieldsArray, tableId, filters) {
                 }
                 tableBody += "</tbody>";
                 table.innerHTML += tableHead + tableBody;
-                console.log('BODY', tableBody);
-                console.log('HEAD', tableHead);
+                
+                
                 cleanActiveInputs(findablePath + "Filters");
             }
         } else {
-            console.log('con fechas');// searching with dates
+            // searching with dates
             var found = 0;
             var filteredResults = [];
             var dateFilteredResults = [];
@@ -620,9 +648,9 @@ function showSearch(sectionToShow, sectionToHide) {
 };
 
 function checkboxChecked(checkboxId, propertieId, inputId, filters) {
-    console.log('lol', filters);
+    
     if (filters != undefined) {
-        console.log('aqui ando' + filters)
+        
         var _filters = this[filters];
         if (!document.getElementById(checkboxId).checked) {
             delete _filters[propertieId];
@@ -650,9 +678,15 @@ function selectStatus(propertie, status, selectedStatus, filters) {
 };
 
 function fillSearchInput(HTMLElementId, filters, propertie) {
-    console.log('siono');
     var _filters = this[filters];
     _filters[propertie].search = document.getElementById(HTMLElementId).value.toLowerCase();
+};
+
+function selectEmployeFilter(HTMLElementId, filters, name,propertie) {
+    document.getElementById(HTMLElementId).innerText = name
+    var _filters = this[filters];
+    _filters[propertie].search = name;
+    
 };
 
 function formatDate(date) {
@@ -728,21 +762,21 @@ function newRepairing(active, activeSN, repairingBeginingDateInputId, repairingF
 
 function deleteElement(id, path, fields, currentQuantity, newQuantity) {
     var promise;
-    console.log('new Qu ' + newQuantity);
+    
     var newQuantity = document.getElementById(newQuantity).value;
     if (newQuantity > currentQuantity) {
-        console.log("1 " + currentQuantity + " " + newQuantity)
+        
         setModal('Error', 'Ha intentado dar de baja un número de piezas mayor al existente');
         $('#message').modal('open').value = "";
     }
     if (newQuantity < currentQuantity) {//normal
-        console.log("2 " + currentQuantity + " " + newQuantity)
+        
         promise = database.ref(path + '/' + id).update({
             quantity: (currentQuantity - newQuantity)
         });
     };
     if (newQuantity == currentQuantity) {//delete
-        console.log("3 " + currentQuantity + " " + newQuantity)
+        
         promise = database.ref(path + '/' + id).update({
             status: 'Baja',
             quantity: 0
@@ -896,9 +930,8 @@ function confirmRepairing(activeId) {
 
 function confirmChange(activeId,fields) {
     var keeperName = document.getElementById('newKeeper').innerText;
-    //RECORTAR LA STRING
+    
     keeperName = keeperName.slice(18,keeperName.length);
-    console.log(keeperName);
     var promise = database.ref('actives' + '/' + activeId).update({
         keeperName: keeperName,
         keeperId: keeperId
@@ -915,14 +948,15 @@ function confirmChange(activeId,fields) {
 
 function cleanActiveInputs(filtersName) {
     this[filtersName] = {};
-    var checkboxes = ['activeName', 'activeKeeper', 'activeBrand', 'activeModel', 'activeStatus', 'activeDate'];
-    var inputs = ['activeNameInput', 'activeKeeperInput', 'activeBrandInput', 'activeModelInput', 'selectedStatus'];
+    var checkboxes = ['activeName', 'activeBrand', 'activeModel', 'activeStatus', 'activeDate','activeKeeperFilter','activeCategoryFilterCheckbox'];
+    var inputs = ['activeNameInput', 'activeBrandInput', 'activeModelInput', 'selectedStatus','selectedActiveCategoryFilter','selectedActiveKeeperFilter'];
 
     for (var check = 0; check < checkboxes.length; check++) {
+
         document.getElementById(checkboxes[check]).checked = false;
     };
     for (var input = 0; input < inputs.length; input++) {
-        document.getElementById(inputs[input]).text = "";
+        document.getElementById(inputs[input]).text = "Buscar";
         document.getElementById(inputs[input]).value = "";
         document.getElementById(inputs[input]).setAttribute("disabled", "");
     };
@@ -937,7 +971,7 @@ function makePDF() {
 
     var res = doc.autoTableHtmlToJson(document.getElementById("resultsTable"));
     var cols = [res.columns[0], res.columns[1], res.columns[2], res.columns[3], res.columns[4], res.columns[5]];
-    //doc.autoTable(cols, res.data, {margin: {top: 80}});
+    
     var header = function (data) {
         doc.setFontSize(18);
         doc.setTextColor(40);
