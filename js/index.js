@@ -1,4 +1,3 @@
-
 // Initialize Firebase
 var config = {
     apiKey: "AIzaSyATQCwO8PQELnDXilRBPIwi1-g0CI6lDz8",
@@ -30,7 +29,7 @@ var activeFields = [
     },
     {
         propertie: 'sn',
-        title: 'Número de Serie'
+        title: 'N.S.'
     },
     {
         propertie: 'brand',
@@ -47,6 +46,18 @@ var activeFields = [
     {
         propertie: 'location',
         title: 'Ubicación'
+    },
+    {
+        propertie: 'quantity',
+        title: 'Cantidad'
+    },
+    {
+        propertie: 'warantyDate',
+        title: 'Fecha garantía'
+    },
+    {
+        propertie: 'category',
+        title: 'Categoría'
     }];
 
 var employeFields = [
@@ -91,12 +102,14 @@ var vehiclesFields = [
 $(document).ready(function () {
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
-    loadEmployees('employe');
+    loadEmployees('employe', 'employeList');
+    loadEmployeesFilter('employe','activeKeeperFilterSelect');
     loadBuildings('buildingList', 'roomsList', 'selectedRoom', 'selectedBuilding');
     loadBuildings('buildingListEmploye', 'roomsListEmploye', 'selectedRoomEmploye', 'selectedBuildingEmploye');
     loadRooms('A', 'roomsList');
     loadRooms('A', 'roomsListEmploye');
     loadDepartments('employeDepartmentList', 'selectedDepartment');
+    setCurrentDate('registerDate');
     document.getElementById('keeperId').value = "Encargado: (Seleccione Encargado de la Lista)";
     document.getElementById('location').value = "Ubicación: (Seleccione Ubicación de la Lista)";
     document.getElementById('selectedRoom').setAttribute('disabled', '');
@@ -168,6 +181,9 @@ function registerActive() {
     var registerDate = document.getElementById('registerDate').value;
     var integerRegisterDate = formatDate(registerDate);
     var serialNumber = document.getElementById('serialNumber').value;
+    var category = document.getElementById('selectedActiveCategory').innerText;
+    var quantity = document.getElementById('activeQuantity').value;
+    var warantyDate = document.getElementById('warantyDate').value;
 
     var promise = database.ref('actives/').push({
         brand: brand,
@@ -181,7 +197,10 @@ function registerActive() {
         registerDate: registerDate,
         integerRegisterDate: integerRegisterDate,
         sn: serialNumber,
-        status: 'Activo'
+        status: 'Activo',
+        category: category,
+        quantity: quantity,
+        warantyDate: warantyDate
     });
 
     promise.then(function (response) {
@@ -197,12 +216,15 @@ function registerActive() {
         document.getElementById('serialNumber').value = "";
         document.getElementById('selectedBuilding').innerText = "Seleccionar Ala";
         document.getElementById('selectedRoom').innerText = "Seleccionar Habitación";
+        var quantity = document.getElementById('activeQuantity').value = "1";
+        var warantyDate = document.getElementById('warantyDate').value = "";
         this.selectedEmploye.id = "";
         this.selectedEmploye.name = "";
         this.selectedBuilding.id = "";
         this.selectedBuilding.name = "";
         this.selectedRoom.id = "";
         this.selectedRoom.name = "";
+        document.getElementById('selectedActiveCategory').innerText = "Seleccionar Categoría"
         database.ref('actives/' + promise.key).update({
             id: promise.key
         });
@@ -212,10 +234,10 @@ function registerActive() {
     })
 };
 
-function loadEmployees(path, comboBox) {
+function loadEmployees(path, comboBoxId) {
     var employees = database.ref(path);
     employees.on('value', function (snapshot) {
-        var employeList = document.getElementById("employeList");
+        var employeList = document.getElementById(comboBoxId);
 
         //Create array of options to be added
         var employeObject = snapshot.val();
@@ -230,6 +252,51 @@ function loadEmployees(path, comboBox) {
             option.setAttribute("onclick", "selectEmploye('" + element.name + " " + element.lastname + "','" + element.id + "');");
             option.href = "#!";
             employeList.appendChild(option);
+        }
+    });
+};
+function loadEmployeesChange(path, comboBoxId) {
+    var employees = database.ref(path);
+    employees.on('value', function (snapshot) {
+        var employeList = document.getElementById(comboBoxId);
+
+        //Create array of options to be added
+        var employeObject = snapshot.val();
+        var employeArray = Object.values(employeObject);
+
+
+        for (var element of employeArray) {
+            var option = document.createElement('a');
+            option.value = element.name + ' ' + element.lastname;
+            option.text = element.name + ' ' + element.lastname;
+            option.className = 'collection-item';
+            option.setAttribute("onclick", "selectEmployeChange('" + element.name + " " + element.lastname + "');");
+            option.href = "#!";
+            employeList.appendChild(option);
+        }
+    });
+};
+
+function loadEmployeesFilter(path, comboBoxId) {
+    var employees = database.ref(path);
+    employees.on('value', function (snapshot) {
+        var employeList = document.getElementById(comboBoxId);
+
+        //Create array of options to be added
+        var employeObject = snapshot.val();
+        var employeArray = Object.values(employeObject);
+
+
+        for (var element of employeArray) {
+            var item = document.createElement('li');
+            var option = document.createElement('a');
+            option.value = element.name + ' ' + element.lastname;
+            option.text = element.name + ' ' + element.lastname;
+            option.className = 'collection-item';
+            option.setAttribute("onclick", "selectEmployeFilter('selectedActiveKeeperFilter','activesFilters','" + element.name + " " + element.lastname + "','keeperName');");
+            option.href = "#!";
+            item.appendChild(option);
+            employeList.appendChild(item);
         }
     });
 };
@@ -307,6 +374,11 @@ function selectEmploye(employeName, employeId) {
     keeper.value = 'Encargado: ' + employeName;
 };
 
+function selectEmployeChange(employeName) {
+    document.getElementById('newKeeper').innerText = "Nuevo Responsable: " + employeName;
+};
+
+
 function setModal(header, message) {
     document.getElementById('modalHeader').innerText = header;
     document.getElementById('modalMessage').innerText = message;
@@ -346,6 +418,7 @@ function registerEmploye() {
     var employeState = document.getElementById('employeState');
     var buildingListEmploye = document.getElementById('buildingListEmploye').innerText;
     var roomsListEmploye = document.getElementById('roomsListEmploye').innerText;
+
 
     var promise = database.ref('employe/').push({
         name: employeName,
@@ -394,8 +467,10 @@ function registerEmploye() {
 };
 
 function query(findablePath, fieldsArray, tableId, filters) {
+
     var printBtn = document.getElementById('printReport');
     printBtn.classList.remove('hide');
+    document.getElementById('dateInputs').classList.add('hide');
 
 
     var result = database.ref(findablePath + '/').orderByChild('name');
@@ -411,7 +486,9 @@ function query(findablePath, fieldsArray, tableId, filters) {
         resultObject = snapshot.val();
         resultArray = Object.values(resultObject);
         if (this.useDate == undefined) {
+            console.log('sin fecha');
             if (filters == undefined || jQuery.isEmptyObject(filters)) {
+
                 //without filters
                 for (var field of fieldsArray) {
                     tableHead += "<th>" + field.title + "</th>";
@@ -420,7 +497,11 @@ function query(findablePath, fieldsArray, tableId, filters) {
                 for (var element of resultArray) {
                     tableBody += '<tr>';
                     for (var field of fieldsArray) {
-                        tableBody += "<td>" + element[field.propertie] + "</td>";
+                        if (element[field.propertie] == undefined) {
+                            tableBody += "<td>NA</td>"
+                        } else {
+                            tableBody += "<td>" + element[field.propertie] + "</td>";
+                        }
                     };
                     if (element.buildingWorkPlace == undefined) {
                         if (element.status.toLowerCase() == 'baja') {
@@ -428,10 +509,12 @@ function query(findablePath, fieldsArray, tableId, filters) {
                             tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'activo') {
+                            tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'reparacion') {
+                            tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;repairingActives&quot;);'>Ver Detalle</a>  </td>";
                         }
@@ -442,6 +525,7 @@ function query(findablePath, fieldsArray, tableId, filters) {
                 table.innerHTML += tableHead + tableBody;
 
             } else {//with filters
+
                 var found = 0;
                 var filteredResults = [];
                 var _filters = Object.values(filters);
@@ -452,13 +536,12 @@ function query(findablePath, fieldsArray, tableId, filters) {
 
                 for (var element of resultArray) {
                     for (var filter of _filters) {
-                        
+
                         if (element[filter.name].toLowerCase().indexOf(filter.search.toLowerCase()) > -1) {
                             found++;
-                            
                         } else {
                             found--;
-                            
+
                         }
                     };
                     if (found == _filters.length) filteredResults.push(element);
@@ -469,8 +552,11 @@ function query(findablePath, fieldsArray, tableId, filters) {
                     tableBody += '<tr>';
                     for (var field of fieldsArray) {
                         //here we check the status so we can put the buttons
-
-                        tableBody += "<td>" + element[field.propertie] + "</td>";
+                        if (element[field.propertie] == undefined) {
+                            tableBody += "<td>NA</td>"
+                        } else {
+                            tableBody += "<td>" + element[field.propertie] + "</td>";
+                        }
                     };
                     if (element.buildingWorkPlace == undefined) {
                         if (element.status.toLowerCase() == 'baja') {
@@ -480,11 +566,16 @@ function query(findablePath, fieldsArray, tableId, filters) {
                         }
                         if (element.status.toLowerCase() == 'activo') {
                             
+
+                            tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'reparacion') {
                             
+
+                            tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
+
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;repairingActives&quot;);'>Ver Detalle</a>  </td>";
                         }
@@ -498,6 +589,7 @@ function query(findablePath, fieldsArray, tableId, filters) {
                 cleanActiveInputs(findablePath + "Filters");
             }
         } else {
+
             // searching with dates
             var found = 0;
             var filteredResults = [];
@@ -536,7 +628,11 @@ function query(findablePath, fieldsArray, tableId, filters) {
             for (var element of dateFilteredResults) {
                 tableBody += '<tr>';
                 for (var field of fieldsArray) {//here we check the status so we can put the buttons
-                    tableBody += "<td>" + element[field.propertie] + "</td>";
+                    if (element[field.propertie] == undefined) {
+                        tableBody += "<td>NA</td>"
+                    } else {
+                        tableBody += "<td>" + element[field.propertie] + "</td>";
+                    }
                 };
                 if (element.buildingWorkPlace == undefined) {
                     if (element.status.toLowerCase() == 'baja') {
@@ -544,10 +640,12 @@ function query(findablePath, fieldsArray, tableId, filters) {
                         tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
                     }
                     if (element.status.toLowerCase() == 'activo') {
+                        tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                         tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                         tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
                     }
                     if (element.status.toLowerCase() == 'reparacion') {
+                        tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                         tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                         tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;repairingActives&quot;);'>Ver Detalle</a>  </td>";
                     }
@@ -565,7 +663,7 @@ function query(findablePath, fieldsArray, tableId, filters) {
 
 function selectFindableType(findablePath, findableName, comboBoxId, sectionToShow, sectionToHide, fieldsArray, tableId) {
     this.useDate = undefined;
-    query(findablePath, fieldsArray, tableId);
+    //query(findablePath, fieldsArray, tableId);
     document.getElementById(comboBoxId).innerText = findableName;
     showSearch(sectionToShow, sectionToHide);
 };
@@ -607,9 +705,16 @@ function selectStatus(propertie, status, selectedStatus, filters) {
 };
 
 function fillSearchInput(HTMLElementId, filters, propertie) {
-    
+
     var _filters = this[filters];
     _filters[propertie].search = document.getElementById(HTMLElementId).value.toLowerCase();
+};
+
+function selectEmployeFilter(HTMLElementId, filters, name,propertie) {
+    document.getElementById(HTMLElementId).innerText = name
+    var _filters = this[filters];
+    _filters[propertie].search = name;
+    
 };
 
 function formatDate(date) {
@@ -630,8 +735,9 @@ function confirmUnsubscribing(activeId, modalId, path, fields) {
     active.on('value', function (snapshot) {
         var _active = snapshot.val();
         if (_active != null) {
-            document.getElementById(modalId).innerHTML = "<ul><li>NOMBRE: " + _active.name + "</li><li>MODELO: " + _active.model + "</li><li>NUÚMERO DE SERIE: " + _active.sn + "</li><li>MARCA: " + _active.brand + "</li><li>RESPONSABLE: " + _active.keeperName + "</li><li>UBICACIÓN: " + _active.location + "</li></ul>";
-            document.getElementById('deleteButton').setAttribute("onclick", "deleteElement('" + _active.id + "','" + path + "', '" + fields + "');");
+            var quantity = _active.quantity;
+            document.getElementById(modalId).innerHTML = "<ul><li>NOMBRE: " + _active.name + "</li><li>MODELO: " + _active.model + "</li><li>NUÚMERO DE SERIE: " + _active.sn + "</li><li>MARCA: " + _active.brand + "</li><li>RESPONSABLE: " + _active.keeperName + "</li><li>UBICACIÓN: " + _active.location + "</li><li>CANTIDAD: " + _active.quantity + "</li><br><br><label>Cantidad a dar de baja:</label><input type='number' step='1' min='1' max='" + _active.quantity + "'name='activeQuantityConfirm' id='activeQuantityConfirm' class='validate' required pattern='[0-9]'></ul>";
+            document.getElementById('deleteButton').setAttribute("onclick", "deleteElement('" + _active.id + "','" + path + "', '" + fields + "'," + _active.quantity + ",'activeQuantityConfirm');");
         }
     });
 };
@@ -682,16 +788,38 @@ function newRepairing(active, activeSN, repairingBeginingDateInputId, repairingF
     });
 };
 
-function deleteElement(id, path, fields) {
-    var promise = database.ref(path + '/' + id + "/status").set('Baja');
-    promise.then(function (response) {
-        query(path, this[fields], 'resultsTable');
-        setModal('Baja Correcta', 'La baja del activo se realizó correctamente.');
+function deleteElement(id, path, fields, currentQuantity, newQuantity) {
+    var promise;
+    
+    var newQuantity = document.getElementById(newQuantity).value;
+    if (newQuantity > currentQuantity) {
+        
+        setModal('Error', 'Ha intentado dar de baja un número de piezas mayor al existente');
         $('#message').modal('open').value = "";
-    }, function (error) {
-        setModal('Error al hacer la baja', 'No se pudo llevar a cabo la baja. Por favor inténtelo de nuevo.');
-        $('#message').modal('open').value = "";
-    })
+    }
+    if (newQuantity < currentQuantity) {//normal
+        
+        promise = database.ref(path + '/' + id).update({
+            quantity: (currentQuantity - newQuantity)
+        });
+    };
+    if (newQuantity == currentQuantity) {//delete
+        
+        promise = database.ref(path + '/' + id).update({
+            status: 'Baja',
+            quantity: 0
+        });
+    };
+    if (promise != undefined) {
+        promise.then(function (response) {
+            query(path, this[fields], 'resultsTable');
+            setModal('Baja Correcta', 'La baja del activo se realizó correctamente.');
+            $('#message').modal('open').value = "";
+        }, function (error) {
+            setModal('Error al hacer la baja', 'No se pudo llevar a cabo la baja. Por favor inténtelo de nuevo.');
+            $('#message').modal('open').value = "";
+        })
+    }
 };
 
 function useDates(checkboxId, inputsDivId) {
@@ -810,6 +938,11 @@ function viewStatus(modalContentId, activeId, path) {
     });
 };
 
+function changeKeeper(modalContentId, activeId, fields) {
+    loadEmployeesChange('employe', modalContentId);
+    document.getElementById('confirmChange').setAttribute("onclick", "confirmChange('" + activeId + "','" + fields + "');");
+};
+
 function confirmRepairing(activeId) {
     var promise = database.ref('actives' + '/' + activeId + '/status').set('Activo');
     promise.then(function (response) {
@@ -823,16 +956,38 @@ function confirmRepairing(activeId) {
     var prom = database.ref('repairingActives/' + activeId).set(null);
 };
 
+function confirmChange(activeId,fields) {
+    var keeperName = document.getElementById('newKeeper').innerText;
+    
+    keeperName = keeperName.slice(18,keeperName.length);
+    var promise = database.ref('actives' + '/' + activeId).update({
+        keeperName: keeperName,
+        keeperId: keeperId
+    });
+    promise.then(function (response) {
+        query(fields, this['activeFields'], 'resultsTable');
+        setModal('Cambio de responsable exitoso', 'El activo ha cambiado de responsable.');
+        $('#message').modal('open').value = "";
+    }, function (error) {
+        setModal('Error al hacer la reparacion', 'No se pudo llevar a cabo la reparacion. Por favor inténtelo de nuevo.');
+        $('#message').modal('open').value = "";
+    })
+};
+
 function cleanActiveInputs(filtersName) {
     this[filtersName] = {};
-    var checkboxes = ['activeName', 'activeKeeper', 'activeBrand', 'activeModel', 'activeStatus', 'activeDate'];
-    var inputs = ['activeNameInput', 'activeKeeperInput', 'activeBrandInput', 'activeModelInput', 'selectedStatus'];
+    this.useDate = undefined;
+    var checkboxes = ['activeName', 'activeBrand', 'activeModel', 'activeStatus', 'activeDate','activeKeeperFilter','activeCategoryFilterCheckbox','employeNameCheckbox',
+    'employeLastnameCheckbox','employeBuildingWorkPlaceCheckbox','dateBefore','dateAfter','dateBetween',];
+    var inputs = ['activeNameInput', 'activeBrandInput', 'activeModelInput', 'selectedStatus','selectedActiveCategoryFilter','selectedActiveKeeperFilter','employeNameCheckboxInput',
+    'employeLastnameCheckboxInput','employeBuildingWorkPlaceCheckboxInput','dateBeforeInput', 'dateAfterInput','dateBetweenInputA', 'dateBetweenInputB'];
 
     for (var check = 0; check < checkboxes.length; check++) {
+
         document.getElementById(checkboxes[check]).checked = false;
     };
     for (var input = 0; input < inputs.length; input++) {
-        document.getElementById(inputs[input]).text = "";
+        document.getElementById(inputs[input]).text = "Buscar";
         document.getElementById(inputs[input]).value = "";
         document.getElementById(inputs[input]).setAttribute("disabled", "");
     };
@@ -847,7 +1002,7 @@ function makePDF() {
 
     var res = doc.autoTableHtmlToJson(document.getElementById("resultsTable"));
     var cols = [res.columns[0], res.columns[1], res.columns[2], res.columns[3], res.columns[4], res.columns[5]];
-    //doc.autoTable(cols, res.data, {margin: {top: 80}});
+    
     var header = function (data) {
         doc.setFontSize(18);
         doc.setTextColor(40);
@@ -869,6 +1024,7 @@ function makePDF() {
 
     doc.save("reporte" + date.toLocaleDateString() + ".pdf");
 };
+
 
 function selectEngine(engineType,selectedEngineButton){
     document.getElementById(selectedEngineButton).innerText = engineType;
@@ -945,4 +1101,24 @@ function registerDriver() {
         setModal('Error al registrar', 'No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
         $('#message').modal('open').value = "";
     })
+
+function selectCategory(categoryName, nextHTMLElement) {
+    document.getElementById(nextHTMLElement).innerText = categoryName;
+};
+
+function setCurrentDate(dateInputId) {
+    var today = new Date();
+    var day = today.getDate();
+    var month = today.getMonth(); //January is 0!
+    var year = today.getFullYear();
+    document.getElementById(dateInputId).value = formatDateToSpanish(day, month, year);
+};
+
+function formatDateToSpanish(day, month, year) {
+    var formatedDate;
+    var spaMonth = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+    formatedDate = day + ' ' + spaMonth[month] + ', ' + year;
+    return formatedDate
+
 };
