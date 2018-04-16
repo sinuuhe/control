@@ -450,8 +450,10 @@ function registerEmploye() {
 };
 
 function query(findablePath, fieldsArray, tableId, filters) {
+
     var printBtn = document.getElementById('printReport');
     printBtn.classList.remove('hide');
+    document.getElementById('dateInputs').classList.add('hide');
 
 
     var result = database.ref(findablePath + '/').orderByChild('name');
@@ -467,7 +469,9 @@ function query(findablePath, fieldsArray, tableId, filters) {
         resultObject = snapshot.val();
         resultArray = Object.values(resultObject);
         if (this.useDate == undefined) {
+            console.log('sin fecha');
             if (filters == undefined || jQuery.isEmptyObject(filters)) {
+                console.log('sin filtros');
                 //without filters
                 for (var field of fieldsArray) {
                     tableHead += "<th>" + field.title + "</th>";
@@ -504,7 +508,7 @@ function query(findablePath, fieldsArray, tableId, filters) {
                 table.innerHTML += tableHead + tableBody;
 
             } else {//with filters
-                
+                console.log('con filtros')
                 var found = 0;
                 var filteredResults = [];
                 var _filters = Object.values(filters);
@@ -563,6 +567,7 @@ function query(findablePath, fieldsArray, tableId, filters) {
                 cleanActiveInputs(findablePath + "Filters");
             }
         } else {
+            console.log('CON fecha');
             // searching with dates
             var found = 0;
             var filteredResults = [];
@@ -636,7 +641,7 @@ function query(findablePath, fieldsArray, tableId, filters) {
 
 function selectFindableType(findablePath, findableName, comboBoxId, sectionToShow, sectionToHide, fieldsArray, tableId) {
     this.useDate = undefined;
-    query(findablePath, fieldsArray, tableId);
+    //query(findablePath, fieldsArray, tableId);
     document.getElementById(comboBoxId).innerText = findableName;
     showSearch(sectionToShow, sectionToHide);
 };
@@ -948,12 +953,11 @@ function confirmChange(activeId,fields) {
 
 function cleanActiveInputs(filtersName) {
     this[filtersName] = {};
+    this.useDate = undefined;
     var checkboxes = ['activeName', 'activeBrand', 'activeModel', 'activeStatus', 'activeDate','activeKeeperFilter','activeCategoryFilterCheckbox','employeNameCheckbox',
-    'employeLastnameCheckbox',
-    'employeBuildingWorkPlaceCheckbox'];
+    'employeLastnameCheckbox','employeBuildingWorkPlaceCheckbox','dateBefore','dateAfter','dateBetween',];
     var inputs = ['activeNameInput', 'activeBrandInput', 'activeModelInput', 'selectedStatus','selectedActiveCategoryFilter','selectedActiveKeeperFilter','employeNameCheckboxInput',
-    'employeLastnameCheckboxInput',
-    'employeBuildingWorkPlaceCheckboxInput'];
+    'employeLastnameCheckboxInput','employeBuildingWorkPlaceCheckboxInput','dateBeforeInput', 'dateAfterInput','dateBetweenInputA', 'dateBetweenInputB'];
 
     for (var check = 0; check < checkboxes.length; check++) {
 
