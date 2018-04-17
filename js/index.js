@@ -1,4 +1,5 @@
 // Initialize Firebase
+
 var config = {
     apiKey: "AIzaSyATQCwO8PQELnDXilRBPIwi1-g0CI6lDz8",
     authDomain: "controlactivos-3dd04.firebaseapp.com",
@@ -149,8 +150,8 @@ function actionButton(elementtoHide, classToSet, elementToShow) {
     document.getElementById('printReport').classList.add('hide');
 };
 
-function showQuery(buttonId, classToSet, elementToShow) {
-    document.getElementById(buttonId).classList.add(classToSet);
+function showQuery(elementTohide, classToSet, elementToShow) {
+    document.getElementById(elementTohide).classList.add(classToSet);
     document.getElementById(elementToShow).classList.remove('hide');
 };
 function registerActive() {
@@ -384,7 +385,7 @@ function selectRoom(roomName, roomId, elementId) {
 };
 
 function selectDepartment(departmentName, departmentId, nextHTMLElement) {
-    document.getElementById(nextHTMLElement).innerText = 'Selección: ' + departmentName;
+    document.getElementById(nextHTMLElement).innerText = departmentName;
     this.selectedDepartment.name = departmentName;
     this.selectedDepartment.id = departmentId;
 
@@ -1019,4 +1020,18 @@ function formatDateToSpanish(day, month, year) {
 
     formatedDate = day + ' ' + spaMonth[month] + ', ' + year;
     return formatedDate
+};
+
+function test(sinuhe){
+    alert('name: ' + sinuhe.name + '\n lastname: ' + sinuhe.lastname);
+};
+
+function registerVehicle(){
+    var newVehicle = new Vehicle();
+    newVehicle.register(newVehicle);
+};
+
+function registerDriver(){
+    var newDriver = new Driver();
+    newDriver.register(newDriver);
 };
