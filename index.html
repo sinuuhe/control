@@ -432,7 +432,7 @@
     </div>
 
 
-    <div id="vehicles" class="col s12">
+    <div id="vehicles" class="col s12 lime lighten-5">
         <br>
         <br>
         <div class="container" id="vehiclesMainMenu">
@@ -444,9 +444,6 @@
             <div class="row">
                 <a class="col s5 offset-s3 waves-effect waves-light btn-large" onclick="showQuery('vehiclesMainMenu','hide','vehiclesQuery');">Consulta Vehículos</a>
             </div>
-        </div>
-        <div class="hide" id="vehiclesQuery">
-            <h1>query</h1>
         </div>
         <div class="hide" id="newVehicle">
             <div class="container">
@@ -549,6 +546,37 @@
                                 </div>
                         </div>
         </div>
+        <div id="vehiclesQuery" class="hide">
+            <div class="row"><h1>Consultas Vehículos</h1></div>
+                <div class="row">
+                    <div class="container">
+                        <div class="col s4">
+                                <label for="driverVehicleStatus">Estado del Vehículo:</label>
+                                <br>
+                                <br>
+                                <ul id="driverVehicleStatus" class="dropdown-content">
+                                        <li onclick="selectCategory('disponible', 'selectedDriverVehicleStatus');">Disponible</li>
+                                        <li onclick="selectCategory('en uso', 'selectedDriverVehicleStatus');">En Uso</li>
+                                        <li onclick="selectCategory('reparando', 'selectedDriverVehicleStatus');">Reparación</li>
+                                        <li onclick="selectCategory('todos', 'selectedDriverVehicleStatus');">Todos</li>
+                                        <li onclick="selectCategory('baja', 'selectedDriverVehicleStatus');">Baja</li>
+                                </ul>
+                                <a class="btn dropdown-button" href="#!" data-activates="driverVehicleStatus" id="selectedDriverVehicleStatus">Seleccionar Departamento</a>
+                            </div>
+                        <br><br>
+                    <a class="col s4 waves-effect waves-light orange btn" onclick="vehiclesQuery('vehicles',vehiclesFields,'vehiclesResultsTable','selectedDriverVehicleStatus');">Buscar</a>
+                </div>
+                </div>
+                <div id="vehiclesToPrint">
+                    <div class="row">
+                        <table class="striped" id="vehiclesResultsTable"></table>
+                    </div>
+                </div>
+                <div class="row">
+                    <a class="col s3 offset-s2 waves-effect waves-light btn-large" onclick="actionButton('vehiclesQuery','hide','vehiclesMainMenu');">Volver</a>
+                </div>
+            </div>
+        </div>
     </div>
     <div id="material" class="col s12">
         <br>
@@ -610,6 +638,7 @@
             <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">CANCELAR</a>
         </div>
     </div>
+    
     <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
     <script src="jquery/jquery-3.3.1.js"></script>

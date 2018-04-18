@@ -19,6 +19,25 @@ var selectedDepartment = { name: "", id: "" };
 var activesFilters = {};
 var employeFilters = {};
 var useDate;
+var currentQueryResult = undefined;
+var vehiclesFields = [
+    {
+        propertie:'model',
+        title: "Modelo"
+    },
+    {
+        propertie:'brand',
+        title: "Marca"
+    },
+    {
+        propertie:'year',
+        title: "Año"
+    },
+    {
+        propertie:'status',
+        title: "Estado"
+    },
+];
 var activeFields = [
     {
         propertie: 'name',
@@ -450,6 +469,69 @@ function registerEmploye() {
     })
 };
 
+function vehiclesQuery(findablePath,fieldsArray,tableId,filterId){
+    var filter = document.getElementById(filterId).innerText.toLocaleLowerCase();
+    console.log('ref ' + findablePath + '/' + filter)
+    var result = database.ref(findablePath + '/' + filter);
+    var resultArray;
+    var table = document.getElementById(tableId);
+    var table = document.getElementById(tableId);
+    table.innerHTML = "";
+
+    var tableHead, tableBody;
+    tableHead = "<thead><tr>"
+    tableBody = "<tbody>"
+    
+    result.on('value', function (snapshot){
+        if(snapshot.val() != undefined && snapshot.val() != null){
+        resultObject = snapshot.val();
+        this.currentQueryResult = resultObject;
+        resultArray = Object.values(resultObject);
+        console.log('on quey')
+        console.log(this.currentQueryResult);
+                //without filters
+                for (var field of fieldsArray) {
+                    tableHead += "<th>" + field.title + "</th>";
+                };
+                tableHead += "</tr></thead>"
+                for (var element of resultArray) {
+                    tableBody += '<tr>';
+                    for (var field of fieldsArray) {
+                        if (element[field.propertie] == undefined) {
+                            tableBody += "<td>NA</td>"
+                        } else {
+                            tableBody += "<td>" + element[field.propertie] + "</td>";
+                        }
+                    };
+                        if (filter.toLowerCase() == 'disponible') {
+                            tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick='deleteVehicle( &quot; " + element.id + " &quot; , &quot; unsubscribe &quot; , &quot; deleteButton &quot; );'>Baja</a>  </td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn green' >Reparar</a>  </td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn blue' >Usar</a>  </td>";
+                        }
+                        if (filter.toLowerCase() == 'en uso') {
+                            tableBody += "<td><a class='waves-effect waves-light btn red' disabled>Baja</a>  </td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn green' diasabld disabled>Reparar</a>  </td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn blue' disabled>Detalles</a>  </td>";
+                        }
+                        if (filter.toLowerCase() == 'reparando') {
+                            tableBody += "<td><a class='waves-effect waves-light btn red' disabled >Baja</a>  </td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn green' ></a> Detalles </td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn blue' disabled>Usar</a>  </td>";
+                        }
+                        
+
+                    tableBody += '</tr>';
+                }
+                tableBody += "</tbody>";
+                table.innerHTML += tableHead + tableBody;
+
+    }else{
+        tableBody += "<h5 class=' blue-text center-align'>                          No hay resultados para vehículos " + filter + " :(</h5>";
+        table.innerHTML += tableHead + tableBody;
+    }
+});
+
+};
 function query(findablePath, fieldsArray, tableId, filters) {
 
     var printBtn = document.getElementById('printReport');
@@ -469,6 +551,7 @@ function query(findablePath, fieldsArray, tableId, filters) {
     result.on('value', function (snapshot) {
         resultObject = snapshot.val();
         resultArray = Object.values(resultObject);
+        console.log(resultObject);
         if (this.useDate == undefined) {
             console.log('sin fecha');
             if (filters == undefined || jQuery.isEmptyObject(filters)) {
@@ -489,7 +572,7 @@ function query(findablePath, fieldsArray, tableId, filters) {
                     };
                     if (element.buildingWorkPlace == undefined) {
                         if (element.status.toLowerCase() == 'baja') {
-                            tableBody += "<td><a class='waves-effect waves-light btn red'disabled>Baja</a>  </td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn red disabled modal-trigger' href='#buildings'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'activo') {
@@ -720,6 +803,21 @@ function confirmUnsubscribing(activeId, modalId, path, fields) {
     });
 };
 
+function deleteVehicle(vehicleId, modalId,buttonId ) {
+    console.log(typeof vehicleId)
+    var id = "" + vehicleId;
+    console.log(this.currentQueryResult[id])
+
+    
+    //  if (currentQueryResult[vehicleId] != null) {
+    //      document.getElementById(modalId).innerHTML = "<ul><li>NOMBRE: " + currentQueryResult[vehicleId].name + "</li><li>MODELO: " + currentQueryResult[vehicleId].model + "</li><li>MARCA: " + currentQueryResult[vehicleId].brand + "</li><li>AÑO: " + currentQueryResult[vehicleId].year + "</li><li>TIPO DE MOTOR: " + currentQueryResult[vehicleId].engineType + "</li></ul>";
+    //      document.getElementById('deleteButton').setAttribute("onclick", "deleteVehicleConfirm('" + this.currentQueryResult[vehicleId].id + "');");
+    //  }
+};
+
+function deleteVehicleConfirm(vehicleId){
+    Vehicle.delete(this.currentQueryResult[vehicleId]);
+};
 function repairActive(activeId, HTMLElementId, path, fields) {
     var active = database.ref(path + '/' + activeId);
     document.getElementById('query').classList.add('hide');
