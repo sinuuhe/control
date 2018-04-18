@@ -12,6 +12,27 @@
 </head>
 
 <body id="body">
+    <div id="loading"> 
+        <div class="container">
+            <div class="row">
+                <div class="col s12 offset-col s12 center-align">
+            <div class="preloader-wrapper big active center-align" >
+                    <div class="spinner-layer spinner-blue-only">
+                      <div class="circle-clipper left">
+                        <div class="circle"></div>
+                      </div><div class="gap-patch">
+                        <div class="circle"></div>
+                      </div><div class="circle-clipper right">
+                        <div class="circle"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                </div>
+                <div class="row"><h2 class="center-align">Cargando...</h2></div>
+                </div>
+    </div>
+    <div id="ready" class="hide">
     <div class="navbar-fixed">
         <nav class="nav-extended">
             <div class="nav-wrapper">
@@ -489,7 +510,8 @@
             <div class="container">
                 <form action="" class="col s12">
                     <p id="vehicleExpensesId" class="hide"></p>
-                    <h4 id="expensesTitle">Titulo</h4>
+                    <h5>Vehículo Seleccionado:</h5>
+                    <h4 id="expensesTitle"></h4>
                     <div class="row">
                         <div class="input-field col s8">
                             <label for="selectedVehicleExpense">Gasto:</label>
@@ -517,24 +539,24 @@
                             <input type="text" name="vehicleExpenseDetails" id="vehicleExpenseDetails" class="materialize-textarea">
                         </div>
                         <div class="col s8">
-                            <input type="checkbox" id="expenseDateCheck" class="filled-in" onclick="useExpensesDates('usingExpenseDate','expenseDateCheck');"
-                            />
-                            <label for="expenseDateCheck">Utlizar fecha de entrada y salida: </label>
+                            <label for="expenseDateCheck">Llenar fecha de salida si es necesario: </label>
                         </div>
                         <div id="usingExpenseDate" class="">
+                                <label for="">Fecha de Ingreso: </label>
                             <div class="input-field col s8">
-                                <label for="expenseTodayDate">Fecha de Ingreso: </label>
-                                <input type="text" name="" id="expenseTodayDate" class="datepicker" >
+                               
+                                <input type="text" name="" id="expenseTodayDate" class="datepicker">
                             </div>
+                            
                             <div class="input-field col s8">
-                                <label for="expenseDate">Fecha de Salida: </label>
+                                    <label for="expenseDate">Fecha de Salida: </label>
                                 <input type="text" name="" id="expenseDate" class="datepicker" >
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <a class="col s3  waves-effect waves-light btn-large" onclick="actionButton('newDriver','hide','vehiclesMainMenu');">Volver</a>
                         <a class="col s3 offset-s2 waves-effect waves-light orange btn-large" onclick="confirmExpense('vehicleExpensesId');">Confirmar gasto</a>
+                        <a class="col s3  waves-effect waves-light btn-large" onclick="actionButton('vehiclesExpenses','hide','vehiclesQuery');">Volver</a>
                     </div>
 
                 </form>
@@ -614,7 +636,7 @@
                         <ul id="driverVehicleStatus" class="dropdown-content">
                             <li onclick="selectCategory('disponible', 'selectedDriverVehicleStatus');">Disponible</li>
                             <li onclick="selectCategory('en uso', 'selectedDriverVehicleStatus');">En Uso</li>
-                            <li onclick="selectCategory('reparando', 'selectedDriverVehicleStatus');">Reparación</li>
+                            <li onclick="selectCategory('reparacion', 'selectedDriverVehicleStatus');">Reparación</li>
                             <li onclick="selectCategory('todos', 'selectedDriverVehicleStatus');">Todos</li>
                             <li onclick="selectCategory('baja', 'selectedDriverVehicleStatus');">Baja</li>
                         </ul>
@@ -626,8 +648,28 @@
                 </div>
             </div>
             <div id="vehiclesToPrint">
+                    <div id="loadingVehiclesQuery" class="hide"> 
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col s12 offset-col s12 center-align">
+                                <div class="preloader-wrapper big active center-align" >
+                                        <div class="spinner-layer spinner-blue-only">
+                                          <div class="circle-clipper left">
+                                            <div class="circle"></div>
+                                          </div><div class="gap-patch">
+                                            <div class="circle"></div>
+                                          </div><div class="circle-clipper right">
+                                            <div class="circle"></div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                    </div>
+                                    <div class="row"><h2 class="center-align">Cargando...</h2></div>
+                                    </div>
+                        </div>
                 <div class="row">
-                    <table class="striped" id="vehiclesResultsTable"></table>
+                    <table class="striped hide" id="vehiclesResultsTable"></table>
                 </div>
             </div>
             <div class="row">
@@ -638,11 +680,11 @@
     </div>
     <div id="material" class="col s12">
         <br>
-        <h1>TRES</h1>
+        
     </div>
     <div id="pending" class="col s12">
         <br>
-        <h1>CUATRO</h1>
+        
     </div>
     <!-- Message Modal Structure -->
     <div id="message" class="modal">
@@ -708,6 +750,7 @@
     <script src="js/driver.js"></script>
     <script src="js/expenses.js"></script>
     <script src="js/autotable.js"></script>
+</div>
 </body>
 
 </html>

@@ -27,7 +27,7 @@ class Vehicle {
      ];
     };
 
-    static delete(vehicle, tableId, filter){
+    static delete(vehicle, tableId, filter, search){
         
         var promise = database.ref(vehicle.path + '/baja/' + vehicle.id).set({
             brand: vehicle.brand,
@@ -43,7 +43,7 @@ class Vehicle {
             database.ref(vehicle.path + '/disponible/' + vehicle.id).set(null);
             setModal('Baja Exitosa', 'El vehículo se dio de baja correctamente.');
             $('#message').modal('open').value = "";
-            vehiclesQuery(vehicle.path, vehiclesFields, tableId, filterId)
+            vehiclesQuery(vehicle.path, vehiclesFields, tableId, filter, search)
         })
     }
     register(vehicle){

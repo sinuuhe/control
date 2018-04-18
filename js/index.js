@@ -103,6 +103,8 @@ var employeFields = [
     }];
 
 $(document).ready(function () {
+    document.getElementById('loading').classList.add('hide');
+    document.getElementById('ready').classList.remove('hide');
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
     loadEmployees('employe', 'employeList');
@@ -113,7 +115,6 @@ $(document).ready(function () {
     loadRooms('A', 'roomsListEmploye');
     loadDepartments('employeDepartmentList', 'selectedDepartment');
     setCurrentDate('registerDate');
-    setCurrentDate('expenseTodayDate');
     document.getElementById('keeperId').value = "Encargado: (Seleccione Encargado de la Lista)";
     document.getElementById('location').value = "Ubicación: (Seleccione Ubicación de la Lista)";
     document.getElementById('selectedRoom').setAttribute('disabled', '');
@@ -470,8 +471,12 @@ function registerEmploye() {
     })
 };
 
-function vehiclesQuery(findablePath, fieldsArray, tableId, filterId) {
-    var filter = document.getElementById(filterId).innerText.toLocaleLowerCase();
+function vehiclesQuery(findablePath, fieldsArray, tableId, filterId, search) {
+    document.getElementById('loadingVehiclesQuery').classList.remove('hide');
+    document.getElementById(tableId).classList.add('hide')
+    var filter;
+    if(search != undefined)filter = search.toLocaleLowerCase();
+    else filter = document.getElementById(filterId).innerText.toLocaleLowerCase();
     var result = database.ref(findablePath + '/' + filter);
     var resultArray;
     var table = document.getElementById(tableId);
@@ -503,21 +508,19 @@ function vehiclesQuery(findablePath, fieldsArray, tableId, filterId) {
                 };
                 if (filter.toLowerCase() == 'disponible') {
                     tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick='deleteVehicle( &quot;" + element.id + "&quot; , &quot;unsubscribeContent&quot; , &quot;deleteButton&quot; );'>Baja</a>  </td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn green' >Reparar</a>  </td>";
+                    
                     tableBody += "<td><a class='waves-effect waves-light btn lime darken-4' onclick='newExpense(&quot;" + element.id + "&quot;,&quot;vehiclesExpenses&quot;,&quot;vehiclesQuery&quot;,&quot;expensesTitle&quot;);'>Nvo. Gasto</a>  </td>";
                     tableBody += "<td><a class='waves-effect waves-light btn blue' >Usar</a>  </td>";
                 }
                 if (filter.toLowerCase() == 'en uso') {
                     tableBody += "<td><a class='waves-effect waves-light btn red' disabled>Baja</a>  </td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn green' diasabld disabled>Reparar</a>  </td>";
+                    
                     tableBody += "<td><a class='waves-effect waves-light btn lime darken-4' disabled>Nvo. Gasto</a>  </td>";
                     tableBody += "<td><a class='waves-effect waves-light btn blue' disabled>Detalles</a>  </td>";
                 }
-                if (filter.toLowerCase() == 'reparando') {
-                    tableBody += "<td><a class='waves-effect waves-light btn red' disabled >Baja</a>  </td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn green' ></a> Detalles </td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn lime darken-4' disabled>Nvo. Gasto</a>  </td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn blue' disabled>Usar</a>  </td>";
+                if (filter.toLowerCase() == 'reparacion') {
+                    tableBody += "<td><a class='waves-effect waves-light btn orange modal-trigger' href='#modalInfo' onclick='repairingDetails(&quot;" + element.id + "&quot;);'> Detalles</a></td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn green' >Reparacion Lista</a></td>";
                 }
 
 
@@ -530,8 +533,10 @@ function vehiclesQuery(findablePath, fieldsArray, tableId, filterId) {
             tableBody += "<h5 class=' blue-text center-align'>                          No hay resultados para vehículos " + filter + " :(</h5>";
             table.innerHTML += tableHead + tableBody;
         }
+        document.getElementById('loadingVehiclesQuery').classList.add('hide');
+        document.getElementById(tableId).classList.remove('hide') 
     });
-
+    
 };
 function query(findablePath, fieldsArray, tableId, filters) {
 
@@ -779,7 +784,7 @@ function formatDate(date) {
     console.log(date)
     var spaMonth = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     var engMonth = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    if (date != undefined) {
+    if (date != undefined && date.length > 0) {
         var res = date.split(" ");
         res = res[1].slice(0, res[1].indexOf(","));
         var monthIndex = spaMonth.indexOf(res);
@@ -815,7 +820,9 @@ function deleteVehicleConfirm(vehicleId) {
         _vehicle.model = currentQueryResult[vehicleId].model;
         _vehicle.year = currentQueryResult[vehicleId].year;
         _vehicle.engineType = currentQueryResult[vehicleId].engineType;
-    Vehicle.delete(_vehicle, 'vehiclesResultsTable','disponible');
+    var search = document.getElementById('selectedVehicleExpense').innerText.toLocaleLowerCase();
+    console.log('here ' + search)
+    Vehicle.delete(_vehicle, 'vehiclesResultsTable','selectedDriverVehicleStatus',search);
 };
 function repairActive(activeId, HTMLElementId, path, fields) {
     var active = database.ref(path + '/' + activeId);
@@ -1108,7 +1115,9 @@ function setCurrentDate(dateInputId) {
     var day = today.getDate();
     var month = today.getMonth(); //January is 0!
     var year = today.getFullYear();
-    document.getElementById(dateInputId).value = formatDateToSpanish(day, month, year);
+    if(dateInputId != undefined && dateInputId.length > 0) 
+        document.getElementById(dateInputId).value = formatDateToSpanish(day, month, year);
+    else return today.getTime();
 };
 
 function formatDateToSpanish(day, month, year) {
@@ -1134,9 +1143,10 @@ function registerDriver() {
 };
 
 function newExpense(vehicleId, elementToShow,elementToHide, titleId){
+    setCurrentDate('expenseTodayDate');
     var vehicle = this.currentQueryResult[vehicleId];
     document.getElementById('vehicleExpensesId').innerText = vehicleId;
-    document.getElementById(titleId).innerText = "Vehículo seleccionado: " + vehicle.model + " " + vehicle.brand + " " + vehicle.year;
+    document.getElementById(titleId).innerText = vehicle.brand + " " + vehicle.model + " " + vehicle.year;
     document.getElementById(elementToShow).classList.remove('hide');
     document.getElementById(elementToHide).classList.add('hide');
 
@@ -1153,3 +1163,18 @@ function confirmExpense(vehicleId){
     newExpense.vehicleId = this.currentQueryResult[document.getElementById(vehicleId).innerText].id;
     newExpense.createExpense(newExpense);
 };
+
+function repairingDetails(vehicleId) {
+    var vehicle = this.currentQueryResult[vehicleId];
+    console.log(this.currentQueryResult)
+    console.log(this.currentQueryResult[vehicleId])
+        if (vehicle != null) {
+            document.getElementById('modalInfoContent').innerHTML = "<h6>Vehiculo: " + vehicle.brand + " " + vehicle.model + " " + vehicle.year + "</h6><h6>Fecha ingreso taller: " + vehicle.inDate + "</h6><h6>Fecha de entrega: " + vehicle.outDate + "</h6><h6>Costo: " + vehicle.cost + "</h6><h6>Detalles: " + vehicle.details + "</h6>";
+            document.getElementById('repairingDoneButton').setAttribute("onclick", "confirmVehicleRepairing('" + vehicleId + "');");
+        }
+
+};
+
+function confirmVehicleRepairing(vehicleId){
+    Expenses.repairingDone(vehicleId);
+}
