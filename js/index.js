@@ -22,19 +22,19 @@ var useDate;
 var currentQueryResult = undefined;
 var vehiclesFields = [
     {
-        propertie:'model',
+        propertie: 'model',
         title: "Modelo"
     },
     {
-        propertie:'brand',
+        propertie: 'brand',
         title: "Marca"
     },
     {
-        propertie:'year',
+        propertie: 'year',
         title: "Año"
     },
     {
-        propertie:'status',
+        propertie: 'status',
         title: "Estado"
     },
 ];
@@ -106,13 +106,14 @@ $(document).ready(function () {
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
     loadEmployees('employe', 'employeList');
-    loadEmployeesFilter('employe','activeKeeperFilterSelect');
+    loadEmployeesFilter('employe', 'activeKeeperFilterSelect');
     loadBuildings('buildingList', 'roomsList', 'selectedRoom', 'selectedBuilding');
     loadBuildings('buildingListEmploye', 'roomsListEmploye', 'selectedRoomEmploye', 'selectedBuildingEmploye');
     loadRooms('A', 'roomsList');
     loadRooms('A', 'roomsListEmploye');
     loadDepartments('employeDepartmentList', 'selectedDepartment');
     setCurrentDate('registerDate');
+    setCurrentDate('expenseTodayDate');
     document.getElementById('keeperId').value = "Encargado: (Seleccione Encargado de la Lista)";
     document.getElementById('location').value = "Ubicación: (Seleccione Ubicación de la Lista)";
     document.getElementById('selectedRoom').setAttribute('disabled', '');
@@ -469,9 +470,8 @@ function registerEmploye() {
     })
 };
 
-function vehiclesQuery(findablePath,fieldsArray,tableId,filterId){
+function vehiclesQuery(findablePath, fieldsArray, tableId, filterId) {
     var filter = document.getElementById(filterId).innerText.toLocaleLowerCase();
-    console.log('ref ' + findablePath + '/' + filter)
     var result = database.ref(findablePath + '/' + filter);
     var resultArray;
     var table = document.getElementById(tableId);
@@ -481,55 +481,56 @@ function vehiclesQuery(findablePath,fieldsArray,tableId,filterId){
     var tableHead, tableBody;
     tableHead = "<thead><tr>"
     tableBody = "<tbody>"
-    
-    result.on('value', function (snapshot){
-        if(snapshot.val() != undefined && snapshot.val() != null){
-        resultObject = snapshot.val();
-        this.currentQueryResult = resultObject;
-        resultArray = Object.values(resultObject);
-        console.log('on quey')
-        console.log(this.currentQueryResult);
-                //without filters
+
+    result.on('value', function (snapshot) {
+        if (snapshot.val() != undefined && snapshot.val() != null) {
+            resultObject = snapshot.val();
+            this.currentQueryResult = resultObject;
+            resultArray = Object.values(resultObject);
+            //without filters
+            for (var field of fieldsArray) {
+                tableHead += "<th>" + field.title + "</th>";
+            };
+            tableHead += "</tr></thead>"
+            for (var element of resultArray) {
+                tableBody += '<tr>';
                 for (var field of fieldsArray) {
-                    tableHead += "<th>" + field.title + "</th>";
+                    if (element[field.propertie] == undefined) {
+                        tableBody += "<td>NA</td>"
+                    } else {
+                        tableBody += "<td>" + element[field.propertie] + "</td>";
+                    }
                 };
-                tableHead += "</tr></thead>"
-                for (var element of resultArray) {
-                    tableBody += '<tr>';
-                    for (var field of fieldsArray) {
-                        if (element[field.propertie] == undefined) {
-                            tableBody += "<td>NA</td>"
-                        } else {
-                            tableBody += "<td>" + element[field.propertie] + "</td>";
-                        }
-                    };
-                        if (filter.toLowerCase() == 'disponible') {
-                            tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick='deleteVehicle( &quot; " + element.id + " &quot; , &quot; unsubscribe &quot; , &quot; deleteButton &quot; );'>Baja</a>  </td>";
-                            tableBody += "<td><a class='waves-effect waves-light btn green' >Reparar</a>  </td>";
-                            tableBody += "<td><a class='waves-effect waves-light btn blue' >Usar</a>  </td>";
-                        }
-                        if (filter.toLowerCase() == 'en uso') {
-                            tableBody += "<td><a class='waves-effect waves-light btn red' disabled>Baja</a>  </td>";
-                            tableBody += "<td><a class='waves-effect waves-light btn green' diasabld disabled>Reparar</a>  </td>";
-                            tableBody += "<td><a class='waves-effect waves-light btn blue' disabled>Detalles</a>  </td>";
-                        }
-                        if (filter.toLowerCase() == 'reparando') {
-                            tableBody += "<td><a class='waves-effect waves-light btn red' disabled >Baja</a>  </td>";
-                            tableBody += "<td><a class='waves-effect waves-light btn green' ></a> Detalles </td>";
-                            tableBody += "<td><a class='waves-effect waves-light btn blue' disabled>Usar</a>  </td>";
-                        }
-                        
-
-                    tableBody += '</tr>';
+                if (filter.toLowerCase() == 'disponible') {
+                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick='deleteVehicle( &quot;" + element.id + "&quot; , &quot;unsubscribeContent&quot; , &quot;deleteButton&quot; );'>Baja</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn green' >Reparar</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn lime darken-4' onclick='newExpense(&quot;" + element.id + "&quot;,&quot;vehiclesExpenses&quot;,&quot;vehiclesQuery&quot;,&quot;expensesTitle&quot;);'>Nvo. Gasto</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn blue' >Usar</a>  </td>";
                 }
-                tableBody += "</tbody>";
-                table.innerHTML += tableHead + tableBody;
+                if (filter.toLowerCase() == 'en uso') {
+                    tableBody += "<td><a class='waves-effect waves-light btn red' disabled>Baja</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn green' diasabld disabled>Reparar</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn lime darken-4' disabled>Nvo. Gasto</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn blue' disabled>Detalles</a>  </td>";
+                }
+                if (filter.toLowerCase() == 'reparando') {
+                    tableBody += "<td><a class='waves-effect waves-light btn red' disabled >Baja</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn green' ></a> Detalles </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn lime darken-4' disabled>Nvo. Gasto</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn blue' disabled>Usar</a>  </td>";
+                }
 
-    }else{
-        tableBody += "<h5 class=' blue-text center-align'>                          No hay resultados para vehículos " + filter + " :(</h5>";
-        table.innerHTML += tableHead + tableBody;
-    }
-});
+
+                tableBody += '</tr>';
+            }
+            tableBody += "</tbody>";
+            table.innerHTML += tableHead + tableBody;
+
+        } else {
+            tableBody += "<h5 class=' blue-text center-align'>                          No hay resultados para vehículos " + filter + " :(</h5>";
+            table.innerHTML += tableHead + tableBody;
+        }
+    });
 
 };
 function query(findablePath, fieldsArray, tableId, filters) {
@@ -551,11 +552,9 @@ function query(findablePath, fieldsArray, tableId, filters) {
     result.on('value', function (snapshot) {
         resultObject = snapshot.val();
         resultArray = Object.values(resultObject);
-        console.log(resultObject);
         if (this.useDate == undefined) {
-            console.log('sin fecha');
             if (filters == undefined || jQuery.isEmptyObject(filters)) {
-                console.log('sin filtros');
+
                 //without filters
                 for (var field of fieldsArray) {
                     tableHead += "<th>" + field.title + "</th>";
@@ -592,7 +591,6 @@ function query(findablePath, fieldsArray, tableId, filters) {
                 table.innerHTML += tableHead + tableBody;
 
             } else {//with filters
-                console.log('con filtros')
                 var found = 0;
                 var filteredResults = [];
                 var _filters = Object.values(filters);
@@ -612,7 +610,7 @@ function query(findablePath, fieldsArray, tableId, filters) {
                     if (found == _filters.length) filteredResults.push(element);
                     found = 0;
                 };
-                
+
                 for (var element of filteredResults) {
                     tableBody += '<tr>';
                     for (var field of fieldsArray) {
@@ -625,18 +623,18 @@ function query(findablePath, fieldsArray, tableId, filters) {
                     };
                     if (element.buildingWorkPlace == undefined) {
                         if (element.status.toLowerCase() == 'baja') {
-                            
+
                             tableBody += "<td><a class='waves-effect waves-light btn red'disabled>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'activo') {
-                            
+
                             tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'reparacion') {
-                            
+
                             tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;repairingActives&quot;);'>Ver Detalle</a>  </td>";
@@ -646,12 +644,11 @@ function query(findablePath, fieldsArray, tableId, filters) {
                 }
                 tableBody += "</tbody>";
                 table.innerHTML += tableHead + tableBody;
-                
-                
+
+
                 cleanActiveInputs(findablePath + "Filters");
             }
         } else {
-            console.log('CON fecha');
             // searching with dates
             var found = 0;
             var filteredResults = [];
@@ -737,9 +734,9 @@ function showSearch(sectionToShow, sectionToHide) {
 };
 
 function checkboxChecked(checkboxId, propertieId, inputId, filters) {
-    
+
     if (filters != undefined) {
-        
+
         var _filters = this[filters];
         if (!document.getElementById(checkboxId).checked) {
             delete _filters[propertieId];
@@ -771,14 +768,15 @@ function fillSearchInput(HTMLElementId, filters, propertie) {
     _filters[propertie].search = document.getElementById(HTMLElementId).value.toLowerCase();
 };
 
-function selectEmployeFilter(HTMLElementId, filters, name,propertie) {
+function selectEmployeFilter(HTMLElementId, filters, name, propertie) {
     document.getElementById(HTMLElementId).innerText = name
     var _filters = this[filters];
     _filters[propertie].search = name;
-    
+
 };
 
 function formatDate(date) {
+    console.log(date)
     var spaMonth = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     var engMonth = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     if (date != undefined) {
@@ -803,20 +801,21 @@ function confirmUnsubscribing(activeId, modalId, path, fields) {
     });
 };
 
-function deleteVehicle(vehicleId, modalId,buttonId ) {
-    console.log(typeof vehicleId)
-    var id = "" + vehicleId;
-    console.log(this.currentQueryResult[id])
-
-    
-    //  if (currentQueryResult[vehicleId] != null) {
-    //      document.getElementById(modalId).innerHTML = "<ul><li>NOMBRE: " + currentQueryResult[vehicleId].name + "</li><li>MODELO: " + currentQueryResult[vehicleId].model + "</li><li>MARCA: " + currentQueryResult[vehicleId].brand + "</li><li>AÑO: " + currentQueryResult[vehicleId].year + "</li><li>TIPO DE MOTOR: " + currentQueryResult[vehicleId].engineType + "</li></ul>";
-    //      document.getElementById('deleteButton').setAttribute("onclick", "deleteVehicleConfirm('" + this.currentQueryResult[vehicleId].id + "');");
-    //  }
+function deleteVehicle(vehicleId, modalId, buttonId) {
+    if (currentQueryResult[vehicleId] != null) {
+        document.getElementById(modalId).innerHTML = "<h4>Dar Vehículo de baja?</h4><ul><li>MODELO: " + currentQueryResult[vehicleId].model + "</li><li>MARCA: " + currentQueryResult[vehicleId].brand + "</li><li>AÑO: " + currentQueryResult[vehicleId].year + "</li><li>TIPO DE MOTOR: " + currentQueryResult[vehicleId].engineType + "</li></ul>";
+        document.getElementById(buttonId).setAttribute("onclick", "deleteVehicleConfirm('" + vehicleId + "');");
+    }
 };
 
-function deleteVehicleConfirm(vehicleId){
-    Vehicle.delete(this.currentQueryResult[vehicleId]);
+function deleteVehicleConfirm(vehicleId) {
+    var _vehicle = new Vehicle();
+        _vehicle.id = vehicleId;
+        _vehicle.brand = currentQueryResult[vehicleId].brand;
+        _vehicle.model = currentQueryResult[vehicleId].model;
+        _vehicle.year = currentQueryResult[vehicleId].year;
+        _vehicle.engineType = currentQueryResult[vehicleId].engineType;
+    Vehicle.delete(_vehicle, 'vehiclesResultsTable','disponible');
 };
 function repairActive(activeId, HTMLElementId, path, fields) {
     var active = database.ref(path + '/' + activeId);
@@ -866,21 +865,21 @@ function newRepairing(active, activeSN, repairingBeginingDateInputId, repairingF
 
 function deleteElement(id, path, fields, currentQuantity, newQuantity) {
     var promise;
-    
+
     var newQuantity = document.getElementById(newQuantity).value;
     if (newQuantity > currentQuantity) {
-        
+
         setModal('Error', 'Ha intentado dar de baja un número de piezas mayor al existente');
         $('#message').modal('open').value = "";
     }
     if (newQuantity < currentQuantity) {//normal
-        
+
         promise = database.ref(path + '/' + id).update({
             quantity: (currentQuantity - newQuantity)
         });
     };
     if (newQuantity == currentQuantity) {//delete
-        
+
         promise = database.ref(path + '/' + id).update({
             status: 'Baja',
             quantity: 0
@@ -1032,10 +1031,10 @@ function confirmRepairing(activeId) {
     var prom = database.ref('repairingActives/' + activeId).set(null);
 };
 
-function confirmChange(activeId,fields) {
+function confirmChange(activeId, fields) {
     var keeperName = document.getElementById('newKeeper').innerText;
-    
-    keeperName = keeperName.slice(18,keeperName.length);
+
+    keeperName = keeperName.slice(18, keeperName.length);
     var promise = database.ref('actives' + '/' + activeId).update({
         keeperName: keeperName,
         keeperId: keeperId
@@ -1053,10 +1052,10 @@ function confirmChange(activeId,fields) {
 function cleanActiveInputs(filtersName) {
     this[filtersName] = {};
     this.useDate = undefined;
-    var checkboxes = ['activeName', 'activeBrand', 'activeModel', 'activeStatus', 'activeDate','activeKeeperFilter','activeCategoryFilterCheckbox','employeNameCheckbox',
-    'employeLastnameCheckbox','employeBuildingWorkPlaceCheckbox','dateBefore','dateAfter','dateBetween',];
-    var inputs = ['activeNameInput', 'activeBrandInput', 'activeModelInput', 'selectedStatus','selectedActiveCategoryFilter','selectedActiveKeeperFilter','employeNameCheckboxInput',
-    'employeLastnameCheckboxInput','employeBuildingWorkPlaceCheckboxInput','dateBeforeInput', 'dateAfterInput','dateBetweenInputA', 'dateBetweenInputB'];
+    var checkboxes = ['activeName', 'activeBrand', 'activeModel', 'activeStatus', 'activeDate', 'activeKeeperFilter', 'activeCategoryFilterCheckbox', 'employeNameCheckbox',
+        'employeLastnameCheckbox', 'employeBuildingWorkPlaceCheckbox', 'dateBefore', 'dateAfter', 'dateBetween',];
+    var inputs = ['activeNameInput', 'activeBrandInput', 'activeModelInput', 'selectedStatus', 'selectedActiveCategoryFilter', 'selectedActiveKeeperFilter', 'employeNameCheckboxInput',
+        'employeLastnameCheckboxInput', 'employeBuildingWorkPlaceCheckboxInput', 'dateBeforeInput', 'dateAfterInput', 'dateBetweenInputA', 'dateBetweenInputB'];
 
     for (var check = 0; check < checkboxes.length; check++) {
 
@@ -1078,7 +1077,7 @@ function makePDF() {
 
     var res = doc.autoTableHtmlToJson(document.getElementById("resultsTable"));
     var cols = [res.columns[0], res.columns[1], res.columns[2], res.columns[3], res.columns[4], res.columns[5]];
-    
+
     var header = function (data) {
         doc.setFontSize(18);
         doc.setTextColor(40);
@@ -1120,16 +1119,37 @@ function formatDateToSpanish(day, month, year) {
     return formatedDate
 };
 
-function test(sinuhe){
+function test(sinuhe) {
     alert('name: ' + sinuhe.name + '\n lastname: ' + sinuhe.lastname);
 };
 
-function registerVehicle(){
+function registerVehicle() {
     var newVehicle = new Vehicle();
     newVehicle.register(newVehicle);
 };
 
-function registerDriver(){
+function registerDriver() {
     var newDriver = new Driver();
     newDriver.register(newDriver);
+};
+
+function newExpense(vehicleId, elementToShow,elementToHide, titleId){
+    var vehicle = this.currentQueryResult[vehicleId];
+    document.getElementById('vehicleExpensesId').innerText = vehicleId;
+    document.getElementById(titleId).innerText = "Vehículo seleccionado: " + vehicle.model + " " + vehicle.brand + " " + vehicle.year;
+    document.getElementById(elementToShow).classList.remove('hide');
+    document.getElementById(elementToHide).classList.add('hide');
+
+};
+function useExpensesDates(elementToShow, checkboxId){
+    if(document.getElementById(checkboxId).checked)
+        document.getElementById(elementToShow).classList.remove('hide');
+    else
+        document.getElementById(elementToShow).classList.add('hide');
+};
+
+function confirmExpense(vehicleId){
+    var newExpense = new Expenses();
+    newExpense.vehicleId = this.currentQueryResult[document.getElementById(vehicleId).innerText].id;
+    newExpense.createExpense(newExpense);
 };

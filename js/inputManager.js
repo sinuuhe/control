@@ -4,8 +4,10 @@ class InputManager{
         for(var input of inputsArray){
             if(input.type == 'input')
                 input.value = document.getElementById(input.inputName).value = "";
-            if(input.type == 'select')
+            else if(input.type == 'select')
                 input.value = document.getElementById(input.inputName).innerText = "Seleccionar"
+            else 
+                document.getElementById(input.inputName).checked = false;
         };
         
         return inputsArray;
@@ -14,8 +16,9 @@ class InputManager{
         for(var input of inputsArray){
             if(input.type == 'input'){
                 input.value = document.getElementById(input.inputName).value;}
-            else{
+            else if(input.type == 'select'){
                 input.value = document.getElementById(input.inputName).innerText;}
+            console.log(input.value)
         };
 
         return inputsArray;

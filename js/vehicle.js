@@ -1,5 +1,6 @@
 class Vehicle {
     constructor(){
+        this.id;
         this.path = "vehicles";
         this.inputs = [
             {
@@ -26,15 +27,23 @@ class Vehicle {
      ];
     };
 
-    delete(vehicle){
-        var promise = database.ref(vehicle.path + '/baja/' + vehicle);
+    static delete(vehicle, tableId, filter){
+        
+        var promise = database.ref(vehicle.path + '/baja/' + vehicle.id).set({
+            brand: vehicle.brand,
+            model: vehicle.model,
+            year: vehicle.year,
+            engineType: vehicle.engineType,
+            status: 'Baja'
+        });
         promise.then(function(response){
             database.ref(vehicle.path + '/todos/' + vehicle.id).update({
-                status: 'baja'
+                status: 'Baja'
             });
             database.ref(vehicle.path + '/disponible/' + vehicle.id).set(null);
             setModal('Baja Exitosa', 'El vehículo se dio de baja correctamente.');
             $('#message').modal('open').value = "";
+            vehiclesQuery(vehicle.path, vehiclesFields, tableId, filterId)
         })
     }
     register(vehicle){
