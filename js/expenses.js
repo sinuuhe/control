@@ -42,7 +42,6 @@ class Expenses{
         expense.inputs = InputManager.fillValuesFromInputs(expense.inputs); 
         //using dates
         if(expense.inputs[5].value != "" && expense.inputs[5].value.length > 0){
-            console.log('on te input ' + expense.inputs[5])
             var promise = database.ref(expense.path + '/todos').push({
                 vehicleName: expense.inputs[0].value,
                 name: expense.inputs[1].value,
@@ -75,7 +74,7 @@ class Expenses{
                     integerOutDate: formatDate(expense.inputs[5].value)
                 });
 
-                database.ref(expense.path + '/pending/' + '/' + formatDate(expense.inputs[5].value) + '/' + promise.key).set({
+                database.ref(expense.path + '/pending/' + '/' + promise.key + '/' + formatDate(expense.inputs[5].value)).set({
                     vehicleName: expense.inputs[0].value,
                     expenseId: promise.key,
                     name: expense.inputs[1].value,
@@ -121,7 +120,6 @@ class Expenses{
                 $('#message').modal('open').value = "";
             })
         }else{//without dates
-            console.log('before')
             var promise = database.ref(expense.path + '/todos/').push({
                 vehicleName: expense.inputs[0].value,
                 vehicleId: expense.vehicleId,

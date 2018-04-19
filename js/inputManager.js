@@ -18,7 +18,6 @@ class InputManager{
                 input.value = document.getElementById(input.inputName).value;}
             else if(input.type == 'select'){
                 input.value = document.getElementById(input.inputName).innerText;}
-            console.log(input.value)
         };
 
         return inputsArray;

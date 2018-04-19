@@ -84,7 +84,6 @@
         <br>
         <div class="container" id="activesMainMenu">
             <h1 class="center-align">Menú Activos</h1>
-            <a class="col s4 offset-s1 waves-effect waves-light btn-large" onclick="test({name: 'sinuhe',lastname: 'gomez'});">Testo</a>
             <div class="row">
                 <a class="col s4 offset-s1 waves-effect waves-light btn-large" onclick="actionButton('activesMainMenu','hide','newActive');">Nuevo Resguardo</a>
                 <a class="col s4 offset-s1 waves-effect waves-light btn-large" onclick="actionButton('activesMainMenu','hide','newEmploye');">Nuevo Trabajador</a>
@@ -453,7 +452,7 @@
     </div>
 
 
-    <div id="vehicles" class="col s12 lime lighten-5">
+    <div id="vehicles" class="col s12 ">
         <br>
         <br>
         <div class="container" id="vehiclesMainMenu">
@@ -559,6 +558,77 @@
                         <a class="col s3  waves-effect waves-light btn-large" onclick="actionButton('vehiclesExpenses','hide','vehiclesQuery');">Volver</a>
                     </div>
 
+                </form>
+            </div>
+        </div>
+        <div id="newTrip" class="hide">
+                    <div class="container">
+                            <form action="" class="col s12">
+                                <p id="vehicleTripId" class="hide"></p>
+                                <p id="driverTripId" class="hide"></p>
+                                <h5>Vehículo Seleccionado:</h5>
+                                <h4 id="tripTitle"></h4>
+                                <div class="row">
+                                    <div class="input-field col s8">
+                                        <label for="selectedVehicleTrip">Motivo Salida:</label>
+                                        <br>
+                                        <br>
+                                        <a class="btn dropdown-button col s12" href="#!" data-activates="vehicleTrip" id="selectedVehicleTrip">Seleccionar</a>
+                                        <ul id="vehicleTrip" class="dropdown-content">
+                                            <li onclick="selectCategory('Compras', 'selectedVehicleTrip');" class="collection-item">Compras</li>
+                                            <li onclick="selectCategory('Recoleccion', 'selectedVehicleTrip');" class="collection-item">Recolección</li>
+                                            <li onclick="selectCategory('Transporte', 'selectedVehicleTrip');" class="collection-item">transporte</li>
+                                            <li onclick="selectCategory('Instalacion', 'selectedVehicleTrip');" class="collection-item">Instalación</li>
+                                            <li onclick="selectCategory('Otro', 'selectedVehicleTrip');" class="collection-item">Otro</li>
+                                        </ul>
+                                    </div>
+                                    <div class="input-field col s8">
+                                        <label for="tripDate">Fecha:</label>
+                                        <input type="text" name="tripDate" id="tripDate" class="datepicker">
+                                    </div>
+                                    <div class="input-field col s8">
+                                        <label for="vehicleDriver">Conductor:</label><br><br>
+                                        <a class="btn dropdown-button col s12" href="#!" data-activates="vehicleDriverList" id="vehicleDriver">Seleccionar</a>
+                                        <ul id="vehicleDriverList" class="dropdown-content">
+                                        </ul>
+                                    </div>
+                                    <div class="input-field col s8">
+                                            <label for="initialKm">Kilometraje Inicial:</label>
+                                            <input type="number" name="initialKm" id="initialKm" class="validate">
+                                    </div>
+                                </div>
+                                <div class="input-field col s8">
+                                        <a class="col s3 offset-s2 waves-effect waves-light orange btn-large" onclick="confirmTrip('vehicleTripId');">Confirmar Salida</a>
+                                        <a class="col s3  waves-effect waves-light btn-large" onclick="actionButton('newTrip','hide','vehiclesQuery');">Volver</a>
+                                    </div>
+            
+                            </form>
+            </div>
+        </div>
+        <div class="hide" id="finishTrip">
+            <div class="container">
+                <form action="">
+                    <div class="col s8 indigo-text text-darken-4" id="finishTripTitle"></div>
+                            <div class="input-field col s8">
+                                    <label for="finalKm">Kilometraje Final:</label>
+                                    <input type="number" name="finalKm" id="finalKm" class="validate">
+                            </div>
+                            <div class="input-field col s8">
+                                    <label for="voucherNumber">Número de factura:</label>
+                                    <input type="text" name="voucherNumber" id="voucherNumber" class="validate">
+                            </div>
+                            <div class="input-field col s8">
+                                    <label for="litres">Litros:</label>
+                                    <input type="number" name="litres" id="litres" min = "1" class="validate">
+                            </div>
+                            <div class="input-field col s8">
+                                    <label for="amount">Monto:</label>
+                                    <input type="number" name="amount" id="amount" min = "1" class="validate">
+                            </div>
+                            <div class="input-field col s8">
+                                    <a class="col s3 offset-s2 waves-effect waves-light orange btn-large" id="confirmFinishButton">Finalizar Salida</a>
+                                    <a class="col s3  waves-effect waves-light btn-large" onclick="actionButton('finishTrip','hide','vehiclesQuery');">Volver</a>
+                                </div>
                 </form>
             </div>
         </div>
@@ -749,6 +819,7 @@
     <script src="js/inputManager.js"></script>
     <script src="js/driver.js"></script>
     <script src="js/expenses.js"></script>
+    <script src="js/trips.js"></script>
     <script src="js/autotable.js"></script>
 </div>
 </body>

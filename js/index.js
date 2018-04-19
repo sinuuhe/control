@@ -174,6 +174,7 @@ function actionButton(elementtoHide, classToSet, elementToShow) {
 function showQuery(elementTohide, classToSet, elementToShow) {
     document.getElementById(elementTohide).classList.add(classToSet);
     document.getElementById(elementToShow).classList.remove('hide');
+    loadDrivers('drivers', 'vehicleDriverList')
 };
 function registerActive() {
     var brand = document.getElementById('brand').value;
@@ -475,7 +476,7 @@ function vehiclesQuery(findablePath, fieldsArray, tableId, filterId, search) {
     document.getElementById('loadingVehiclesQuery').classList.remove('hide');
     document.getElementById(tableId).classList.add('hide')
     var filter;
-    if(search != undefined)filter = search.toLocaleLowerCase();
+    if (search != undefined) filter = search.toLocaleLowerCase();
     else filter = document.getElementById(filterId).innerText.toLocaleLowerCase();
     var result = database.ref(findablePath + '/' + filter);
     var resultArray;
@@ -508,15 +509,12 @@ function vehiclesQuery(findablePath, fieldsArray, tableId, filterId, search) {
                 };
                 if (filter.toLowerCase() == 'disponible') {
                     tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick='deleteVehicle( &quot;" + element.id + "&quot; , &quot;unsubscribeContent&quot; , &quot;deleteButton&quot; );'>Baja</a>  </td>";
-                    
+
                     tableBody += "<td><a class='waves-effect waves-light btn lime darken-4' onclick='newExpense(&quot;" + element.id + "&quot;,&quot;vehiclesExpenses&quot;,&quot;vehiclesQuery&quot;,&quot;expensesTitle&quot;);'>Nvo. Gasto</a>  </td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn blue' >Usar</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn blue' onclick='useVehicle(&quot;" + element.id + "&quot;)'>Usar</a>  </td>";
                 }
                 if (filter.toLowerCase() == 'en uso') {
-                    tableBody += "<td><a class='waves-effect waves-light btn red' disabled>Baja</a>  </td>";
-                    
-                    tableBody += "<td><a class='waves-effect waves-light btn lime darken-4' disabled>Nvo. Gasto</a>  </td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn blue' disabled>Detalles</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn lime darken-4 '  onclick='finishTrip(&quot;" + element.id + "&quot;);'>Terminar salida</a>  </td>";
                 }
                 if (filter.toLowerCase() == 'reparacion') {
                     tableBody += "<td><a class='waves-effect waves-light btn orange modal-trigger' href='#modalInfo' onclick='repairingDetails(&quot;" + element.id + "&quot;);'> Detalles</a></td>";
@@ -534,9 +532,9 @@ function vehiclesQuery(findablePath, fieldsArray, tableId, filterId, search) {
             table.innerHTML += tableHead + tableBody;
         }
         document.getElementById('loadingVehiclesQuery').classList.add('hide');
-        document.getElementById(tableId).classList.remove('hide') 
+        document.getElementById(tableId).classList.remove('hide')
     });
-    
+
 };
 function query(findablePath, fieldsArray, tableId, filters) {
 
@@ -781,7 +779,6 @@ function selectEmployeFilter(HTMLElementId, filters, name, propertie) {
 };
 
 function formatDate(date) {
-    console.log(date)
     var spaMonth = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
     var engMonth = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     if (date != undefined && date.length > 0) {
@@ -815,14 +812,13 @@ function deleteVehicle(vehicleId, modalId, buttonId) {
 
 function deleteVehicleConfirm(vehicleId) {
     var _vehicle = new Vehicle();
-        _vehicle.id = vehicleId;
-        _vehicle.brand = currentQueryResult[vehicleId].brand;
-        _vehicle.model = currentQueryResult[vehicleId].model;
-        _vehicle.year = currentQueryResult[vehicleId].year;
-        _vehicle.engineType = currentQueryResult[vehicleId].engineType;
+    _vehicle.id = vehicleId;
+    _vehicle.brand = currentQueryResult[vehicleId].brand;
+    _vehicle.model = currentQueryResult[vehicleId].model;
+    _vehicle.year = currentQueryResult[vehicleId].year;
+    _vehicle.engineType = currentQueryResult[vehicleId].engineType;
     var search = document.getElementById('selectedVehicleExpense').innerText.toLocaleLowerCase();
-    console.log('here ' + search)
-    Vehicle.delete(_vehicle, 'vehiclesResultsTable','selectedDriverVehicleStatus',search);
+    Vehicle.delete(_vehicle, 'vehiclesResultsTable', 'selectedDriverVehicleStatus', search);
 };
 function repairActive(activeId, HTMLElementId, path, fields) {
     var active = database.ref(path + '/' + activeId);
@@ -1115,7 +1111,7 @@ function setCurrentDate(dateInputId) {
     var day = today.getDate();
     var month = today.getMonth(); //January is 0!
     var year = today.getFullYear();
-    if(dateInputId != undefined && dateInputId.length > 0) 
+    if (dateInputId != undefined && dateInputId.length > 0)
         document.getElementById(dateInputId).value = formatDateToSpanish(day, month, year);
     else return today.getTime();
 };
@@ -1142,7 +1138,7 @@ function registerDriver() {
     newDriver.register(newDriver);
 };
 
-function newExpense(vehicleId, elementToShow,elementToHide, titleId){
+function newExpense(vehicleId, elementToShow, elementToHide, titleId) {
     setCurrentDate('expenseTodayDate');
     var vehicle = this.currentQueryResult[vehicleId];
     document.getElementById('vehicleExpensesId').innerText = vehicleId;
@@ -1151,14 +1147,14 @@ function newExpense(vehicleId, elementToShow,elementToHide, titleId){
     document.getElementById(elementToHide).classList.add('hide');
 
 };
-function useExpensesDates(elementToShow, checkboxId){
-    if(document.getElementById(checkboxId).checked)
+function useExpensesDates(elementToShow, checkboxId) {
+    if (document.getElementById(checkboxId).checked)
         document.getElementById(elementToShow).classList.remove('hide');
     else
         document.getElementById(elementToShow).classList.add('hide');
 };
 
-function confirmExpense(vehicleId){
+function confirmExpense(vehicleId) {
     var newExpense = new Expenses();
     newExpense.vehicleId = this.currentQueryResult[document.getElementById(vehicleId).innerText].id;
     newExpense.createExpense(newExpense);
@@ -1166,15 +1162,72 @@ function confirmExpense(vehicleId){
 
 function repairingDetails(vehicleId) {
     var vehicle = this.currentQueryResult[vehicleId];
-    console.log(this.currentQueryResult)
-    console.log(this.currentQueryResult[vehicleId])
-        if (vehicle != null) {
-            document.getElementById('modalInfoContent').innerHTML = "<h6>Vehiculo: " + vehicle.brand + " " + vehicle.model + " " + vehicle.year + "</h6><h6>Fecha ingreso taller: " + vehicle.inDate + "</h6><h6>Fecha de entrega: " + vehicle.outDate + "</h6><h6>Costo: " + vehicle.cost + "</h6><h6>Detalles: " + vehicle.details + "</h6>";
-            document.getElementById('repairingDoneButton').setAttribute("onclick", "confirmVehicleRepairing('" + vehicleId + "');");
-        }
+    if (vehicle != null) {
+        document.getElementById('modalInfoContent').innerHTML = "<h6>Vehiculo: " + vehicle.brand + " " + vehicle.model + " " + vehicle.year + "</h6><h6>Fecha ingreso taller: " + vehicle.inDate + "</h6><h6>Fecha de entrega: " + vehicle.outDate + "</h6><h6>Costo: " + vehicle.cost + "</h6><h6>Detalles: " + vehicle.details + "</h6>";
+        document.getElementById('repairingDoneButton').setAttribute("onclick", "confirmVehicleRepairing('" + vehicleId + "');");
+    }
 
 };
 
-function confirmVehicleRepairing(vehicleId){
+function confirmVehicleRepairing(vehicleId) {
     Expenses.repairingDone(vehicleId);
 }
+
+function loadDrivers(path, listId) {
+    var employees = database.ref(path);
+    employees.on('value', function (snapshot) {
+        var employeList = document.getElementById(listId);
+
+        //Create array of options to be added
+        var employeObject = snapshot.val();
+        var employeArray = Object.values(employeObject);
+
+
+        for (var element of employeArray) {
+            var item = document.createElement('li');
+            var option = document.createElement('a');
+            option.value = element.name + ' ' + element.lastname;
+            option.text = element.name + ' ' + element.lastname;
+            option.className = 'collection-item modal-action modal-close';
+            option.setAttribute("onclick", "selectDriver('" + element.name + " " + element.lastname + "','" + element.id + "','vehicleDriver');");
+            option.href = "#!";
+            item.appendChild(option);
+            employeList.appendChild(item);
+        }
+    });
+};
+
+function selectDriver(employeName, employeId, selectedHTML) {
+    document.getElementById(selectedHTML).innerText = employeName;
+    document.getElementById('driverTripId').innerText = employeId;
+};
+
+function useVehicle(vehicleId){
+    actionButton('vehiclesQuery','hide','newTrip');
+    document.getElementById('vehicleTripId').innerText = vehicleId;
+    document.getElementById('tripTitle').innerText = this.currentQueryResult[vehicleId].brand + " " +  this.currentQueryResult[vehicleId].model + " " + this.currentQueryResult[vehicleId].year;
+}
+
+function confirmTrip(vehicleId){
+    var _vehicleId = document.getElementById(vehicleId).innerText;
+    var newTrip = new Trips();
+    newTrip.vehicleId = _vehicleId;
+    newTrip.newTrip(newTrip);
+};
+
+function finishTrip(vehicleId){
+    actionButton('vehiclesQuery','hide','finishTrip');
+    var trip = database.ref('salidas/en curso/' + vehicleId);
+    var objectTrip;
+    trip.on('value', function(snapshot){
+            objectTrip = snapshot.val();
+            if(objectTrip != undefined){
+                document.getElementById('finishTripTitle').innerHTML = "<br><h4>Detalles:</h4><h5>Vehiculo: " + objectTrip.vehicle +"</h5><h5>Fecha salida: " + objectTrip.date + "</h5><h5>Motivo salida: " + objectTrip.issue + "</h5><h5>Conductor: " + objectTrip.driver + "</h5><br>";
+                 document.getElementById('confirmFinishButton').setAttribute("onclick", "confirmFinishTrip('" + objectTrip.vehicleId + "','" + objectTrip.tripId + "');");        
+            }
+        });
+};
+
+function confirmFinishTrip(vehicleId, tripId){
+    Trips.finisTrip(vehicleId, tripId);
+};
