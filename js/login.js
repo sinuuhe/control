@@ -37,4 +37,9 @@
         console.log('not logged in');
         //document.getElementById('logout').style.display = "none"
     }
+
+    document.addEventListener('keypress', (event) => {
+      const keyName = event.key;
+      if(keyName === 'Enter') login();
+    });
 });

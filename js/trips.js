@@ -113,15 +113,30 @@ class Trips {
             }
         ];
         database.ref('salidas/en curso/' + vehicleId).set(null);
-
+        inputs = InputManager.fillValuesFromInputs(inputs);
         database.ref('salidas/todos/' + vehicleId + '/' + tripId).update({
-            status: 'terminado'
+            status: 'terminado',
+            finalKm: inputs[0].value,
+            voucherNumber: inputs[1].value,
+            litres: inputs[2].value,
+            amount: inputs[3].value
         });
         var trip = database.ref('salidas/todos/' + vehicleId + '/' + tripId);
-        var updatedTrip = database.ref('salidas/treminadas/' + vehicleId + '/' + tripId);
+        var updatedTrip = database.ref('salidas/terminadas/' + vehicleId + '/' + tripId);
 
         trip.on('value', function (snapshot) {
             updatedTrip.set(snapshot.val());
+            var _trip = snapshot.val();
+            database.ref('expenses/date/' + getMonth(_trip.date).toLowerCase() + '/combustible/' + tripId).set({
+                cost: _trip.amount,
+                details: 'Compra de Combustible',
+                expenseId: tripId,
+                inDate: _trip.date,
+                integerInDate: formatDate(_trip.date),
+                name: 'combustible',
+                vehicleId: vehicleId,
+                vehicleName: _trip.vehicle
+            })
 
         })
         database.ref('vehicles/todos/' + vehicleId).update({

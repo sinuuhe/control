@@ -20,6 +20,24 @@ var activesFilters = {};
 var employeFilters = {};
 var useDate;
 var currentQueryResult = undefined;
+var expensesFields = [
+    {
+        propertie: 'name',
+        title: "Concepto"
+    },
+    {
+        propertie: 'inDate',
+        title: "Fecha"
+    },
+    {
+        propertie: 'vehicleName',
+        title: "Vehículo"
+    },
+    {
+        propertie: 'cost',
+        title: "Importe"
+    },
+];
 var vehiclesFields = [
     {
         propertie: 'model',
@@ -134,18 +152,18 @@ $(document).ready(function () {
     });
 });
 
-function login() {
-    var email = document.getElementById('user').value;
-    email = email + "@gmail.com";
-    var pass = document.getElementById('password').value;
 
-    //Auth
-    const auth = firebase.auth();
-    const promise = auth.signInWithEmailAndPassword(email, pass);
-
-    promise.catch(e => console.log(e.message));
-};
-
+//Session Timer
+firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
+  .then(function() {
+    return firebase.auth().signInWithEmailAndPassword(email, password);
+  })
+  .catch(function(error) {
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+  });
+  
 //Adding a listener for the user state
 firebase.auth().onAuthStateChanged(firebaseUser => {
     //better to use CSS for the visibility
@@ -1116,6 +1134,12 @@ function setCurrentDate(dateInputId) {
     else return today.getTime();
 };
 
+function getMonth(date) {
+    var res = date.split(" ");
+    var month = res[1].slice(0, res[1].length - 1)
+    return month;
+}
+
 function formatDateToSpanish(day, month, year) {
     var formatedDate;
     var spaMonth = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
@@ -1202,32 +1226,158 @@ function selectDriver(employeName, employeId, selectedHTML) {
     document.getElementById('driverTripId').innerText = employeId;
 };
 
-function useVehicle(vehicleId){
-    actionButton('vehiclesQuery','hide','newTrip');
+function useVehicle(vehicleId) {
+    actionButton('vehiclesQuery', 'hide', 'newTrip');
     document.getElementById('vehicleTripId').innerText = vehicleId;
-    document.getElementById('tripTitle').innerText = this.currentQueryResult[vehicleId].brand + " " +  this.currentQueryResult[vehicleId].model + " " + this.currentQueryResult[vehicleId].year;
+    document.getElementById('tripTitle').innerText = this.currentQueryResult[vehicleId].brand + " " + this.currentQueryResult[vehicleId].model + " " + this.currentQueryResult[vehicleId].year;
 }
 
-function confirmTrip(vehicleId){
+function confirmTrip(vehicleId) {
     var _vehicleId = document.getElementById(vehicleId).innerText;
     var newTrip = new Trips();
     newTrip.vehicleId = _vehicleId;
     newTrip.newTrip(newTrip);
 };
 
-function finishTrip(vehicleId){
-    actionButton('vehiclesQuery','hide','finishTrip');
+function finishTrip(vehicleId) {
+    actionButton('vehiclesQuery', 'hide', 'finishTrip');
     var trip = database.ref('salidas/en curso/' + vehicleId);
     var objectTrip;
-    trip.on('value', function(snapshot){
-            objectTrip = snapshot.val();
-            if(objectTrip != undefined){
-                document.getElementById('finishTripTitle').innerHTML = "<br><h4>Detalles:</h4><h5>Vehiculo: " + objectTrip.vehicle +"</h5><h5>Fecha salida: " + objectTrip.date + "</h5><h5>Motivo salida: " + objectTrip.issue + "</h5><h5>Conductor: " + objectTrip.driver + "</h5><br>";
-                 document.getElementById('confirmFinishButton').setAttribute("onclick", "confirmFinishTrip('" + objectTrip.vehicleId + "','" + objectTrip.tripId + "');");        
-            }
-        });
+    trip.on('value', function (snapshot) {
+        objectTrip = snapshot.val();
+        if (objectTrip != undefined) {
+            document.getElementById('finishTripTitle').innerHTML = "<br><h4>Detalles:</h4><h5>Vehiculo: " + objectTrip.vehicle + "</h5><h5>Fecha salida: " + objectTrip.date + "</h5><h5>Motivo salida: " + objectTrip.issue + "</h5><h5>Conductor: " + objectTrip.driver + "</h5><br>";
+            document.getElementById('confirmFinishButton').setAttribute("onclick", "confirmFinishTrip('" + objectTrip.vehicleId + "','" + objectTrip.tripId + "');");
+        }
+    });
 };
 
-function confirmFinishTrip(vehicleId, tripId){
+function confirmFinishTrip(vehicleId, tripId) {
     Trips.finisTrip(vehicleId, tripId);
 };
+
+function searchExpenses(filterId, selectedMonthId) {
+    document.getElementById('signature').classList.remove('hide');
+    var filter = document.getElementById(filterId).innerText;
+    var month = document.getElementById(selectedMonthId).innerText;
+    month = month.toLowerCase();
+    console.log('/expenses/date/' + month)
+    vehiclesQueryReport('/expenses/date/' + month, expensesFields, 'vehiclesFiltersResultsTable', filterId);
+}
+
+function vehiclesQueryReport(findablePath, fieldsArray, tableId, filterId, search) {
+    document.getElementById('loadingVehiclesQuery').classList.remove('hide');
+    document.getElementById(tableId).classList.add('hide')
+    var filter;
+    if (search != undefined) filter = search.toLocaleLowerCase();
+    else filter = document.getElementById(filterId).innerText.toLocaleLowerCase();
+    var result = database.ref(findablePath + '/' + filter);
+    var resultArray;
+    var table = document.getElementById(tableId);
+    var table = document.getElementById(tableId);
+    table.innerHTML = "";
+
+    var tableHead, tableBody;
+    tableHead = "<thead><tr>"
+    tableBody = "<tbody>"
+
+    result.on('value', function (snapshot) {
+        var total = 0;
+        if (snapshot.val() != undefined && snapshot.val() != null) {
+            resultObject = snapshot.val();
+            this.currentQueryResult = resultObject;
+            resultArray = Object.values(resultObject);
+            //without filters
+            for (var field of fieldsArray) {
+                tableHead += "<th>" + field.title + "</th>";
+            };
+            tableHead += "</tr></thead>"
+            for (var element of resultArray) {
+                tableBody += '<tr>';
+                for (var field of fieldsArray) {
+                    if (element[field.propertie] == undefined) {
+                        tableBody += "<td>NA</td>"
+                    } else {
+                        if (field.propertie == 'cost') {
+                            total += Number(element[field.propertie]);
+                            tableBody += "<td> $ " + element[field.propertie] + "</td>";
+                        } else
+                            tableBody += "<td>" + element[field.propertie] + "</td>";
+
+                    }
+                };
+                if (filter.toLowerCase() == 'disponible') {
+                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick='deleteVehicle( &quot;" + element.id + "&quot; , &quot;unsubscribeContent&quot; , &quot;deleteButton&quot; );'>Baja</a>  </td>";
+
+                    tableBody += "<td><a class='waves-effect waves-light btn lime darken-4' onclick='newExpense(&quot;" + element.id + "&quot;,&quot;vehiclesExpenses&quot;,&quot;vehiclesQuery&quot;,&quot;expensesTitle&quot;);'>Nvo. Gasto</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn blue' onclick='useVehicle(&quot;" + element.id + "&quot;)'>Usar</a>  </td>";
+                }
+                if (filter.toLowerCase() == 'en uso') {
+                    tableBody += "<td><a class='waves-effect waves-light btn lime darken-4 '  onclick='finishTrip(&quot;" + element.id + "&quot;);'>Terminar salida</a>  </td>";
+                }
+                if (filter.toLowerCase() == 'reparacion') {
+                    tableBody += "<td><a class='waves-effect waves-light btn orange modal-trigger' href='#modalInfo' onclick='repairingDetails(&quot;" + element.id + "&quot;);'> Detalles</a></td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn green' >Reparacion Lista</a></td>";
+                }
+
+
+                tableBody += '</tr>';
+            }
+            tableBody += "<tr></td><td> </td><td> </td><td></td><td></tr><td> </td><td> </td><td> </td><td>Total: $ " + total + "</td>"
+            tableBody += "</tbody>";
+            table.innerHTML += tableHead + tableBody;
+
+        } else {
+            tableBody += "<h5 class=' blue-text center-align'>                          No hay resultados para vehículos " + filter + " :(</h5>";
+            table.innerHTML += tableHead + tableBody;
+        }
+
+        document.getElementById('loadingVehiclesQuery').classList.add('hide');
+        document.getElementById(tableId).classList.remove('hide')
+
+    });
+
+};
+
+function makePDFReport() {
+    var date = new Date();
+
+    jsPDF.autoTableSetDefaults({ headerStyles: { fillColor: [62, 39, 35] } });
+    var doc = new jsPDF('l', 'pt');
+
+    var res = doc.autoTableHtmlToJson(document.getElementById("vehiclesFiltersResultsTable"));
+    var cols = [res.columns[0], res.columns[1], res.columns[2], res.columns[3]];
+
+    var header = function (data) {
+        doc.setFontSize(18);
+        doc.setTextColor(40);
+        doc.setFontStyle('normal');
+        //doc.addImage(headerImgData, 'JPEG', data.settings.margin.left, 20, 50, 50);
+        doc.text("Reporte de " + document.getElementById('selectedVehicleFilter').innerText + " al " + date.toLocaleDateString(), data.settings.margin.left, 20);
+    };
+
+    var options = {
+        theme: 'grid',
+        addPageContent: header,
+        margin: {
+            top: 100
+        },
+        startY: 35
+    };
+
+    doc.autoTable(cols, res.data, options);
+    let finalY = doc.autoTable.previous.finalY; // The y position on the page
+    if (document.getElementById('firstPrintingName').value.length > 0) {
+        doc.text(50, finalY + 230, document.getElementById('firstPrintingName').value);
+        doc.text(50, finalY + 200, "____________________")
+    }
+    if (document.getElementById('secondPrintingName').value.length > 0) {
+        doc.text(600, finalY + 230, document.getElementById('secondPrintingName').value)
+        doc.text(600, finalY + 200, "____________________")
+    }
+
+    doc.save("reporte" + date.toLocaleDateString() + ".pdf");
+    document.getElementById('firstPrintingName').value = "";
+    document.getElementById('secondPrintingName').value = "";
+    document.getElementById('signature').classList.add('hide');
+}

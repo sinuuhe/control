@@ -46,7 +46,7 @@ class Expenses{
                 vehicleName: expense.inputs[0].value,
                 name: expense.inputs[1].value,
                 vehicleId: expense.vehicleId,
-                cost: expense.inputs[2].value,
+                cost:  expense.inputs[2].value,
                 details: expense.inputs[3].value,
                 inDate: expense.inputs[4].value,
                 outDate: expense.inputs[5].value,
@@ -61,12 +61,24 @@ class Expenses{
                 database.ref(expense.path + '/todos/' + promise.key).update({
                     id: promise.key
                 });
-                database.ref(expense.path + '/' + expense.inputs[1].value + '/' + promise.key).set({
+                database.ref(expense.path + '/' + expense.inputs[1].value.toLowerCase() + '/' + promise.key).set({
                     vehicleName: expense.inputs[0].value,
                     expenseId: promise.key,
                     vehicleId: expense.vehicleId,
                     name: expense.inputs[1].value,
-                    cost: expense.inputs[2].value,
+                    cost:  expense.inputs[2].value,
+                    details: expense.inputs[3].value,
+                    inDate: expense.inputs[4].value,
+                    outDate: expense.inputs[5].value,
+                    integerInDate: formatDate(expense.inputs[4].value),
+                    integerOutDate: formatDate(expense.inputs[5].value)
+                });
+                database.ref(expense.path + '/date/' +  getMonth(expense.inputs[4].value).toLowerCase() + '/' + expense.inputs[1].value.toLowerCase() + '/' + promise.key).set({
+                    vehicleName: expense.inputs[0].value,
+                    expenseId: promise.key,
+                    vehicleId: expense.vehicleId,
+                    name: expense.inputs[1].value,
+                    cost:  expense.inputs[2].value,
                     details: expense.inputs[3].value,
                     inDate: expense.inputs[4].value,
                     outDate: expense.inputs[5].value,
@@ -92,7 +104,7 @@ class Expenses{
                         status: 'reparacion',
                         details: expense.inputs[3].value,
                         inDate: expense.inputs[4].value,
-                        cost: expense.inputs[2].value,
+                        cost:  expense.inputs[2].value,
                     outDate: expense.inputs[5].value,
                     integerInDate: formatDate(expense.inputs[4].value),
                     integerOutDate: formatDate(expense.inputs[5].value)
@@ -124,7 +136,7 @@ class Expenses{
                 vehicleName: expense.inputs[0].value,
                 vehicleId: expense.vehicleId,
                 name: expense.inputs[1].value,
-                cost: expense.inputs[2].value,
+                cost:  expense.inputs[2].value,
                 details: expense.inputs[3].value,
                 inDate: expense.inputs[4].value,
                 integerInDate: formatDate(expense.inputs[4].value)
@@ -138,7 +150,18 @@ class Expenses{
                 database.ref(expense.path + '/todos/' + promise.key).update({
                     id: promise.key
                 });
-                database.ref(expense.path + '/' + expense.inputs[1].value + '/' + promise.key).set({
+                database.ref(expense.path + '/' + expense.inputs[1].value.toLowerCase() + '/' + promise.key).set({
+                    vehicleName: expense.inputs[0].value,
+                    expenseId: promise.key,
+                    name: expense.inputs[1].value,
+                    cost: expense.inputs[2].value,
+                    vehicleId: expense.vehicleId,
+                    details: expense.inputs[3].value,
+                    inDate: expense.inputs[4].value,
+                    integerInDate: formatDate(expense.inputs[4].value)
+                });
+
+                database.ref(expense.path + '/date/' + getMonth(expense.inputs[4].value).toLowerCase() + '/' + expense.inputs[1].value.toLowerCase() + '/' + promise.key).set({
                     vehicleName: expense.inputs[0].value,
                     expenseId: promise.key,
                     name: expense.inputs[1].value,
@@ -169,7 +192,7 @@ class Expenses{
 
         updatedVehicle.on('value', function(snapshot){
             updateDisponible.set(snapshot.val());
-            database.ref('/expenses/reparaciones terminadas/' + vehicleId + '/' + setCurrentDate()).set(
+            database.ref('expenses/reparaciones terminadas/' + vehicleId + '/' + setCurrentDate()).set(
                 snapshot.val()
             );
         },function(error){
