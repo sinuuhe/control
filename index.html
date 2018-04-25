@@ -86,16 +86,9 @@
             <br>
             <br>
             <br>
-            <div class="container" id="activesMainMenu">
-                <h1 class="center-align">Menú Activos</h1>
-                <div class="row">
-                    <a class="col s4 offset-s1 waves-effect waves-light btn-large" onclick="actionButton('activesMainMenu','hide','newActive');">Nuevo Resguardo</a>
-                    <a class="col s4 offset-s1 waves-effect waves-light btn-large" onclick="actionButton('activesMainMenu','hide','newEmploye');">Nuevo Trabajador</a>
-                </div>
-                <div class="row">
-                    <a class="col s5 offset-s3 waves-effect waves-light btn-large" onclick="showQuery('activesMainMenu','hide','query','actives', activeFields,'activesTable');">Consultas</a>
-                </div>
+            <div id="toCreate">
             </div>
+
             <!-- Section showed when new active button is clicked -->
             <div class="container hide" id="newActive">
                 <div class="row">
@@ -105,7 +98,7 @@
                     <form action="" class="col s12">
                         <div class="row">
                             <div class="input-field col s8">
-                                <label for="name">Nombre:</label>
+                                <label for="name">Nombre del activo:</label>
                                 <input type="text" name="name" id="name" class="validate">
                             </div>
                             <div class="input-field col s8">
@@ -144,17 +137,28 @@
                                 <input type="text" name="model" id="model" class="validate">
                             </div>
                             <div class="input-field col s8">
-                                <input type="text" name="location" id="location" class="validate" disabled>
-                            </div>
-                            <div class="col s4">
-                                <a class="waves-effect waves-light btn modal-trigger" href="#buildings">Seleccionar Ubicación</a>
+                                <label for="selectedBuilding">Edificio:</label>
+                                <br>
+                                <br>
+                                <ul id="buildingList" class="dropdown-content">
+                                </ul>
+                                <a class="btn dropdown-button col s5" href="#!" data-activates="buildingList" id="selectedBuilding">Seleccionar Ala</a>
                             </div>
                             <div class="input-field col s8">
-                                <label for="keeperId"></label>
-                                <input type="text" name="keeperId" id="keeperId" class="validate" disabled>
+                                <label for="selectedRoom">Habitación:</label>
+                                <br>
+                                <br>
+                                <ul id="roomsList" class="dropdown-content">
+                                </ul>
+                                <a class="btn dropdown-button col s5 " href="#!" data-activates="roomsList" id="selectedRoom">Seleccionar Habitación</a>
                             </div>
-                            <div class="col s4">
-                                <a class="waves-effect waves-light btn modal-trigger" href="#employees">Seleccionar Encargado</a>
+                            <div class="input-field col s8">
+                                <label for="keeperId">Empleado:</label>
+                                <br>
+                                <br>
+                                <ul id="employeeList" class="dropdown-content">
+                                </ul>
+                                <a class="btn dropdown-button col s5 " href="#!" data-activates="employeeList" id="selectedEmployee">Seleccionar Empleado</a>
                             </div>
                             <div class="input-field col s8">
                                 <label for="maintenanceDate">Fecha de Matenimiento:</label>
@@ -189,12 +193,6 @@
                         <h4 id="buildingHeader">Seleccionar Ubicación</h4>
                         <div class="container">
                             <div class="row">
-                                <ul id="buildingList" class="dropdown-content">
-                                </ul>
-                                <a class="btn dropdown-button col s5" href="#!" data-activates="buildingList" id="selectedBuilding">Seleccionar Ala</a>
-                                <ul id="roomsList" class="dropdown-content">
-                                </ul>
-                                <a class="btn dropdown-button col s5 offset-s1" href="#!" data-activates="roomsList" id="selectedRoom">Seleccionar Habitación</a>
                             </div>
                         </div>
                     </div>
@@ -212,7 +210,7 @@
                     <form action="" class="col s12">
                         <div class="row">
                             <div class="input-field col s8">
-                                <label for="employeName">Nombre:</label>
+                                <label for="employeName">Nombre del trabajador:</label>
                                 <input type="text" name="employeName" id="employeName" class="validate">
                             </div>
                             <div class="input-field col s8">
@@ -296,20 +294,53 @@
                         <h6 class="col s12">Seleccionar Elemento a Buscar: </h6>
                         <ul id="findableSelect" class="dropdown-content ">
                             <li>
-                                <a class="collection-item " onclick="selectFindableType('actives','Activos','selectedFindable','activesFilter','employeFilter',activeFields,'resultsTable');">Activos</a>
+                                <a class="collection-item " onclick="selectFindableType('actives','Activos','selectedFindable','activesNormalSearch','employeFilter',activeFields,'resultsTable');">Activos</a>
                             </li>
                             <li>
-                                <a class="collection-item " onclick="selectFindableType('employe','Empleados','selectedFindable','employeFilter','activesFilter',employeFields,'resultsTable');">Empleados</a>
+                                <a class="collection-item " onclick="selectFindableType('employe','Empleados','selectedFindable','employeFilter','activesNormalSearch',employeFields,'resultsTable');">Empleados</a>
                             </li>
                         </ul>
                         <a class="btn dropdown-button col s12" href="#!" data-activates="findableSelect" id="selectedFindable">Seleccionar Elemento a buscar</a>
+                    </div>
+                    <div class="hide" id="activesNormalSearch">
+                        <div class="row">
+                            <div class="col s5">
+                                <p class="s12">Primer Filtro</p>
+                                <a class="btn dropdown-button col s12" href="#!" data-activates="activeFilterList" id="firstActiveFilter">Seleccionar</a>
+                                <ul id="activeFilterList" class="dropdown-content">
+                                    <li><a class="collection-item">Nombre Del Activo</a></li>
+                                    <li><a class="collection-item">Nombre del Responsable</a></li>
+                                    <li><a class="collection-item">Marca del Activo</a></li>
+                                    <li><a class="collection-item">Modelo del Activo</a></li>
+                                    <li><a class="collection-item">Estado del Activo</a></li>
+                                    <li><a class="collection-item">Categoría del Activo</a></li>
+                                    <li><a class="collection-item">Fechas</a></li>
+                                </ul>
+                            </div>
+
+                            <div class="col s5 offset-s1">
+                                <p class="s12">Segundo Filtro (Opcional)</p>
+                                <a class="btn dropdown-button col s12" href="#!" data-activates="secondActiveFilterList" id="secondActiveFilter">Seleccionar</a>
+                                <ul id="secondActiveFilterList" class="dropdown-content">
+                                        <li><a class="collection-item">Nombre Del Activo</a></li>
+                                    <li><a class="collection-item">Nombre del Responsable</a></li>
+                                    <li><a class="collection-item">Marca del Activo</a></li>
+                                    <li><a class="collection-item">Modelo del Activo</a></li>
+                                    <li><a class="collection-item">Estado del Activo</a></li>
+                                    <li><a class="collection-item">Categoría del Activo</a></li>
+                                    <li><a class="collection-item">Fechas</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <a class="btn dropdown-button col s5" href="#!" id="firstActiveFilter">Buscar</a>
+
                     </div>
                     <div id="activesFilter" class="hide">
                         <div class="row">
                             <div class="col s5">
                                 <input type="checkbox" id="activeName" class="filled-in" onclick="checkboxChecked('activeName','name','activeNameInput','activesFilters');"
                                 />
-                                <label for="activeName">Nombre</label>
+                                <label for="activeName">Nombre del activo</label>
                                 <input type="text" name="" id="activeNameInput" placeholder="Buscar..." disabled onkeyup="fillSearchInput('activeNameInput', 'activesFilters', 'name')">
                             </div>
 
@@ -511,69 +542,69 @@
 
             </div>
             <div id="reportToPrint">
-            <div class="hide" id="vehicleReports">
-                <div class="container">
-                    <h2>Reportes Vehículos</h2>
+                <div class="hide" id="vehicleReports">
+                    <div class="container">
+                        <h2>Reportes Vehículos</h2>
+                        <div class="row">
+                            <div class="col s3">
+                                <label for="selectedVehicleFilter">Seleccionar Filtro:</label>
+                                <a class="btn dropdown-button blue" href="#!" data-activates="vehicleFilters" id="selectedVehicleFilter">Seleccionar</a>
+                                <ul id="vehicleFilters" class="dropdown-content">
+                                    <li onclick="selectCategory('Repuestos', 'selectedVehicleFilter');" class="collection-item">Repuestos</li>
+                                    <li onclick="selectCategory('Aceite', 'selectedVehicleFilter');" class="collection-item">Aceite</li>
+                                    <li onclick="selectCategory('Mantenimiento Gral', 'selectedVehicleFilter');" class="collection-item">Mantenimiento Gral.</li>
+                                    <li onclick="selectCategory('Multas', 'selectedVehicleFilter');" class="collection-item">Multas</li>
+                                    <li onclick="selectCategory('Llantas', 'selectedVehicleFilter');" class="collection-item">Llantas</li>
+                                    <li onclick="selectCategory('Seguro', 'selectedVehicleFilter');" class="collection-item">Seguro</li>
+                                    <li onclick="selectCategory('Lavado', 'selectedVehicleFilter');" class="collection-item">Lavado</li>
+                                    <li onclick="selectCategory('Reparacion', 'selectedVehicleFilter');" class="collection-item">Reparación</li>
+                                    <li onclick="selectCategory('Combustible', 'selectedVehicleFilter');" class="collection-item">Combustible</li>
+                                    <li onclick="selectCategory('Otros', 'selectedVehicleFilter');" class="collection-item">Otros</li>
+                                </ul>
+                            </div>
+                            <div class="col s3">
+                                <label for="selectedVehicleMonth">Seleccionar Mes:</label>
+                                <a class="btn dropdown-button blue" href="#!" data-activates="vehicleMonths" id="selectedVehicleMonth">Seleccionar</a>
+                                <ul id="vehicleMonths" class="dropdown-content">
+                                    <li onclick="selectCategory('Enero', 'selectedVehicleMonth');" class="collection-item">Enero</li>
+                                    <li onclick="selectCategory('Febrero', 'selectedVehicleMonth');" class="collection-item">Febrero</li>
+                                    <li onclick="selectCategory('Marzo', 'selectedVehicleMonth');" class="collection-item">Marzo</li>
+                                    <li onclick="selectCategory('Abril', 'selectedVehicleMonth');" class="collection-item">Abril</li>
+                                    <li onclick="selectCategory('Mayo', 'selectedVehicleMonth');" class="collection-item">Mayo</li>
+                                    <li onclick="selectCategory('Junio', 'selectedVehicleMonth');" class="collection-item">Junio</li>
+                                    <li onclick="selectCategory('Julio', 'selectedVehicleMonth');" class="collection-item">Julio</li>
+                                    <li onclick="selectCategory('Agosto', 'selectedVehicleMonth');" class="collection-item">Agosto</li>
+                                    <li onclick="selectCategory('Septiembre', 'selectedVehicleMonth');" class="collection-item">Septiembre</li>
+                                    <li onclick="selectCategory('Octubre', 'selectedVehicleMonth');" class="collection-item">Octubre</li>
+                                    <li onclick="selectCategory('Noviembre', 'selectedVehicleMonth');" class="collection-item">Noviembre</li>
+                                    <li onclick="selectCategory('Diciembre', 'selectedVehicleMonth');" class="collection-item">Diciembre</li>
+                                </ul>
+                            </div>
+                            <div class="col s3">
+                                <a class="btn waves-effect waves-light green " id="searchVehicles" onclick="searchExpenses('selectedVehicleFilter','selectedVehicleMonth');">Buscar</a>
+                            </div>
+                        </div>
+                    </div>
                     <div class="row">
-                        <div class="col s3">
-                        <label for="selectedVehicleFilter">Seleccionar Filtro:</label>
-                        <a class="btn dropdown-button blue" href="#!" data-activates="vehicleFilters" id="selectedVehicleFilter">Seleccionar</a>
-                        <ul id="vehicleFilters" class="dropdown-content">
-                            <li onclick="selectCategory('Repuestos', 'selectedVehicleFilter');" class="collection-item">Repuestos</li>
-                            <li onclick="selectCategory('Aceite', 'selectedVehicleFilter');" class="collection-item">Aceite</li>
-                            <li onclick="selectCategory('Mantenimiento Gral', 'selectedVehicleFilter');" class="collection-item">Mantenimiento Gral.</li>
-                            <li onclick="selectCategory('Multas', 'selectedVehicleFilter');" class="collection-item">Multas</li>
-                            <li onclick="selectCategory('Llantas', 'selectedVehicleFilter');" class="collection-item">Llantas</li>
-                            <li onclick="selectCategory('Seguro', 'selectedVehicleFilter');" class="collection-item">Seguro</li>
-                            <li onclick="selectCategory('Lavado', 'selectedVehicleFilter');" class="collection-item">Lavado</li>
-                            <li onclick="selectCategory('Reparacion', 'selectedVehicleFilter');" class="collection-item">Reparación</li>
-                            <li onclick="selectCategory('Combustible', 'selectedVehicleFilter');" class="collection-item">Combustible</li>
-                            <li onclick="selectCategory('Otros', 'selectedVehicleFilter');" class="collection-item">Otros</li>
-                        </ul>
-                    </div>
-                    <div class="col s3">
-                        <label for="selectedVehicleMonth">Seleccionar Mes:</label>
-                        <a class="btn dropdown-button blue" href="#!" data-activates="vehicleMonths" id="selectedVehicleMonth">Seleccionar</a>
-                        <ul id="vehicleMonths" class="dropdown-content">
-                            <li onclick="selectCategory('Enero', 'selectedVehicleMonth');" class="collection-item">Enero</li>
-                            <li onclick="selectCategory('Febrero', 'selectedVehicleMonth');" class="collection-item">Febrero</li>
-                            <li onclick="selectCategory('Marzo', 'selectedVehicleMonth');" class="collection-item">Marzo</li>
-                            <li onclick="selectCategory('Abril', 'selectedVehicleMonth');" class="collection-item">Abril</li>
-                            <li onclick="selectCategory('Mayo', 'selectedVehicleMonth');" class="collection-item">Mayo</li>
-                            <li onclick="selectCategory('Junio', 'selectedVehicleMonth');" class="collection-item">Junio</li>
-                            <li onclick="selectCategory('Julio', 'selectedVehicleMonth');" class="collection-item">Julio</li>
-                            <li onclick="selectCategory('Agosto', 'selectedVehicleMonth');" class="collection-item">Agosto</li>
-                            <li onclick="selectCategory('Septiembre', 'selectedVehicleMonth');" class="collection-item">Septiembre</li>
-                            <li onclick="selectCategory('Octubre', 'selectedVehicleMonth');" class="collection-item">Octubre</li>
-                            <li onclick="selectCategory('Noviembre', 'selectedVehicleMonth');" class="collection-item">Noviembre</li>
-                            <li onclick="selectCategory('Diciembre', 'selectedVehicleMonth');" class="collection-item">Diciembre</li>
-                        </ul>
-                    </div>
-                    <div class="col s3">
-                        <a class="btn waves-effect waves-light green " id="searchVehicles" onclick="searchExpenses('selectedVehicleFilter','selectedVehicleMonth');">Buscar</a>
-                    </div>
-                    </div>
-                </div>
-                <div class="row">
                         <table class="striped " id="vehiclesFiltersResultsTable"></table>
                     </div>
                     <div class="row hide" id="signature">
-                            <div class="input-field col s2 offset-s2">
-                                    <label for="firstPrintingName">Primer Nombre (OPCIONAL):</label>
-                                    <input type="text" step="1" min="1" name="firstPrintingName" id="firstPrintingName" class="validate" required pattern="[0-9]">
-                                </div>
-                                <div class="input-field col s2">
-                                        <label for="secondPrintingName">Segundo Nombre (OPCIONAL):</label>
-                                        <input type="text" step="1" min="1" name="secondPrintingName" id="secondPrintingName" class="validate" required pattern="[0-9]">
-                                    </div>
+                        <div class="input-field col s2 offset-s2">
+                            <label for="firstPrintingName">Primer Nombre (OPCIONAL):</label>
+                            <input type="text" step="1" min="1" name="firstPrintingName" id="firstPrintingName" class="validate" required pattern="[0-9]">
+                        </div>
+                        <div class="input-field col s2">
+                            <label for="secondPrintingName">Segundo Nombre (OPCIONAL):</label>
+                            <input type="text" step="1" min="1" name="secondPrintingName" id="secondPrintingName" class="validate" required pattern="[0-9]">
+                        </div>
                     </div>
                     <div class="row col s12">
-                            
-                    <a class="btn waves-effect waves-light green col s2 offset-s2"  onclick="actionButton('vehicleReports','hide','vehiclesMainMenu');">Volver a Menú</a>
-                    <a class="btn waves-effect waves-light blue col s2 offset-s2"  onclick="makePDFReport();">Imprimir Reporte</a>
+
+                        <a class="btn waves-effect waves-light green col s2 offset-s2" onclick="actionButton('vehicleReports','hide','vehiclesMainMenu');">Volver a Menú</a>
+                        <a class="btn waves-effect waves-light blue col s2 offset-s2" onclick="makePDFReport();">Imprimir Reporte</a>
+                    </div>
                 </div>
             </div>
-        </div>
             <div class="hide" id="vehiclesExpenses">
                 <div class="container">
                     <form action="" class="col s12">
@@ -895,6 +926,7 @@
     <script src="js/driver.js"></script>
     <script src="js/expenses.js"></script>
     <script src="js/trips.js"></script>
+    <script src="js/newStructure.js"></script>
     <script src="js/autotable.js"></script>
     </div>
 </body>
