@@ -27,7 +27,7 @@ var properties = {
                     innerElements : [
                         {
                             htmlElement: "a",
-                            classes: "col s4 offset-s1 waves-effect waves-light btn-large",
+                            classes: "col s4 offset-s1 waves-effect waves-light btn-large  red darken-4",
                             value: "Nuevo Resguardo",
                             type:" ",
                             id:" ",
@@ -40,7 +40,7 @@ var properties = {
                         },
                         {
                             htmlElement: "a",
-                            classes: "col s4 offset-s1 waves-effect waves-light btn-large",
+                            classes: "col s4 offset-s1 waves-effect waves-light btn-large red darken-4",
                             value: "Nuevo Trabajador",
                             type:" ",
                             id:" ",
@@ -64,7 +64,7 @@ var properties = {
                         [
                             {
                                 htmlElement: "a",
-                                classes: "col s5 offset-s3 waves-effect waves-light btn-large",
+                                classes: "col s5 offset-s3 waves-effect waves-light btn-large red darken-4",
                                 value: "Consultas",
                                 type:" ",
                                 id:" ",

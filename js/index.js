@@ -19,6 +19,8 @@ var selectedDepartment = { name: "", id: "" };
 var activesFilters = {};
 var employeFilters = {};
 var useDate;
+var firstFilter = "";
+var secondFilter = "";
 var currentQueryResult = undefined;
 var expensesFields = [
     {
@@ -1570,7 +1572,110 @@ function queryTest(filters) {
         x.on('value', function(snapshot) {
             console.log(snapshot.val());
         });
-    }
+    } 
+};
+
+function selectNormalFilter(comboId, filter, selectedValue,filterName,input){
+    document.getElementById(comboId).innerText = selectedValue;
+    this[filterName].name = filter;
+    document.getElementById(input).classList.remove('hide');
+    document.getElementById('keeperFirstFilter').classList.add('hide');
+    document.getElementById('statusFirstFilter').classList.add('hide');
+    document.getElementById('categoryFirstFilter').classList.add('hide');
+}
+
+function removeFilter(secondFilter,secondActiveFilterInput){
+    this[secondFilter] = "";
+    document.getElementById(secondActiveFilterInput).value = "";
+    document.getElementById(secondActiveFilterInput).classList.add('hide');
+}
+
+function firstFilterKeeper(keeperFirstFilter,activeFilterKeeperList,comboId,selectedFilter){
+    document.getElementById(keeperFirstFilter).classList.remove('hide');
+    loadEmployeesFirstFilter('employe', activeFilterKeeperList);
+    document.getElementById(comboId).innerText = selectedFilter;
+    document.getElementById('firstActiveFilterInput').classList.add('hide');
+    document.getElementById('statusFirstFilter').classList.add('hide');
+    document.getElementById('categoryFirstFilter').classList.add('hide');
+    document.getElementById('dateInputsFirstFilter').classList.add('hide');
+};
+
+function selectEmployeFirstFilter(comboId,employeName,employeId, hiddenElementId){
+    document.getElementById(comboId).innerText = employeName;
+    document.getElementById(hiddenElementId).innerText = employeId;
+};
+
+function loadEmployeesFirstFilter(path, comboBoxId) {
+    var employees = database.ref(path);
+    employees.on('value', function (snapshot) {
+        var employeList = document.getElementById(comboBoxId);
+
+        //Create array of options to be added
+        var employeObject = snapshot.val();
+        var employeArray = Object.values(employeObject);
+
+
+        for (var element of employeArray) {
+            var item = document.createElement('li');
+            var option = document.createElement('a');
+            option.value = element.name + ' ' + element.lastname;
+            option.text = element.name + ' ' + element.lastname;
+            option.className = 'collection-item modal-action modal-close';
+            option.setAttribute("onclick", "selectEmployeFirstFilter('firstFilterSelectedKeeper','" + element.name + " " + element.lastname + "','" + element.id + "','firstFilterKeeperId');");
+            option.href = "#!";
+            item.appendChild(option)
+            employeList.appendChild(item);
+        }
+    });
+};
+
+function selectFirstFilterStatus(comboId,statusToSet){
+    document.getElementById(comboId).innerText = statusToSet
+}
+
+function useStatusFirstFilter(elementId,value){
+    document.getElementById('categoryFirstFilter').classList.add('hide');
+    document.getElementById('firstActiveFilter').innerText = value;
+    document.getElementById(elementId).classList.remove('hide');
+    document.getElementById('firstActiveFilterInput').classList.add('hide');
+    document.getElementById('keeperFirstFilter').classList.add('hide');
+    document.getElementById('dateInputsFirstFilter').classList.add('hide');
     
-   
+};
+
+function useDateFirstFilter(datesId){
+    document.getElementById('categoryFirstFilter').classList.add('hide');
+    document.getElementById(datesId).classList.remove('hide');
+    document.getElementById('firstActiveFilterInput').classList.add('hide');
+    document.getElementById('keeperFirstFilter').classList.add('hide');
+    document.getElementById('firstActiveFilter').innerText = "Fechas";
+};
+
+function checkboxCheckedDateFirst(checkboxId, propertie, inputId, filters) {
+    var _filters = this[filters];
+
+    var inputs = ['dateBeforeInputFirst', 'dateAfterInputFirst', 'dateBetweenInputAFirst', 'dateBetweenInputBFirst'];
+    if (inputId == 'dateBetweenInputFirst') {
+
+        for (var i = 0; i < inputs.length; i++) {
+            if (inputs[i] != 'dateBetweenInputAFirst' && inputs[i] != 'dateBetweenInputBFirst') {
+                document.getElementById(inputs[i]).setAttribute('disabled', '');
+                document.getElementById(inputs[i]).value = "";
+                document.getElementById(inputs[i]).innerText = "Seleccionar Fecha";
+            } else {
+                document.getElementById(inputs[i]).removeAttribute('disabled');
+            }
+        };
+    } else {
+        for (var i = 0; i < inputs.length; i++) {
+            if (inputs[i] != inputId) {
+                document.getElementById(inputs[i]).setAttribute('disabled', '');
+                document.getElementById(inputs[i]).value = "";
+                document.getElementById(inputs[i]).innerText = "Seleccionar Fecha";
+                delete _filters[properties[i]];
+            } else {
+                document.getElementById(inputs[i]).removeAttribute('disabled');
+            }
+        };
+    }
 };
