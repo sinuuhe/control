@@ -310,22 +310,22 @@
                                 <a class="btn red darken-4 dropdown-button col s12" href="#!" data-activates="activeFilterList" id="firstActiveFilter">Seleccionar</a>
                                 <ul id="activeFilterList" class="dropdown-content">
                                     <li>
-                                        <a class="collection-item" onclick="selectNormalFilter('firstActiveFilter', 'name', 'Nombre Del Activo','firstFilter','firstActiveFilterInput','secondActiveFilterInput');">Nombre Del Activo</a>
+                                        <a class="collection-item" onclick="selectNormalFilter('firstActiveFilter', 'name', 'Nombre Del Activo','firstFilter','firstActiveFilterInput');">Nombre Del Activo</a>
                                     </li>
                                     <li>
                                         <a class="collection-item" onclick="firstFilterKeeper('keeperFirstFilter','activeFilterKeeperList','firstActiveFilter','Nombre del Responsable')">Nombre del Responsable</a>
                                     </li>
                                     <li>
-                                        <a class="collection-item" onclick="selectNormalFilter('firstActiveFilter', 'brand', 'Marca del Activo','firstFilter','firstActiveFilterInput','secondActiveFilterInput');">Marca del Activo</a>
+                                        <a class="collection-item" onclick="selectNormalFilter('firstActiveFilter', 'brand', 'Marca del Activo','firstFilter','firstActiveFilterInput');">Marca del Activo</a>
                                     </li>
                                     <li>
-                                        <a class="collection-item" onclick="selectNormalFilter('firstActiveFilter', 'model', 'Modelo del Activo','firstFilter','firstActiveFilterInput','secondActiveFilterInput');">Modelo del Activo</a>
+                                        <a class="collection-item" onclick="selectNormalFilter('firstActiveFilter', 'model', 'Modelo del Activo','firstFilter','firstActiveFilterInput');">Modelo del Activo</a>
                                     </li>
                                     <li>
-                                        <a class="collection-item" onclick="useStatusFirstFilter('statusFirstFilter','Estado del Activo');">Estado del Activo</a>
+                                        <a class="collection-item" onclick="useStatusFirstFilter('statusFirstFilter','Estado del Activo','firstActiveFilter');">Estado del Activo</a>
                                     </li>
                                     <li>
-                                        <a class="collection-item" onclick="useStatusFirstFilter('categoryFirstFilter','Categoría del Activo');">Categoría del Activo</a>
+                                        <a class="collection-item" onclick="useStatusFirstFilter('categoryFirstFilter','Categoría del Activo','firstActiveFilter');">Categoría del Activo</a>
                                     </li>
                                     <li>
                                         <a class="collection-item" onclick="useDateFirstFilter('dateInputsFirstFilter');">Fechas</a>
@@ -365,23 +365,23 @@
                                     <div class="col s12" >
                                             <div class="row" >
                                                   <div class="col s5">
-                                                      <input type="radio" id="dateBeforeFirst" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateBeforeFirst','date','dateBeforeInputFirst','activesFilters');"
+                                                      <input type="radio" id="dateBeforeFirst" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateBeforeFirst','date','dateBeforeInputFirst','firstFilter');"
                                                       />
                                                       <label for="dateBeforeFirst">Antes de: </label>
-                                                      <input type="text" name="" id="dateBeforeInputFirst" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addDateToFilters('dateBeforeInput','dateBefore', 'activesFilters');">
+                                                      <input type="text" name="" id="dateBeforeInputFirst" class="datepicker" placeholder="Seleccionar Fecha..." disabled >
                                                   </div>
                                                   <div class="col s5">
-                                                      <input type="radio" id="dateAfterFirst" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateAfterFirst','date','dateAfterInputFirst','activesFilters');"
+                                                      <input type="radio" id="dateAfterFirst" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateAfterFirst','date','dateAfterInputFirst','firstFilter');"
                                                       />
                                                       <label for="dateAfterFirst">Después de: </label>
-                                                      <input type="text" name="" id="dateAfterInputFirst" class="datepicker" placeholder="Seleccionar Fecha..." disabled onchange="addDateToFilters('dateAfterInput','dateAfter', 'activesFilters');">
+                                                      <input type="text" name="" id="dateAfterInputFirst" class="datepicker" placeholder="Seleccionar Fecha..." disabled >
                                                   </div>
                                                   <div class="col s12">
-                                                      <input type="radio" id="dateBetweenFirst" class="filled-in col s12" name="group3" onclick="checkboxCheckedDateFirst('dateBetweenFirst','date','dateBetweenInputFirst','activesFilters');"
+                                                      <input type="radio" id="dateBetweenFirst" class="filled-in col s12" name="group3" onclick="checkboxCheckedDateFirst('dateBetweenFirst','date','dateBetweenInputFirst','firstFilter');"
                                                       />
                                                       <label for="dateBetweenFirst" class="col s12">Entre fechas: </label>
-                                                      <input type="text" name="" id="dateBetweenInputAFirst" class="datepicker col s3" placeholder="Seleccionar Fecha..." disabled onchange="addBetweenDateToFilters('dateBetweenInputA','dateBetween', 'activesFilters');">
-                                                      <input type="text" name="" id="dateBetweenInputBFirst" class="datepicker col s3 offset-s2" placeholder="Seleccionar Fecha..." disabled onchange="addBetweenDateToFilters('dateBetweenInputB','dateBetween', 'activesFilters');">
+                                                      <input type="text" name="" id="dateBetweenInputAFirst" class="datepicker col s3" placeholder="Seleccionar Fecha..." disabled >
+                                                      <input type="text" name="" id="dateBetweenInputBFirst" class="datepicker col s3 offset-s2" placeholder="Seleccionar Fecha..." disabled >
                                                   </div>
                                               </div>
                                       </div>
@@ -394,32 +394,85 @@
                                 <a class="btn red darken-4 dropdown-button col s9" href="#!" data-activates="secondActiveFilterList" id="secondActiveFilter">Seleccionar</a>
                                 <a class="btn red darken-4 dropdown-button col s2 offset-s1" href="#!" onclick="removeFilter('secondFilter','secondActiveFilterInput');">X</a>
                                 <ul id="secondActiveFilterList" class="dropdown-content">
-                                    <li>
-                                        <a class="collection-item" onclick="selectNormalFilter('secondActiveFilter', 'name', 'Nombre Del Activo','secondFilter','secondActiveFilterInput');">Nombre Del Activo</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item">Nombre del Responsable</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item" onclick="selectNormalFilter('secondActiveFilter', 'brand', 'Marca del Activo','secondFilter','secondActiveFilterInput');">Marca del Activo</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item" onclick="selectNormalFilter('secondActiveFilter', 'model', 'Modelo del Activo','secondFilter','secondActiveFilterInput');">Modelo del Activo</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item">Estado del Activo</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item">Categoría del Activo</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item">Fechas</a>
-                                    </li>
+                                        <li>
+                                                <a class="collection-item" onclick="selectNormalFilterSecond('secondActiveFilter', 'name', 'Nombre Del Activo','secondFilter','secondActiveFilterInput');">Nombre Del Activo</a>
+                                            </li>
+                                            <li>
+                                                <a class="collection-item" onclick="secondFilterKeeper('keeperSecondFilter','secondActiveFilterKeeperList','secondActiveFilter','Nombre del Responsable')">Nombre del Responsable</a>
+                                            </li>
+                                            <li>
+                                                <a class="collection-item" onclick="selectNormalFilterSecond('secondActiveFilter', 'brand', 'Marca del Activo','secondFilter','secondActiveFilterInput');">Marca del Activo</a>
+                                            </li>
+                                            <li>
+                                                <a class="collection-item" onclick="selectNormalFilterSecond('secondActiveFilter', 'model', 'Modelo del Activo','secondFilter','secondActiveFilterInput');">Modelo del Activo</a>
+                                            </li>
+                                            <li>
+                                                <a class="collection-item" onclick="useStatusSecondFilter('statusSecondFilter','Estado del Activo','selectedStatusSecondFilterList');">Estado del Activo</a>
+                                            </li>
+                                            <li>
+                                                <a class="collection-item" onclick="useStatusSecondFilter('categorySecondFilter','Categoría del Activo','secondActiveFilter');">Categoría del Activo</a>
+                                            </li>
+                                            <li>
+                                                <a class="collection-item" onclick="useDateSecondFilter('dateInputsSecondFilter');">Fechas</a>
+                                            </li>
                                 </ul>
                                 <input type="text" name="secondActiveFilterInput" id="secondActiveFilterInput" placeholder="Buscar..." class="validate s12 hide">
+                                <div class="hide col s12" id="keeperSecondFilter">
+                                        <p class="col s12">Seleccionar Empleado</p>
+                                        <p id="secondFilterKeeperId" class="hide"></p>
+                                        <a class="btn  red lighten-1 dropdown-button col s12 " href="#!" data-activates="secondActiveFilterKeeperList" id="firstFilterSelectedKeeper">Seleccionar</a>
+                                    <ul id="secondActiveFilterKeeperList" class="dropdown-content"></ul>
+                                    </div>
+                                    <div class="hide col s12" id="statusSecondFilter">
+                                            <p class="col s12">Seleccionar Estado</p>
+                                        <a class="btn  red lighten-1 dropdown-button col s12 " href="#!" data-activates="statusSecondFilterList" id="selectedStatusSecondFilterList">Seleccionar</a>
+                                    <ul id="statusSecondFilterList" class="dropdown-content">
+                                        <li><a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusSecondFilterList','activo');">Activo</a></li>
+                                        <li><a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusSecondFilterList','baja');">Baja</a></li>
+                                        <li><a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusSecondFilterList','rpreparacion');">Reparación</a></li>
+                                    </ul>
+                                    </div>
+                                    <div class="hide col s12" id="categorySecondFilter">
+                                            <p class="col s12">Seleccionar Categoría</p>
+                                            <a class="btn  red lighten-1 dropdown-button col s12 " href="#!" data-activates="categorySecondFilterList" id="selectedCategorySecondFilterList">Seleccionar</a>
+                                        <ul id="categorySecondFilterList" class="dropdown-content">
+                                                <li onclick="selectCategory('Herramientas', 'selectedCategorySecondFilterList');">Herramientas</li>
+                                                <li onclick="selectCategory('Máquinas Eléctricas', 'selectedCategorySecondFilterList');">Máquinas Eléctricas</li>
+                                                <li onclick="selectCategory('Maquinaria Pesada', 'selectedCategorySecondFilterList');">Maquinaria Pesada</li>
+                                                <li onclick="selectCategory('Herramienta Especializada', 'selectedCategorySecondFilterList');">Herramienta Especializada</li>
+                                                <li onclick="selectCategory('Equipo de Cómputo', 'selectedCategorySecondFilterList');">Equipo de Cómputo</li>
+                                                <li onclick="selectCategory('Equipo de Oficina', 'selectedCategorySecondFilterList');">Equipo de Oficina</li>
+                                                <li onclick="selectCategory('Mobiliario', 'selectedCategorySecondFilterList');">Mobiliario</li>
+                                        </ul>
+                                    </div>  
                             </div>
+                            <div class="row hide" id="dateInputsSecondFilter">
+                                    <div class="col s12" >
+                                            <div class="row" >
+                                                  <div class="col s5">
+                                                      <input type="radio" id="dateBeforeSecond" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateBeforeSecond','date','dateBeforeInputSecond','secondFilter');"
+                                                      />
+                                                      <label for="dateBeforeSecond">Antes de: </label>
+                                                      <input type="text" name="" id="dateBeforeInputSecond" class="datepicker" placeholder="Seleccionar Fecha..." disabled >
+                                                  </div>
+                                                  <div class="col s5">
+                                                      <input type="radio" id="dateAfterSecond" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateAfterSecond','date','dateAfterInputSecond','secondFilter');"
+                                                      />
+                                                      <label for="dateAfterSecond">Después de: </label>
+                                                      <input type="text" name="" id="dateAfterInputSecond" class="datepicker" placeholder="Seleccionar Fecha..." disabled >
+                                                  </div>
+                                                  <div class="col s12">
+                                                      <input type="radio" id="dateBetweenSecond" class="filled-in col s12" name="group3" onclick="checkboxCheckedDateFirst('dateBetweenSecond','date','dateBetweenInputSecond','secondFilter');"
+                                                      />
+                                                      <label for="dateBetweenSecond" class="col s12">Entre fechas: </label>
+                                                      <input type="text" name="" id="dateBetweenInputASecond" class="datepicker col s3" placeholder="Seleccionar Fecha..." disabled onchange="addBetweenDateToFilters('dateBetweenInputA','dateBetween', 'secondFilter');">
+                                                      <input type="text" name="" id="dateBetweenInputBSecond" class="datepicker col s3 offset-s2" placeholder="Seleccionar Fecha..." disabled onchange="addBetweenDateToFilters('dateBetweenInputB','dateBetween', 'secondFilter');">
+                                                  </div>
+                                              </div>
+                                      </div>
+                                    </div>
                         </div>
-                        <a class="btn red darken-4 dropdown-button col s5" href="#!" id="firstActiveFilter">Buscar</a>
+                        <a class="btn red darken-4 dropdown-button col s5" href="#!" onclick="simpleSearch('firstActiveFilter','secondActiveFilter','resultsTable');" id="firstActiveFilter">Buscar</a>
 
                     </div>
                     <div id="activesFilter" class="hide">

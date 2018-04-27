@@ -133,10 +133,10 @@ $(document).ready(function () {
     loadBuildings('buildingListEmploye', 'roomsListEmploye', 'selectedRoomEmploye', 'selectedBuildingEmploye');
     loadRooms('A', 'roomsList');
     loadRooms('A', 'roomsListEmploye');
-    buildMenu(properties,'toCreate');
+    buildMenu(properties, 'toCreate');
     loadDepartments('employeDepartmentList', 'selectedDepartment');
     setCurrentDate('registerDate');
-    
+
     document.getElementById('selectedRoom').setAttribute('disabled', '');
 
     $('.datepicker').pickadate({
@@ -157,14 +157,14 @@ $(document).ready(function () {
 
 //Session Timer
 firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION)
-  .then(function() {
-    return firebase.auth().signInWithEmailAndPassword(email, password);
-  })
-  .catch(function(error) {
-    // Handle Errors here.
-    var errorCode = error.code;
-    var errorMessage = error.message;
-  });
+    .then(function () {
+        return firebase.auth().signInWithEmailAndPassword(email, password);
+    })
+    .catch(function (error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+    });
 
 //Adding a listener for the user state
 firebase.auth().onAuthStateChanged(firebaseUser => {
@@ -199,14 +199,14 @@ function showQuery(elementTohide, classToSet, elementToShow) {
 };
 function registerActive() {
     var brand = document.getElementById('brand').value;
-    var location = document.getElementById('selectedBuilding').innerText + ', ' + document.getElementById('selectedRoom').innerText ;
-    if(document.getElementById('maintenanceDate').value != undefined && document.getElementById('maintenanceDate').value.length > 2 ){
+    var location = document.getElementById('selectedBuilding').innerText + ', ' + document.getElementById('selectedRoom').innerText;
+    if (document.getElementById('maintenanceDate').value != undefined && document.getElementById('maintenanceDate').value.length > 2) {
         var maintenanceDate = document.getElementById('maintenanceDate').value;
         var integerMaintenanceDate = formatDate(maintenanceDate);
     }
-    else{
-    var maintenanceDate = "NA";
-    var integerMaintenanceDate = 0;
+    else {
+        var maintenanceDate = "NA";
+        var integerMaintenanceDate = 0;
     }
     var keeperId = this.selectedEmploye.id;
     var model = document.getElementById('model').value;
@@ -216,12 +216,12 @@ function registerActive() {
     var serialNumber = document.getElementById('serialNumber').value;
     var category = document.getElementById('selectedActiveCategory').innerText;
     var quantity = document.getElementById('activeQuantity').value;
-    if(document.getElementById('warantyDate').value != undefined && document.getElementById('warantyDate').value.length > 2)
+    if (document.getElementById('warantyDate').value != undefined && document.getElementById('warantyDate').value.length > 2)
         var warantyDate = document.getElementById('warantyDate').value;
     else
         var warantyDate = "NA";
 
-        console.log(quantity);
+    console.log(quantity);
     var promise = database.ref('actives/all').push({
         brand: brand.toUpperCase(),
         keeperId: keeperId,
@@ -245,140 +245,140 @@ function registerActive() {
             id: promise.key
         });
         console.log(quantity);
-       
+
         database.ref('actives/name/' + name.toUpperCase() + '/' + promise.key).set({
             brand: brand.toUpperCase(),
-        keeperId: keeperId,
-        keeperName: this.selectedEmploye.name.toUpperCase(),
-        location: location.toUpperCase(),
-        maintenanceDate: maintenanceDate,
-        integerMaintenanceDate: integerMaintenanceDate,
-        model: model.toUpperCase(),
-        name: name.toUpperCase(),
-        registerDate: registerDate,
-        integerRegisterDate: integerRegisterDate,
-        sn: serialNumber.toUpperCase(),
-        status: 'ACTIVO',
-        category: category.toUpperCase(),
-        quantity: quantity,
-        warantyDate: warantyDate,
-        id: promise.key
+            keeperId: keeperId,
+            keeperName: this.selectedEmploye.name.toUpperCase(),
+            location: location.toUpperCase(),
+            maintenanceDate: maintenanceDate,
+            integerMaintenanceDate: integerMaintenanceDate,
+            model: model.toUpperCase(),
+            name: name.toUpperCase(),
+            registerDate: registerDate,
+            integerRegisterDate: integerRegisterDate,
+            sn: serialNumber.toUpperCase(),
+            status: 'ACTIVO',
+            category: category.toUpperCase(),
+            quantity: quantity,
+            warantyDate: warantyDate,
+            id: promise.key
         });
 
         database.ref('actives/brand/' + brand.toUpperCase() + '/' + promise.key).set({
             brand: brand.toUpperCase(),
-        keeperId: keeperId,
-        keeperName: this.selectedEmploye.name.toUpperCase(),
-        location: location.toUpperCase(),
-        maintenanceDate: maintenanceDate,
-        integerMaintenanceDate: integerMaintenanceDate,
-        model: model.toUpperCase(),
-        name: name.toUpperCase(),
-        registerDate: registerDate,
-        integerRegisterDate: integerRegisterDate,
-        sn: serialNumber.toUpperCase(),
-        status: 'ACTIVO',
-        category: category.toUpperCase(),
-        quantity: quantity,
-        warantyDate: warantyDate,
-        id: promise.key
+            keeperId: keeperId,
+            keeperName: this.selectedEmploye.name.toUpperCase(),
+            location: location.toUpperCase(),
+            maintenanceDate: maintenanceDate,
+            integerMaintenanceDate: integerMaintenanceDate,
+            model: model.toUpperCase(),
+            name: name.toUpperCase(),
+            registerDate: registerDate,
+            integerRegisterDate: integerRegisterDate,
+            sn: serialNumber.toUpperCase(),
+            status: 'ACTIVO',
+            category: category.toUpperCase(),
+            quantity: quantity,
+            warantyDate: warantyDate,
+            id: promise.key
         });
 
         database.ref('actives/model/' + model.toUpperCase() + '/' + promise.key).set({
             brand: brand.toUpperCase(),
-        keeperId: keeperId,
-        keeperName: this.selectedEmploye.name.toUpperCase(),
-        location: location.toUpperCase(),
-        maintenanceDate: maintenanceDate,
-        integerMaintenanceDate: integerMaintenanceDate,
-        model: model.toUpperCase(),
-        name: name.toUpperCase(),
-        registerDate: registerDate,
-        integerRegisterDate: integerRegisterDate,
-        sn: serialNumber.toUpperCase(),
-        status: 'ACTIVO',
-        category: category.toUpperCase(),
-        quantity: quantity,
-        warantyDate: warantyDate,
-        id: promise.key
+            keeperId: keeperId,
+            keeperName: this.selectedEmploye.name.toUpperCase(),
+            location: location.toUpperCase(),
+            maintenanceDate: maintenanceDate,
+            integerMaintenanceDate: integerMaintenanceDate,
+            model: model.toUpperCase(),
+            name: name.toUpperCase(),
+            registerDate: registerDate,
+            integerRegisterDate: integerRegisterDate,
+            sn: serialNumber.toUpperCase(),
+            status: 'ACTIVO',
+            category: category.toUpperCase(),
+            quantity: quantity,
+            warantyDate: warantyDate,
+            id: promise.key
         });
 
         database.ref('actives/status/ACTIVO/' + promise.key).set({
             brand: brand.toUpperCase(),
-        keeperId: keeperId,
-        keeperName: this.selectedEmploye.name.toUpperCase(),
-        location: location.toUpperCase(),
-        maintenanceDate: maintenanceDate,
-        integerMaintenanceDate: integerMaintenanceDate,
-        model: model.toUpperCase(),
-        name: name.toUpperCase(),
-        registerDate: registerDate,
-        integerRegisterDate: integerRegisterDate,
-        sn: serialNumber.toUpperCase(),
-        status: 'ACTIVO',
-        category: category.toUpperCase(),
-        quantity: quantity,
-        warantyDate: warantyDate,
-        id: promise.key
+            keeperId: keeperId,
+            keeperName: this.selectedEmploye.name.toUpperCase(),
+            location: location.toUpperCase(),
+            maintenanceDate: maintenanceDate,
+            integerMaintenanceDate: integerMaintenanceDate,
+            model: model.toUpperCase(),
+            name: name.toUpperCase(),
+            registerDate: registerDate,
+            integerRegisterDate: integerRegisterDate,
+            sn: serialNumber.toUpperCase(),
+            status: 'ACTIVO',
+            category: category.toUpperCase(),
+            quantity: quantity,
+            warantyDate: warantyDate,
+            id: promise.key
         });
 
         database.ref('actives/category/' + category.toUpperCase() + '/' + promise.key).set({
             brand: brand.toUpperCase(),
-        keeperId: keeperId,
-        keeperName: this.selectedEmploye.name.toUpperCase(),
-        location: location.toUpperCase(),
-        maintenanceDate: maintenanceDate,
-        integerMaintenanceDate: integerMaintenanceDate,
-        model: model.toUpperCase(),
-        name: name.toUpperCase(),
-        registerDate: registerDate,
-        integerRegisterDate: integerRegisterDate,
-        sn: serialNumber.toUpperCase(),
-        status: 'ACTIVO',
-        category: category.toUpperCase(),
-        quantity: quantity,
-        warantyDate: warantyDate,
-        id: promise.key
+            keeperId: keeperId,
+            keeperName: this.selectedEmploye.name.toUpperCase(),
+            location: location.toUpperCase(),
+            maintenanceDate: maintenanceDate,
+            integerMaintenanceDate: integerMaintenanceDate,
+            model: model.toUpperCase(),
+            name: name.toUpperCase(),
+            registerDate: registerDate,
+            integerRegisterDate: integerRegisterDate,
+            sn: serialNumber.toUpperCase(),
+            status: 'ACTIVO',
+            category: category.toUpperCase(),
+            quantity: quantity,
+            warantyDate: warantyDate,
+            id: promise.key
         });
 
         database.ref('actives/date/' + integerRegisterDate + '/' + promise.key).set({
             brand: brand.toUpperCase(),
-        keeperId: keeperId,
-        keeperName: this.selectedEmploye.name.toUpperCase(),
-        location: location.toUpperCase(),
-        maintenanceDate: maintenanceDate,
-        integerMaintenanceDate: integerMaintenanceDate,
-        model: model.toUpperCase(),
-        name: name.toUpperCase(),
-        registerDate: registerDate,
-        integerRegisterDate: integerRegisterDate,
-        sn: serialNumber.toUpperCase(),
-        status: 'ACTIVO',
-        category: category.toUpperCase(),
-        quantity: quantity,
-        warantyDate: warantyDate,
-        id: promise.key
+            keeperId: keeperId,
+            keeperName: this.selectedEmploye.name.toUpperCase(),
+            location: location.toUpperCase(),
+            maintenanceDate: maintenanceDate,
+            integerMaintenanceDate: integerMaintenanceDate,
+            model: model.toUpperCase(),
+            name: name.toUpperCase(),
+            registerDate: registerDate,
+            integerRegisterDate: integerRegisterDate,
+            sn: serialNumber.toUpperCase(),
+            status: 'ACTIVO',
+            category: category.toUpperCase(),
+            quantity: quantity,
+            warantyDate: warantyDate,
+            id: promise.key
         });
         database.ref('actives/keeper/' + keeperId + '/' + promise.key).set({
             brand: brand.toUpperCase(),
-        keeperId: keeperId,
-        keeperName: this.selectedEmploye.name.toUpperCase(),
-        location: location.toUpperCase(),
-        maintenanceDate: maintenanceDate,
-        integerMaintenanceDate: integerMaintenanceDate,
-        model: model.toUpperCase(),
-        name: name.toUpperCase(),
-        registerDate: registerDate,
-        integerRegisterDate: integerRegisterDate,
-        sn: serialNumber.toUpperCase(),
-        status: 'ACTIVO',
-        category: category.toUpperCase(),
-        quantity: quantity,
-        warantyDate: warantyDate,
-        id: promise.key
+            keeperId: keeperId,
+            keeperName: this.selectedEmploye.name.toUpperCase(),
+            location: location.toUpperCase(),
+            maintenanceDate: maintenanceDate,
+            integerMaintenanceDate: integerMaintenanceDate,
+            model: model.toUpperCase(),
+            name: name.toUpperCase(),
+            registerDate: registerDate,
+            integerRegisterDate: integerRegisterDate,
+            sn: serialNumber.toUpperCase(),
+            status: 'ACTIVO',
+            category: category.toUpperCase(),
+            quantity: quantity,
+            warantyDate: warantyDate,
+            id: promise.key
         });
 
-        
+
         setModal('Registro Exitoso', 'El activo se registró correctamente.');
         $('#message').modal('open').value = "";
         document.getElementById('brand').value = "";
@@ -398,7 +398,7 @@ function registerActive() {
         this.selectedRoom.id = "";
         this.selectedRoom.name = "";
         document.getElementById('selectedActiveCategory').innerText = "Seleccionar Categoría"
-        
+
     }, function (error) {
         setModal('Error al registrar', 'No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
         $('#message').modal('open').value = "";
@@ -1530,7 +1530,7 @@ function makePDFReport() {
     document.getElementById('signature').classList.add('hide');
 }
 
-function buildMenu(properties, htmlId){
+function buildMenu(properties, htmlId) {
     var toSet = document.getElementById(htmlId);
     var body = document.createElement(properties.htmlElement);
     body.className = properties.classes;
@@ -1538,59 +1538,66 @@ function buildMenu(properties, htmlId){
     body.id = properties.id;
     body.type = properties.type;
     body.setAttribute(properties.events.name, properties.events.method);
-    if(properties.innerElements != ' ')menuBuilder(properties.innerElements,body);
+    if (properties.innerElements != ' ') menuBuilder(properties.innerElements, body);
 
     toSet.appendChild(body);
 };
 
-function menuBuilder(propertie, incoming){
-    for(element of propertie){
+function menuBuilder(propertie, incoming) {
+    for (element of propertie) {
         var newElement = document.createElement(element.htmlElement);
-            newElement.className = element.classes;
-            newElement.textContent = element.value;
-            newElement.id = element.id;
-            newElement.type = element.type;
-            if(element.events != ' ')
-                newElement.setAttribute(element.events.name, element.events.method);
-            if(element.innerElements != ' ') {
-                menuBuilder(element.innerElements,newElement);
-            }
-            incoming.appendChild(newElement);
+        newElement.className = element.classes;
+        newElement.textContent = element.value;
+        newElement.id = element.id;
+        newElement.type = element.type;
+        if (element.events != ' ')
+            newElement.setAttribute(element.events.name, element.events.method);
+        if (element.innerElements != ' ') {
+            menuBuilder(element.innerElements, newElement);
+        }
+        incoming.appendChild(newElement);
     }
 };
 
 
 function queryTest(filters) {
-    if(filters != undefined){
+    if (filters != undefined) {
         var _filters = Object.values(filters);
         var x = database.ref('actives');
-        for(filter of _filters){
+        for (filter of _filters) {
 
             x = x.orderByChild(filter.propertie);
             x = x.equalTo(filter.search);
         }
-        x.on('value', function(snapshot) {
+        x.on('value', function (snapshot) {
             console.log(snapshot.val());
         });
-    } 
+    }
 };
 
-function selectNormalFilter(comboId, filter, selectedValue,filterName,input){
+function selectNormalFilter(comboId, filter, selectedValue, filterName, inputId) {
     document.getElementById(comboId).innerText = selectedValue;
     this[filterName].name = filter;
-    document.getElementById(input).classList.remove('hide');
+    document.getElementById(inputId).classList.remove('hide')
     document.getElementById('keeperFirstFilter').classList.add('hide');
     document.getElementById('statusFirstFilter').classList.add('hide');
     document.getElementById('categoryFirstFilter').classList.add('hide');
 }
-
-function removeFilter(secondFilter,secondActiveFilterInput){
+function selectNormalFilterSecond(comboId, filter, selectedValue, filterName, inputId) {
+    document.getElementById(comboId).innerText = selectedValue;
+    this[filterName].name = filter;
+    document.getElementById(inputId).classList.remove('hide')
+    document.getElementById('keeperSecondFilter').classList.add('hide');
+    document.getElementById('statusSecondFilter').classList.add('hide');
+    document.getElementById('categorySecondFilter').classList.add('hide');
+}
+function removeFilter(secondFilter, secondActiveFilterInput) {
     this[secondFilter] = "";
     document.getElementById(secondActiveFilterInput).value = "";
     document.getElementById(secondActiveFilterInput).classList.add('hide');
 }
 
-function firstFilterKeeper(keeperFirstFilter,activeFilterKeeperList,comboId,selectedFilter){
+function firstFilterKeeper(keeperFirstFilter, activeFilterKeeperList, comboId, selectedFilter) {
     document.getElementById(keeperFirstFilter).classList.remove('hide');
     loadEmployeesFirstFilter('employe', activeFilterKeeperList);
     document.getElementById(comboId).innerText = selectedFilter;
@@ -1599,13 +1606,23 @@ function firstFilterKeeper(keeperFirstFilter,activeFilterKeeperList,comboId,sele
     document.getElementById('categoryFirstFilter').classList.add('hide');
     document.getElementById('dateInputsFirstFilter').classList.add('hide');
 };
-
-function selectEmployeFirstFilter(comboId,employeName,employeId, hiddenElementId){
+function secondFilterKeeper(keeperFirstFilter, activeFilterKeeperList, comboId, selectedFilter) {
+    document.getElementById(keeperFirstFilter).classList.remove('hide');
+    loadEmployeesFirstFilter('employe', activeFilterKeeperList);
+    document.getElementById(comboId).innerText = selectedFilter;
+    document.getElementById('secondActiveFilterInput').classList.add('hide');
+    document.getElementById('statusSecondFilter').classList.add('hide');
+    document.getElementById('categorySecondFilter').classList.add('hide');
+    document.getElementById('dateInputsSecondFilter').classList.add('hide');
+};
+function selectEmployeFirstFilter(comboId, employeName, employeId, hiddenElementId) {
     document.getElementById(comboId).innerText = employeName;
     document.getElementById(hiddenElementId).innerText = employeId;
+    this.selectedEmploye.id = employeId;
 };
 
 function loadEmployeesFirstFilter(path, comboBoxId) {
+    console.log('entro con path: ' + path + ' y combo: ' + comboBoxId)
     var employees = database.ref(path);
     employees.on('value', function (snapshot) {
         var employeList = document.getElementById(comboBoxId);
@@ -1629,26 +1646,44 @@ function loadEmployeesFirstFilter(path, comboBoxId) {
     });
 };
 
-function selectFirstFilterStatus(comboId,statusToSet){
+function selectFirstFilterStatus(comboId, statusToSet) {
     document.getElementById(comboId).innerText = statusToSet
 }
 
-function useStatusFirstFilter(elementId,value){
+function useStatusFirstFilter(elementId, value, comboId) {
     document.getElementById('categoryFirstFilter').classList.add('hide');
-    document.getElementById('firstActiveFilter').innerText = value;
-    document.getElementById(elementId).classList.remove('hide');
     document.getElementById('firstActiveFilterInput').classList.add('hide');
     document.getElementById('keeperFirstFilter').classList.add('hide');
+    document.getElementById('statusFirstFilter').classList.add('hide');
     document.getElementById('dateInputsFirstFilter').classList.add('hide');
-    
+    document.getElementById(elementId).classList.remove('hide');
+    document.getElementById(comboId).innerText = value;
+
 };
 
-function useDateFirstFilter(datesId){
+function useStatusSecondFilter(elementId, value, comboId) {
+    document.getElementById('categorySecondFilter').classList.add('hide');
+    document.getElementById(elementId).classList.remove('hide');
+    document.getElementById('secondActiveFilterInput').classList.add('hide');
+    document.getElementById('keeperSecondFilter').classList.add('hide');
+    document.getElementById('dateInputsSecondFilter').classList.add('hide');
+    document.getElementById(comboId).innerText = value;
+
+};
+
+function useDateFirstFilter(datesId) {
     document.getElementById('categoryFirstFilter').classList.add('hide');
     document.getElementById(datesId).classList.remove('hide');
     document.getElementById('firstActiveFilterInput').classList.add('hide');
     document.getElementById('keeperFirstFilter').classList.add('hide');
     document.getElementById('firstActiveFilter').innerText = "Fechas";
+};
+function useDateSecondFilter(datesId) {
+    document.getElementById('categorySecondFilter').classList.add('hide');
+    document.getElementById(datesId).classList.remove('hide');
+    document.getElementById('secondActiveFilterInput').classList.add('hide');
+    document.getElementById('keeperSecondFilter').classList.add('hide');
+    document.getElementById('secondActiveFilter').innerText = "Fechas";
 };
 
 function checkboxCheckedDateFirst(checkboxId, propertie, inputId, filters) {
@@ -1679,3 +1714,168 @@ function checkboxCheckedDateFirst(checkboxId, propertie, inputId, filters) {
         };
     }
 };
+
+function simpleSearch(firstActiveFilter, secondActiveFilter, tableId) {
+    if (document.getElementById(secondActiveFilter).innerText != 'SELECCIONAR') {
+        //with two filters
+    } else {
+        //with one filter
+        filter = document.getElementById(firstActiveFilter).innerText.toLowerCase();
+
+        switch (filter) {
+            case ('nombre del activo'):
+                var path = 'name';
+                var search = document.getElementById('firstActiveFilterInput').value.toUpperCase();
+                var ref = database.ref('actives/' + path + '/' + search);
+                ref.on('value', function (snapshot) {
+                    if (snapshot.val() != null) {
+                        buildTable(snapshot.val(), tableId, this.activeFields);
+                    } else {
+                        console.log('No se encontraron resultados. Asegúrese de escribir correctamente el criterio a buscar')
+                    }
+                });
+                break;
+            case ('nombre del responsable'):
+                var path = 'keeper';
+                var search = this.selectedEmploye.id;
+                var ref = database.ref('actives/' + path + '/' + search);
+                ref.on('value', function (snapshot) {
+                    if (snapshot.val() != null) {
+                        buildTable(snapshot.val(), tableId, this.activeFields);
+                    } else {
+                        console.log('No se encontraron resultados. Asegúrese de escribir correctamente el criterio a buscar')
+                    }
+                });
+                break;
+            case ('marca del activo'):
+                var path = 'brand';
+                var search = document.getElementById('firstActiveFilterInput').value.toUpperCase();
+                var ref = database.ref('actives/' + path + '/' + search);
+                ref.on('value', function (snapshot) {
+                    if (snapshot.val() != null) {
+                        buildTable(snapshot.val(), tableId, this.activeFields);
+                    } else {
+                        console.log('No se encontraron resultados. Asegúrese de escribir correctamente el criterio a buscar')
+                    }
+                });
+                break;
+            case ('modelo del activo'):
+                var path = 'model';
+                var search = document.getElementById('firstActiveFilterInput').value.toUpperCase();
+                var ref = database.ref('actives/' + path + '/' + search);
+                ref.on('value', function (snapshot) {
+                    if (snapshot.val() != null) {
+                        buildTable(snapshot.val(), tableId, this.activeFields);
+                    } else {
+                        console.log('No se encontraron resultados. Asegúrese de escribir correctamente el criterio a buscar')
+                    }
+                });
+                break;
+            case ('estado del activo'):
+                var path = 'status';
+                var search = document.getElementById('selectedStatusFirstFilterList').innerText.toUpperCase();
+                var ref = database.ref('actives/' + path + '/' + search);
+                ref.on('value', function (snapshot) {
+                    if (snapshot.val() != null) {
+                        buildTable(snapshot.val(), tableId, this.activeFields);
+                    } else {
+                        console.log('No se encontraron resultados. Asegúrese de escribir correctamente el criterio a buscar')
+                    }
+                });
+                break;
+            case ('categoría del activo'):
+                var path = 'category';
+                var search = document.getElementById('selectedCategoryFirstFilterList').innerText.toUpperCase();
+                var ref = database.ref('actives/' + path + '/' + search);
+                ref.on('value', function (snapshot) {
+                    if (snapshot.val() != null) {
+        buildTable(snapshot.val(), tableId, this.activeFields);
+                    } else {
+                        console.log('No se encontraron resultados. Asegúrese de escribir correctamente el criterio a buscar')
+                    }
+                });
+                break;
+            case ('fechas'):
+                var path = 'date';
+
+                if (document.getElementById('dateBeforeFirst').checked) {
+                    var date = document.getElementById('dateBeforeInputFirst').value;
+                    var integerDate = formatDate(date);
+                    var ref = database.ref('actives/all');
+                    var resArray;
+                    ref.orderByChild('integerRegisterDate').endAt(integerDate).on('value', function (snapshot) {
+buildTable(snapshot.val(), tableId, this.activeFields);
+                        if (snapshot.val().length == 0) console.log("No results")
+                    });
+                }
+                if (document.getElementById('dateAfterFirst').checked) {
+                    var date = document.getElementById('dateAfterInputFirst').value;
+                    var integerDate = formatDate(date);
+                    var ref = database.ref('actives/all');
+                    console.log(integerDate)
+                    var resArray;
+                    ref.orderByChild('integerRegisterDate').startAt(integerDate).on('value', function (snapshot) {
+                         buildTable(snapshot.val(), tableId, this.activeFields);
+                        if (snapshot.val().length == 0) console.log("No results")
+                    });
+                }
+                if (document.getElementById('dateBetweenFirst').checked) {
+                    var dateA = formatDate(document.getElementById('dateBetweenInputAFirst').value);
+                    var dateB = formatDate(document.getElementById('dateBetweenInputBFirst').value);
+                    var ref = database.ref('actives/all');
+                    var resArray;
+                    ref.orderByChild('integerRegisterDate').startAt(dateA).endAt(dateB).on('value', function (snapshot) {
+                        buildTable(snapshot.val(), tableId, this.activeFields);
+                        if (snapshot.val().length == 0) console.log("No results")
+                    });
+                }
+        }
+    }
+};
+
+function buildTable(resObject, tableId, fieldsArray) {
+    var printBtn = document.getElementById('printReport');
+    printBtn.classList.remove('hide');
+    var table = document.getElementById(tableId);
+    table.innerHTML = "";
+    var tableHead, tableBody;
+    tableHead = "<thead><tr>"
+    tableBody = "<tbody>"
+    var resultArray = Object.values(resObject);
+        //without filters
+        for (var field of fieldsArray) {
+            tableHead += "<th>" + field.title + "</th>";
+        };
+        tableHead += "</tr></thead>"
+        for (var element of resultArray) {
+            tableBody += '<tr>';
+            for (var field of fieldsArray) {
+                if (element[field.propertie] == undefined) {
+                    tableBody += "<td>NA</td>"
+                } else {
+                    tableBody += "<td>" + element[field.propertie] + "</td>";
+                }
+            };
+            if (element.buildingWorkPlace == undefined) {
+                if (element.status.toLowerCase() == 'baja') {
+                    tableBody += "<td><a class='waves-effect waves-light btn red disabled modal-trigger' href='#buildings'>Baja</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
+                }
+                if (element.status.toLowerCase() == 'activo') {
+                    tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
+                }
+                if (element.status.toLowerCase() == 'reparacion') {
+                    tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;repairingActives&quot;);'>Ver Detalle</a>  </td>";
+                }
+            }
+            tableBody += '</tr>';
+        }
+        tableBody += "</tbody>";
+        table.innerHTML += tableHead + tableBody;
+
+    
+}
