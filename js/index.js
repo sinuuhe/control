@@ -128,6 +128,8 @@ $(document).ready(function () {
     document.getElementById('ready').classList.remove('hide');
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
+    setModal('AVISO PARA EL GRADUADO! 😎', "Al momento: \n -La búsqueda de activos ya está(Parece, fala que encuentres errores 😛)\n-Se agregó ubicación de Resguardo personal\n-Se agregó ubicación 'otro'\n-Se agregó 'Recepción' a Nogales\n\nVienen más cosas lol 💋");
+        $('#message').modal('open').value = "";
     loadEmployees('employe', 'employeeList');
     loadEmployeesFilter('employe', 'activeKeeperFilterSelect');
     loadBuildings('buildingList', 'roomsList', 'selectedRoom', 'selectedBuilding','O');
@@ -204,6 +206,9 @@ function registerActive() {
         var location = document.getElementById('selectedBuilding').innerText + ', ' + document.getElementById('selectedRoom').innerText;
     else
         var location = document.getElementById('otherBuildingInputField').value
+    if(document.getElementById('selectedBuilding').innerText == 'RESGUARDO PERSONAL'){
+        var location = document.getElementById('selectedBuilding').innerText;
+    }
     if (document.getElementById('maintenanceDate').value != undefined && document.getElementById('maintenanceDate').value.length > 2) {
         var maintenanceDate = document.getElementById('maintenanceDate').value;
         var integerMaintenanceDate = formatDate(maintenanceDate);
@@ -429,7 +434,7 @@ function loadEmployeesChange(path, comboBoxId) {
             option.value = element.name + ' ' + element.lastname;
             option.text = element.name + ' ' + element.lastname;
             option.className = 'collection-item';
-            option.setAttribute("onclick", "selectEmployeChange('" + element.name + " " + element.lastname + "');");
+            option.setAttribute("onclick", "selectEmployeChange('" + element.name + " " + element.lastname + "','" + element.id + "');");
             option.href = "#!";
             employeList.appendChild(option);
         }
@@ -573,8 +578,9 @@ function selectEmploye(employeName, employeId) {
     keeper.innerText = employeName;
 };
 
-function selectEmployeChange(employeName) {
+function selectEmployeChange(employeName, employeId) {
     document.getElementById('newKeeper').innerText = "Nuevo Responsable: " + employeName;
+    this.selectedEmploye.id = employeId;
 };
 
 
@@ -774,13 +780,15 @@ function query(findablePath, fieldsArray, tableId, filters) {
                         }
                         if (element.status.toLowerCase() == 'activo') {
                             tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
-                            tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
-                            tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives/all&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                            if(element.quantity != 1)tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
+                    else
+                    tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives/all&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'reparacion') {
                             tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
-                            tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
-                            tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;repairingActives&quot;);'>Ver Detalle</a>  </td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives/all&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;actives/status/REPARACION&quot;);'>Ver Detalle</a>  </td>";
                         }
                     }
                     tableBody += '</tr>';
@@ -829,13 +837,15 @@ function query(findablePath, fieldsArray, tableId, filters) {
 
                             tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                             tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
-                            tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
+                            if(element.quantity != 1)tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
+                    else
+                    tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives/all&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
                         }
                         if (element.status.toLowerCase() == 'reparacion') {
 
                             tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
-                            tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
-                            tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;repairingActives&quot;);'>Ver Detalle</a>  </td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives/all&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;actives/status/REPARACION&quot;);'>Ver Detalle</a>  </td>";
                         }
                     }
                     tableBody += '</tr>';
@@ -899,12 +909,14 @@ function query(findablePath, fieldsArray, tableId, filters) {
                     if (element.status.toLowerCase() == 'activo') {
                         tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
                         tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
-                        tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
+                        if(element.quantity != 1)tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
+                    else
+                    tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives/all&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
                     }
                     if (element.status.toLowerCase() == 'reparacion') {
                         tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
-                        tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
-                        tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;repairingActives&quot;);'>Ver Detalle</a>  </td>";
+                        tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives/all&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                        tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;actives/status/REPARACION&quot;);'>Ver Detalle</a>  </td>";
                     }
                 }
                 tableBody += '</tr>';
@@ -1030,23 +1042,19 @@ function repairActive(activeId, HTMLElementId, path, fields) {
 };
 
 function newRepairing(active, activeSN, repairingBeginingDateInputId, repairingFinishDateInputId, repairingCostInputId, repairingPlaceInputId, activeName) {
+    
+    var currentActiveValue = "";
+    var currentActive = database.ref('actives/all/' + active);
+    currentActive.on('value', function(s){
+        currentActiveValue = s.val();
+        database.ref('actives/status/REPARACION/' + active).set(s.val());
+    })
     var repairingBeginingDate = document.getElementById(repairingBeginingDateInputId).value;
     var repairingFinishDate = document.getElementById(repairingFinishDateInputId).value;
     var repairingCost = document.getElementById(repairingCostInputId).value;
     var repairingPlace = document.getElementById(repairingPlaceInputId).value;
-    database.ref('actives/' + active).update({
-        status: 'Reparacion'
-    });
-
-    var promise = database.ref('repairingActives/' + active).set({
-        repairingBeginingDate: repairingBeginingDate,
-        integerRepairingBeginingDate: formatDate(repairingBeginingDate),
-        repairingFinishDate: repairingFinishDate,
-        integerRepairingFinishDate: formatDate(repairingFinishDate),
-        cost: repairingCost,
-        place: repairingPlace,
-        sn: activeSN.toUpperCase(),
-        name: activeName
+    var promise = database.ref('actives/status/REPARACION/' + active).update({
+        status:'REPARACION'
     });
 
     promise.then(function (response) {
@@ -1056,36 +1064,72 @@ function newRepairing(active, activeSN, repairingBeginingDateInputId, repairingF
         document.getElementById(repairingFinishDateInputId).value = "";
         document.getElementById(repairingCostInputId).value = "";
         document.getElementById(repairingPlaceInputId).value = "";
-        query('actives', activeFields, 'resultsTable', activesFilters);
+        database.ref('actives/status/ACTIVO/' + active).set(null);
+        database.ref('actives/brand/' + currentActiveValue.brand + '/' + currentActiveValue.id).update({
+            status:'REPARACION'
+        });
+        database.ref('actives/all/' + currentActiveValue.id).update({
+            status:'REPARACION'
+        });
+        database.ref('actives/category/' + currentActiveValue.category + '/' + currentActiveValue.id).update({
+            status:'REPARACION'
+        });
+        database.ref('actives/keeper/' + currentActiveValue.keeperId + '/' + currentActiveValue.id).update({
+            status:'REPARACION'
+        });
+        database.ref('actives/model/' + currentActiveValue.model + '/' + currentActiveValue.id).update({
+            status:'REPARACION'
+        });
+        database.ref('actives/name/' + currentActiveValue.name + '/' + currentActiveValue.id).update({
+            status:'REPARACION'
+        });
+        database.ref('actives/status/REPARACION/' + active).update({
+            repairingBeginingDate: repairingBeginingDate,
+            integerRepairingBeginingDate: formatDate(repairingBeginingDate),
+            repairingFinishDate: repairingFinishDate,
+            integerRepairingFinishDate: formatDate(repairingFinishDate),
+            cost: repairingCost,
+            place: repairingPlace
+        })
+        simpleSearch('firstActiveFilter','secondActiveFilter','resultsTable');
         actionButton('repairing', 'hide', 'query');
     });
 };
 
 function deleteElement(id, path, fields, currentQuantity, newQuantity) {
     var promise;
-
+    var prevActive = database.ref(path + '/' + id);
     var newQuantity = document.getElementById(newQuantity).value;
     if (newQuantity > currentQuantity) {
-
+        console.log('case > ' + newQuantity + '-' + currentQuantity)
         setModal('Error', 'Ha intentado dar de baja un número de piezas mayor al existente');
         $('#message').modal('open').value = "";
     }
     if (newQuantity < currentQuantity) {//normal
-
+        console.log('case < ' + newQuantity + '-' + currentQuantity)
         promise = database.ref(path + '/' + id).update({
             quantity: (currentQuantity - newQuantity)
         });
+        database.ref('actives/status/ACTIVO/' + id).update({
+            quantity: (currentQuantity - newQuantity)
+        })
     };
     if (newQuantity == currentQuantity) {//delete
-
+        console.log('case = ' + newQuantity + '-' + currentQuantity)
         promise = database.ref(path + '/' + id).update({
             status: 'Baja',
             quantity: 0
         });
+        database.ref('actives/status/ACTIVO/' + id).set(null);
+        var newActive = database.ref('actives/status/BAJA/' + id);
+            prevActive.on('value', function(s){
+                newActive.set(s.val())
+            })
     };
     if (promise != undefined) {
         promise.then(function (response) {
-            query(path, this[fields], 'resultsTable');
+            //query(path, this[fields], 'resultsTable');
+            simpleSearch('firstActiveFilter','secondActiveFilter','resultsTable');
             setModal('Baja Correcta', 'La baja del activo se realizó correctamente.');
             $('#message').modal('open').value = "";
         }, function (error) {
@@ -1217,9 +1261,19 @@ function changeKeeper(modalContentId, activeId, fields) {
 };
 
 function confirmRepairing(activeId) {
-    var promise = database.ref('actives' + '/' + activeId + '/status').set('Activo');
+    var promise = database.ref('actives/all' + '/' + activeId + '/status').set('ACTIVO');
+    var repairedActive = database.ref('actives/all/' + activeId).on('value', function(s){
+        var currActive = s.val();
+        database.ref('actives/brand' + '/' + currActive.brand + '/' + currActive.id + '/status').set('ACTIVO');
+        database.ref('actives/category' + '/' + currActive.category + '/' + currActive.id + '/status').set('ACTIVO');
+        database.ref('actives/keeper' + '/' + currActive.keeperId + '/' + currActive.id + '/status').set('ACTIVO');
+        database.ref('actives/model' + '/' + currActive.model + '/' + currActive.id + '/status').set('ACTIVO');
+        database.ref('actives/name' + '/' + currActive.name + '/' + currActive.id + '/status').set('ACTIVO');
+        database.ref('actives/status/REPARACION' + '/' + currActive.id).set(null);
+        database.ref('actives/status' + '/ACTIVO/' + currActive.id ).set(currActive);
+    });
     promise.then(function (response) {
-        query('actives', this['activeFields'], 'resultsTable');
+        simpleSearch('firstActiveFilter','secondActiveFilter','resultsTable');
         setModal('Reparación realizada', 'El activo ahora se encuentra reparado.');
         $('#message').modal('open').value = "";
     }, function (error) {
@@ -1233,13 +1287,17 @@ function confirmChange(activeId, fields) {
     var keeperName = document.getElementById('newKeeper').innerText;
 
     keeperName = keeperName.slice(18, keeperName.length);
-    var promise = database.ref('actives' + '/' + activeId).update({
+    var promise = database.ref('actives/all' + '/' + activeId).update({
         keeperName: keeperName,
-        keeperId: keeperId
+        keeperId: this.selectedEmploye.id
     });
     promise.then(function (response) {
-        query(fields, this['activeFields'], 'resultsTable');
+        simpleSearch('firstActiveFilter','secondActiveFilter','resultsTable');
         setModal('Cambio de responsable exitoso', 'El activo ha cambiado de responsable.');
+        database.ref('actives/status/ACTIVO' + '/' + activeId).update({
+            keeperName: keeperName,
+            keeperId: this.selectedEmploye.id
+        });
         $('#message').modal('open').value = "";
     }, function (error) {
         setModal('Error al hacer la reparacion', 'No se pudo llevar a cabo la reparacion. Por favor inténtelo de nuevo.');
@@ -1871,6 +1929,7 @@ function simpleSearch(firstActiveFilter, secondActiveFilter, tableId) {
             case ('estado del activo'):
                 var path = 'status';
                 var search = document.getElementById('selectedStatusFirstFilterList').innerText.toUpperCase();
+                console.log('path on status ' + 'actives/' + path + '/' + search)
                 var ref = database.ref('actives/' + path + '/' + search);
                 if(document.getElementById(secondActiveFilter).innerText != "SELECCIONAR"){
                     var secondSearch = this.secondSearch.toUpperCase();            
@@ -1976,7 +2035,8 @@ function simpleSearch(firstActiveFilter, secondActiveFilter, tableId) {
                 }
         }
     }
-    
+    document.getElementById('firstActiveFilterInput').value = "";
+    document.getElementById('secondActiveFilterInput').value = "";
 };
 
 function buildTable(resObject, tableId, fieldsArray) {
@@ -2011,13 +2071,15 @@ function buildTable(resObject, tableId, fieldsArray) {
                 }
                 if (element.status.toLowerCase() == 'activo') {
                     tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives/all&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                    if(element.quantity != 1)tableBody += "<td><a class='waves-effect waves-light btn green' disabled>Reparar</a>  </td>";
+                    else
+                    tableBody += "<td><a class='waves-effect waves-light btn green' onclick = 'repairActive( &quot;" + element.id + "&quot;,&quot;repairing&quot;,&quot;actives/all&quot;,&quot;activeFields&quot;);'>Reparar</a>  </td>";
                 }
                 if (element.status.toLowerCase() == 'reparacion') {
                     tableBody += "<td><a class='waves-effect waves-light btn blue modal-trigger' href='#changeKeeper' onclick = 'changeKeeper( &quot;changeKeeperModalContent&quot;,&quot;" + element.id + "&quot;,&quot;actives&quot;);'>Responsable</a>  </td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;repairingActives&quot;);'>Ver Detalle</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick = 'confirmUnsubscribing( &quot;" + element.id + "&quot;,&quot;unsubscribeModalMessage&quot;,&quot;actives/all&quot;,&quot;activeFields&quot;);'>Baja</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn yellow modal-trigger' href='#modalInfo' onclick = 'viewStatus( &quot;modalInfoContent&quot;,&quot;" + element.id + "&quot;,&quot;actives/status/REPARACION&quot;);'>Ver Detalle</a>  </td>";
                 }
             }
             tableBody += '</tr>';
