@@ -21,6 +21,7 @@ var employeFilters = {};
 var useDate;
 var firstFilter = "";
 var secondFilter = "";
+var secondSearch = "";
 var currentQueryResult = undefined;
 var expensesFields = [
     {
@@ -129,7 +130,7 @@ $(document).ready(function () {
     $('.modal').modal();
     loadEmployees('employe', 'employeeList');
     loadEmployeesFilter('employe', 'activeKeeperFilterSelect');
-    loadBuildings('buildingList', 'roomsList', 'selectedRoom', 'selectedBuilding');
+    loadBuildings('buildingList', 'roomsList', 'selectedRoom', 'selectedBuilding','O');
     loadBuildings('buildingListEmploye', 'roomsListEmploye', 'selectedRoomEmploye', 'selectedBuildingEmploye');
     loadRooms('A', 'roomsList');
     loadRooms('A', 'roomsListEmploye');
@@ -199,7 +200,10 @@ function showQuery(elementTohide, classToSet, elementToShow) {
 };
 function registerActive() {
     var brand = document.getElementById('brand').value;
-    var location = document.getElementById('selectedBuilding').innerText + ', ' + document.getElementById('selectedRoom').innerText;
+    if(document.getElementById('selectedBuilding').innerText != 'OTRO')
+        var location = document.getElementById('selectedBuilding').innerText + ', ' + document.getElementById('selectedRoom').innerText;
+    else
+        var location = document.getElementById('otherBuildingInputField').value
     if (document.getElementById('maintenanceDate').value != undefined && document.getElementById('maintenanceDate').value.length > 2) {
         var maintenanceDate = document.getElementById('maintenanceDate').value;
         var integerMaintenanceDate = formatDate(maintenanceDate);
@@ -220,8 +224,6 @@ function registerActive() {
         var warantyDate = document.getElementById('warantyDate').value;
     else
         var warantyDate = "NA";
-
-    console.log(quantity);
     var promise = database.ref('actives/all').push({
         brand: brand.toUpperCase(),
         keeperId: keeperId,
@@ -341,24 +343,6 @@ function registerActive() {
             id: promise.key
         });
 
-        database.ref('actives/date/' + integerRegisterDate + '/' + promise.key).set({
-            brand: brand.toUpperCase(),
-            keeperId: keeperId,
-            keeperName: this.selectedEmploye.name.toUpperCase(),
-            location: location.toUpperCase(),
-            maintenanceDate: maintenanceDate,
-            integerMaintenanceDate: integerMaintenanceDate,
-            model: model.toUpperCase(),
-            name: name.toUpperCase(),
-            registerDate: registerDate,
-            integerRegisterDate: integerRegisterDate,
-            sn: serialNumber.toUpperCase(),
-            status: 'ACTIVO',
-            category: category.toUpperCase(),
-            quantity: quantity,
-            warantyDate: warantyDate,
-            id: promise.key
-        });
         database.ref('actives/keeper/' + keeperId + '/' + promise.key).set({
             brand: brand.toUpperCase(),
             keeperId: keeperId,
@@ -397,6 +381,8 @@ function registerActive() {
         this.selectedBuilding.name = "";
         this.selectedRoom.id = "";
         this.selectedRoom.name = "";
+        document.getElementById('otherBuildingInputField').value = "";
+        document.getElementById('otherBuildingInput').classList.add('hide');
         document.getElementById('selectedActiveCategory').innerText = "Seleccionar Categoría"
 
     }, function (error) {
@@ -450,7 +436,7 @@ function loadEmployeesChange(path, comboBoxId) {
     });
 };
 
-function loadEmployeesFilter(path, comboBoxId) {
+function loadEmployeesFilterSecond(path, comboBoxId) {
     var employees = database.ref(path);
     employees.on('value', function (snapshot) {
         var employeList = document.getElementById(comboBoxId);
@@ -474,6 +460,29 @@ function loadEmployeesFilter(path, comboBoxId) {
     });
 };
 
+function loadEmployeesFilter(path, comboBoxId) {
+    var employees = database.ref(path);
+    employees.on('value', function (snapshot) {
+        var employeList = document.getElementById(comboBoxId);
+
+        //Create array of options to be added
+        var employeObject = snapshot.val();
+        var employeArray = Object.values(employeObject);
+
+
+        for (var element of employeArray) {
+            var item = document.createElement('li');
+            var option = document.createElement('a');
+            option.value = element.name + ' ' + element.lastname;
+            option.text = element.name + ' ' + element.lastname;
+            option.className = 'collection-item';
+            option.setAttribute("onclick", "selectEmployeFilter('selectedActiveKeeperFilter','activesFilters','" + element.name + " " + element.lastname + "','keeperName');");
+            option.href = "#!";
+            item.appendChild(option);
+            employeList.appendChild(item);
+        }
+    });
+};
 function loadDepartments(HTMLElementId, nextHTMLElement) {
     var department = database.ref('departments/');
     var departmentList = document.getElementById(HTMLElementId);
@@ -495,7 +504,7 @@ function loadDepartments(HTMLElementId, nextHTMLElement) {
         }
     });
 };
-function loadBuildings(elementId, nextElementId, selectedRoomInput, selectedBuildingInput) {
+function loadBuildings(elementId, nextElementId, selectedRoomInput, selectedBuildingInput, otherFlah) {
     var building = database.ref('locations/');
     var buildingArray, buildingObject;
     var buildingList = document.getElementById(elementId);
@@ -514,8 +523,25 @@ function loadBuildings(elementId, nextElementId, selectedRoomInput, selectedBuil
             listItem.appendChild(option)
             buildingList.appendChild(listItem);
         }
+        if(otherFlah != undefined && otherFlah == 'O'){
+            var listItem = document.createElement('li');
+            var option = document.createElement('a');
+            option.value = "Otro"
+            option.text = "Otro"
+            option.setAttribute("onclick", "showOther('otherBuildingInput');");
+            option.href = "#!";
+            option.id = element.id
+            listItem.appendChild(option)
+            buildingList.appendChild(listItem);
+        }
     });
 };
+
+function showOther(otherBuildingInput){
+    document.getElementById(otherBuildingInput).classList.remove('hide');
+    document.getElementById('normalBuilding').classList.add('hide');
+    document.getElementById('selectedBuilding').innerText = 'OTRO';
+}
 
 function loadRooms(buildingId, elementId, nextElementId) {
     var building = database.ref('locations/' + buildingId + '/rooms');
@@ -564,6 +590,8 @@ function selectBuilding(buildingName, buildingId, elementId, selectedRoomInput, 
     this.selectedBuilding.id = buildingId;
     loadRooms(buildingId, elementId, selectedRoomInput);
     document.getElementById(selectedRoomInput).innerText = 'Seleccionar Habitación';
+    document.getElementById('otherBuildingInput').classList.add('hide');
+    document.getElementById('normalBuilding').classList.remove('hide');
 };
 
 function selectRoom(roomName, roomId, elementId) {
@@ -939,6 +967,7 @@ function fillSearchInput(HTMLElementId, filters, propertie) {
 
 function selectEmployeFilter(HTMLElementId, filters, name, propertie) {
     document.getElementById(HTMLElementId).innerText = name
+    this.secondSearch = name;
     var _filters = this[filters];
     _filters[propertie].search = name;
 
@@ -1270,6 +1299,8 @@ function makePDF() {
 };
 function selectCategory(categoryName, nextHTMLElement) {
     document.getElementById(nextHTMLElement).innerText = categoryName;
+    this.secondSearch = categoryName.toUpperCase();
+    this.secondFilter = 'category';
 };
 
 function setCurrentDate(dateInputId) {
@@ -1582,10 +1613,11 @@ function selectNormalFilter(comboId, filter, selectedValue, filterName, inputId)
     document.getElementById('keeperFirstFilter').classList.add('hide');
     document.getElementById('statusFirstFilter').classList.add('hide');
     document.getElementById('categoryFirstFilter').classList.add('hide');
+    document.getElementById('dateInputsFirstFilter').classList.add('hide');
 }
 function selectNormalFilterSecond(comboId, filter, selectedValue, filterName, inputId) {
     document.getElementById(comboId).innerText = selectedValue;
-    this[filterName].name = filter;
+    this[filterName] = filter;
     document.getElementById(inputId).classList.remove('hide')
     document.getElementById('keeperSecondFilter').classList.add('hide');
     document.getElementById('statusSecondFilter').classList.add('hide');
@@ -1595,11 +1627,12 @@ function removeFilter(secondFilter, secondActiveFilterInput) {
     this[secondFilter] = "";
     document.getElementById(secondActiveFilterInput).value = "";
     document.getElementById(secondActiveFilterInput).classList.add('hide');
+    document.getElementById('secondActiveFilter').innerText = "SELECCIONAR";
 }
 
 function firstFilterKeeper(keeperFirstFilter, activeFilterKeeperList, comboId, selectedFilter) {
     document.getElementById(keeperFirstFilter).classList.remove('hide');
-    loadEmployeesFirstFilter('employe', activeFilterKeeperList);
+    loadEmployeesFirstFilter('employe', activeFilterKeeperList,'firstFilterSelectedKeeper');
     document.getElementById(comboId).innerText = selectedFilter;
     document.getElementById('firstActiveFilterInput').classList.add('hide');
     document.getElementById('statusFirstFilter').classList.add('hide');
@@ -1608,20 +1641,21 @@ function firstFilterKeeper(keeperFirstFilter, activeFilterKeeperList, comboId, s
 };
 function secondFilterKeeper(keeperFirstFilter, activeFilterKeeperList, comboId, selectedFilter) {
     document.getElementById(keeperFirstFilter).classList.remove('hide');
-    loadEmployeesFirstFilter('employe', activeFilterKeeperList);
+    loadEmployeesFirstFilter('employe', activeFilterKeeperList,'secondFilterSelectedKeeper');
     document.getElementById(comboId).innerText = selectedFilter;
     document.getElementById('secondActiveFilterInput').classList.add('hide');
     document.getElementById('statusSecondFilter').classList.add('hide');
     document.getElementById('categorySecondFilter').classList.add('hide');
-    document.getElementById('dateInputsSecondFilter').classList.add('hide');
 };
 function selectEmployeFirstFilter(comboId, employeName, employeId, hiddenElementId) {
     document.getElementById(comboId).innerText = employeName;
     document.getElementById(hiddenElementId).innerText = employeId;
     this.selectedEmploye.id = employeId;
+    this.secondSearch = employeId;
+    this.secondFilter = 'keeperId';
 };
 
-function loadEmployeesFirstFilter(path, comboBoxId) {
+function loadEmployeesFirstFilter(path, comboBoxId,comboId) {
     console.log('entro con path: ' + path + ' y combo: ' + comboBoxId)
     var employees = database.ref(path);
     employees.on('value', function (snapshot) {
@@ -1629,6 +1663,7 @@ function loadEmployeesFirstFilter(path, comboBoxId) {
 
         //Create array of options to be added
         var employeObject = snapshot.val();
+        console.log(snapshot.val())
         var employeArray = Object.values(employeObject);
 
 
@@ -1638,7 +1673,7 @@ function loadEmployeesFirstFilter(path, comboBoxId) {
             option.value = element.name + ' ' + element.lastname;
             option.text = element.name + ' ' + element.lastname;
             option.className = 'collection-item modal-action modal-close';
-            option.setAttribute("onclick", "selectEmployeFirstFilter('firstFilterSelectedKeeper','" + element.name + " " + element.lastname + "','" + element.id + "','firstFilterKeeperId');");
+            option.setAttribute("onclick", "selectEmployeFirstFilter('" + comboId + "','" + element.name + " " + element.lastname + "','" + element.id + "','firstFilterKeeperId');");
             option.href = "#!";
             item.appendChild(option)
             employeList.appendChild(item);
@@ -1648,6 +1683,8 @@ function loadEmployeesFirstFilter(path, comboBoxId) {
 
 function selectFirstFilterStatus(comboId, statusToSet) {
     document.getElementById(comboId).innerText = statusToSet
+    this.secondFilter = 'status';
+    this.secondSearch = statusToSet.toUpperCase();
 }
 
 function useStatusFirstFilter(elementId, value, comboId) {
@@ -1663,11 +1700,12 @@ function useStatusFirstFilter(elementId, value, comboId) {
 
 function useStatusSecondFilter(elementId, value, comboId) {
     document.getElementById('categorySecondFilter').classList.add('hide');
-    document.getElementById(elementId).classList.remove('hide');
     document.getElementById('secondActiveFilterInput').classList.add('hide');
     document.getElementById('keeperSecondFilter').classList.add('hide');
-    document.getElementById('dateInputsSecondFilter').classList.add('hide');
+    document.getElementById('statusSecondFilter').classList.add('hide');
+    document.getElementById(elementId).classList.remove('hide');
     document.getElementById(comboId).innerText = value;
+    this.secondFilter = 'category';
 
 };
 
@@ -1716,84 +1754,169 @@ function checkboxCheckedDateFirst(checkboxId, propertie, inputId, filters) {
 };
 
 function simpleSearch(firstActiveFilter, secondActiveFilter, tableId) {
-    if (document.getElementById(secondActiveFilter).innerText != 'SELECCIONAR') {
-        //with two filters
-    } else {
+    if(document.getElementById(firstActiveFilter).innerText == document.getElementById(secondActiveFilter).innerText){
+        setModal('Error de búsqueda', 'Eligió el mismo filtro.\n No se puede elegir el mismo filtro (arriba y abajo) al realizar la búsqueda');
+        $('#message').modal('open').value = "";
+    }else{
         //with one filter
-        filter = document.getElementById(firstActiveFilter).innerText.toLowerCase();
-
+        var filter = document.getElementById(firstActiveFilter).innerText.toLowerCase();
+        console.log('switch value: ' + filter)
         switch (filter) {
             case ('nombre del activo'):
                 var path = 'name';
                 var search = document.getElementById('firstActiveFilterInput').value.toUpperCase();
                 var ref = database.ref('actives/' + path + '/' + search);
-                ref.on('value', function (snapshot) {
-                    if (snapshot.val() != null) {
-                        buildTable(snapshot.val(), tableId, this.activeFields);
-                    } else {
-                        console.log('No se encontraron resultados. Asegúrese de escribir correctamente el criterio a buscar')
+                console.log('this is the path: actives/' + path + '/' + search)
+                if(document.getElementById(secondActiveFilter).innerText != "SELECCIONAR"){
+                    console.log('entro')
+                    var secondSearch = this.secondSearch;            
+                    ref.on('value', function (snapshot) {
+                        console.log('before null')
+                        if(snapshot.val() != null){
+                            console.log('after null')
+                    var filterArray = Object.values(snapshot.val());
+                    var filteredResults = [];
+                    for(var element of filterArray){
+                        console.log('this is second filt '+    this.secondFilter+ ' ' + element[this.secondFilter])
+                        console.log('eleme ' + element[this.secondFilter] + ' '  + ' search ' + secondSearch )
+                        if(element[this.secondFilter] == secondSearch)
+                            filteredResults.push(element);
                     }
-                });
+                    buildTable(filteredResults, tableId, this.activeFields);
+                }else buildTable(snapshot.val(), tableId, this.activeFields);
+                })
+                }else{
+                ref.on('value', function (snapshot) {
+                    if(snapshot.val() != null){
+                    var resultasArray = Object.values(snapshot.val())
+                    buildTable(resultasArray, tableId, this.activeFields);
+                    }else buildTable(snapshot.val(), tableId, this.activeFields);
+                });}
                 break;
             case ('nombre del responsable'):
                 var path = 'keeper';
                 var search = this.selectedEmploye.id;
                 var ref = database.ref('actives/' + path + '/' + search);
-                ref.on('value', function (snapshot) {
-                    if (snapshot.val() != null) {
-                        buildTable(snapshot.val(), tableId, this.activeFields);
-                    } else {
-                        console.log('No se encontraron resultados. Asegúrese de escribir correctamente el criterio a buscar')
+                if(document.getElementById(secondActiveFilter).innerText != "SELECCIONAR"){
+                    var secondSearch = this.secondSearch.toUpperCase();            
+                    ref.on('value', function (snapshot) {
+                        if(snapshot.val() != null){
+                    var filterArray = Object.values(snapshot.val());
+                    var filteredResults = [];
+                    for(var element of filterArray){
+                        if(element[this.secondFilter] == secondSearch)
+                            filteredResults.push(element);
                     }
-                });
+                    buildTable(filteredResults, tableId, this.activeFields);
+                }else buildTable(snapshot.val(), tableId, this.activeFields);
+                })
+                }else{
+                ref.on('value', function (snapshot) {
+                    if(snapshot.val() != null){
+                    var resultasArray = Object.values(snapshot.val())
+                    buildTable(resultasArray, tableId, this.activeFields);
+                    }else buildTable(snapshot.val(), tableId, this.activeFields);
+                });}
                 break;
             case ('marca del activo'):
                 var path = 'brand';
                 var search = document.getElementById('firstActiveFilterInput').value.toUpperCase();
                 var ref = database.ref('actives/' + path + '/' + search);
-                ref.on('value', function (snapshot) {
-                    if (snapshot.val() != null) {
-                        buildTable(snapshot.val(), tableId, this.activeFields);
-                    } else {
-                        console.log('No se encontraron resultados. Asegúrese de escribir correctamente el criterio a buscar')
+                if(document.getElementById(secondActiveFilter).innerText != "SELECCIONAR"){
+                    var secondSearch = this.secondSearch.toUpperCase();            
+                    ref.on('value', function (snapshot) {
+                        if(snapshot.val() != null){
+                    var filterArray = Object.values(snapshot.val());
+                    var filteredResults = [];
+                    for(var element of filterArray){
+                        if(element[this.secondFilter] == secondSearch)
+                            filteredResults.push(element);
                     }
-                });
+                    buildTable(filteredResults, tableId, this.activeFields);
+                }else buildTable(snapshot.val(), tableId, this.activeFields);
+                })
+                }else{
+                ref.on('value', function (snapshot) {
+                    if(snapshot.val() != null){
+                    var resultasArray = Object.values(snapshot.val())
+                    buildTable(resultasArray, tableId, this.activeFields);
+                    }else buildTable(snapshot.val(), tableId, this.activeFields);
+                });}
                 break;
             case ('modelo del activo'):
                 var path = 'model';
                 var search = document.getElementById('firstActiveFilterInput').value.toUpperCase();
                 var ref = database.ref('actives/' + path + '/' + search);
-                ref.on('value', function (snapshot) {
-                    if (snapshot.val() != null) {
-                        buildTable(snapshot.val(), tableId, this.activeFields);
-                    } else {
-                        console.log('No se encontraron resultados. Asegúrese de escribir correctamente el criterio a buscar')
+                if(document.getElementById(secondActiveFilter).innerText != "SELECCIONAR"){
+                    var secondSearch = this.secondSearch.toUpperCase();            
+                    ref.on('value', function (snapshot) {
+                        if(snapshot.val() != null){
+                    var filterArray = Object.values(snapshot.val());
+                    var filteredResults = [];
+                    for(var element of filterArray){
+                        if(element[this.secondFilter] == secondSearch)
+                            filteredResults.push(element);
                     }
-                });
+                    buildTable(filteredResults, tableId, this.activeFields);
+                }else buildTable(snapshot.val(), tableId, this.activeFields);
+                })
+                }else{
+                ref.on('value', function (snapshot) {
+                    if(snapshot.val() != null){
+                    var resultasArray = Object.values(snapshot.val())
+                    buildTable(resultasArray, tableId, this.activeFields);
+                    }else buildTable(snapshot.val(), tableId, this.activeFields);
+                });}
                 break;
             case ('estado del activo'):
                 var path = 'status';
                 var search = document.getElementById('selectedStatusFirstFilterList').innerText.toUpperCase();
                 var ref = database.ref('actives/' + path + '/' + search);
-                ref.on('value', function (snapshot) {
-                    if (snapshot.val() != null) {
-                        buildTable(snapshot.val(), tableId, this.activeFields);
-                    } else {
-                        console.log('No se encontraron resultados. Asegúrese de escribir correctamente el criterio a buscar')
+                if(document.getElementById(secondActiveFilter).innerText != "SELECCIONAR"){
+                    var secondSearch = this.secondSearch.toUpperCase();            
+                    ref.on('value', function (snapshot) {
+                        if(snapshot.val() != null){
+                    var filterArray = Object.values(snapshot.val());
+                    var filteredResults = [];
+                    for(var element of filterArray){
+                        if(element[this.secondFilter] == secondSearch)
+                            filteredResults.push(element);
                     }
-                });
+                    buildTable(filteredResults, tableId, this.activeFields);
+                }else buildTable(snapshot.val(), tableId, this.activeFields);
+                })
+                }else{
+                ref.on('value', function (snapshot) {
+                    if(snapshot.val() != null){
+                    var resultasArray = Object.values(snapshot.val())
+                    buildTable(resultasArray, tableId, this.activeFields);
+                    }else buildTable(snapshot.val(), tableId, this.activeFields);
+                });}
                 break;
             case ('categoría del activo'):
                 var path = 'category';
                 var search = document.getElementById('selectedCategoryFirstFilterList').innerText.toUpperCase();
                 var ref = database.ref('actives/' + path + '/' + search);
-                ref.on('value', function (snapshot) {
-                    if (snapshot.val() != null) {
-        buildTable(snapshot.val(), tableId, this.activeFields);
-                    } else {
-                        console.log('No se encontraron resultados. Asegúrese de escribir correctamente el criterio a buscar')
+                if(document.getElementById(secondActiveFilter).innerText != "SELECCIONAR"){
+                    var secondSearch = this.secondSearch.toUpperCase();            
+                    ref.on('value', function (snapshot) {
+                        if(snapshot.val() != null){
+                    var filterArray = Object.values(snapshot.val());
+                    var filteredResults = [];
+                    for(var element of filterArray){
+                        if(element[this.secondFilter] == secondSearch)
+                            filteredResults.push(element);
                     }
-                });
+                    buildTable(filteredResults, tableId, this.activeFields);
+                }else buildTable(snapshot.val(), tableId, this.activeFields);
+                })
+                }else{
+                ref.on('value', function (snapshot) {
+                    if(snapshot.val() != null){
+                    var resultasArray = Object.values(snapshot.val())
+                    buildTable(resultasArray, tableId, this.activeFields);
+                    }else buildTable(snapshot.val(), tableId, this.activeFields);
+                });}
                 break;
             case ('fechas'):
                 var path = 'date';
@@ -1802,21 +1925,36 @@ function simpleSearch(firstActiveFilter, secondActiveFilter, tableId) {
                     var date = document.getElementById('dateBeforeInputFirst').value;
                     var integerDate = formatDate(date);
                     var ref = database.ref('actives/all');
-                    var resArray;
+                    var resArray = null;
                     ref.orderByChild('integerRegisterDate').endAt(integerDate).on('value', function (snapshot) {
-buildTable(snapshot.val(), tableId, this.activeFields);
-                        if (snapshot.val().length == 0) console.log("No results")
+                        if(document.getElementById(secondActiveFilter).innerText != "SELECCIONAR"){
+                            var secondSearch = this.secondSearch.toUpperCase();            
+                        }else{
+                            if(snapshot.val() == null) buildTable(null, tableId, this.activeFields);
+                            else{ 
+                                resArray = Object.values(snapshot.val())
+                                buildTable(resArray, tableId, this.activeFields);
+                            }   
+                        }
                     });
+                    
                 }
                 if (document.getElementById('dateAfterFirst').checked) {
                     var date = document.getElementById('dateAfterInputFirst').value;
                     var integerDate = formatDate(date);
                     var ref = database.ref('actives/all');
                     console.log(integerDate)
-                    var resArray;
+                    var resArray = null;
                     ref.orderByChild('integerRegisterDate').startAt(integerDate).on('value', function (snapshot) {
-                         buildTable(snapshot.val(), tableId, this.activeFields);
-                        if (snapshot.val().length == 0) console.log("No results")
+                        if(document.getElementById(secondActiveFilter).innerText != "SELECCIONAR"){
+                            var secondSearch = this.secondSearch.toUpperCase();            
+                        }else{
+                            if(snapshot.val() == null) buildTable(null, tableId, this.activeFields);
+                            else{ 
+                                resArray = Object.values(snapshot.val())
+                                buildTable(resArray, tableId, this.activeFields);
+                            }   
+                        }
                     });
                 }
                 if (document.getElementById('dateBetweenFirst').checked) {
@@ -1825,12 +1963,20 @@ buildTable(snapshot.val(), tableId, this.activeFields);
                     var ref = database.ref('actives/all');
                     var resArray;
                     ref.orderByChild('integerRegisterDate').startAt(dateA).endAt(dateB).on('value', function (snapshot) {
-                        buildTable(snapshot.val(), tableId, this.activeFields);
-                        if (snapshot.val().length == 0) console.log("No results")
+                        if(document.getElementById(secondActiveFilter).innerText != "SELECCIONAR"){
+                            var secondSearch = this.secondSearch.toUpperCase();            
+                        }else{
+                            if(snapshot.val() == null) buildTable(null, tableId, this.activeFields);
+                            else{ 
+                                resArray = Object.values(snapshot.val())
+                                buildTable(resArray, tableId, this.activeFields);
+                            }   
+                        }
                     });
                 }
         }
     }
+    
 };
 
 function buildTable(resObject, tableId, fieldsArray) {
@@ -1841,13 +1987,15 @@ function buildTable(resObject, tableId, fieldsArray) {
     var tableHead, tableBody;
     tableHead = "<thead><tr>"
     tableBody = "<tbody>"
-    var resultArray = Object.values(resObject);
+    if(resObject == null) table.innerHTML = "<h3>No se encontraron resultados</h3>";
+    else{
+    if(resObject.length > 0){
         //without filters
         for (var field of fieldsArray) {
             tableHead += "<th>" + field.title + "</th>";
         };
         tableHead += "</tr></thead>"
-        for (var element of resultArray) {
+        for (var element of resObject) {
             tableBody += '<tr>';
             for (var field of fieldsArray) {
                 if (element[field.propertie] == undefined) {
@@ -1877,5 +2025,12 @@ function buildTable(resObject, tableId, fieldsArray) {
         tableBody += "</tbody>";
         table.innerHTML += tableHead + tableBody;
 
-    
+    }else{
+        table.innerHTML = "<h3>No se encontraron resultados</h3>";
+    }
+}
+};
+
+function fillSecondFilter(inputId){
+    this.secondSearch = document.getElementById(inputId).value.toUpperCase();
 }
