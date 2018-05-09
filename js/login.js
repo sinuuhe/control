@@ -30,6 +30,7 @@
     //better to use CSS for the visibility
     if(firebaseUser){
         console.log(firebaseUser);
+       //window.location.pathname = "controlActivos/index.html";
         window.location.pathname = "Users/sinuhe/Documents/controlActivos/index.html";
         //document.getElementById('logout').style.display = "block"
     }else{

@@ -5,6 +5,7 @@ var properties = {
     value:" ",
     events:" ",
     type:" ",
+    permission:"NORMAL",
     innerElements : [
         
             
@@ -15,6 +16,7 @@ var properties = {
                     events:" ",
                     innerElements :"",
                     id:" ",
+                    permission:"NORMAL",
                     type:" "
                 },
                 {
@@ -24,14 +26,16 @@ var properties = {
                     htmlElement:"div",
                     id:" ",
                     type:" ",
+                    permission:"NORMAL",
                     innerElements : [
                         {
                             htmlElement: "a",
-                            classes: "col s4 offset-s1 waves-effect waves-light btn-large  red darken-4",
+                            classes: "col s4 offset-s1 waves-effect waves-light btn-large z-depth-5 red darken-4",
                             value: "Nuevo Resguardo",
                             type:" ",
-                            id:" ",
+                            id:"scale-demo",
                             innerElements:" ",
+                            permission:"ADMINISTRADOR",
                             events:
                                 {
                                     name: "onclick",
@@ -40,11 +44,12 @@ var properties = {
                         },
                         {
                             htmlElement: "a",
-                            classes: "col s4 offset-s1 waves-effect waves-light btn-large red darken-4",
+                            classes: "col s4 offset-s1 waves-effect waves-light btn-large z-depth-5 red darken-4",
                             value: "Nuevo Trabajador",
                             type:" ",
                             id:" ",
                             innerElements:" ",
+                            permission:"ADMINISTRADOR",
                             events:
                                 {
                                     name: "onclick",
@@ -60,14 +65,30 @@ var properties = {
                     id:" ",
                     classes: "row",
                     type:" ",
+                    permission:"NORMAL",
                     innerElements :
                         [
                             {
                                 htmlElement: "a",
-                                classes: "col s5 offset-s3 waves-effect waves-light btn-large red darken-4",
+                                classes: "col s4 offset-s1 waves-effect waves-light  z-depth-5 btn-large red darken-4",
+                                value: "Nuevo Resguardo Temporal",
+                                type:" ",
+                                id:" ",
+                                permission:"NORMAL",
+                                innerElements:" ",
+                                events:
+                                    {
+                                        name: "onclick",
+                                        method: "newTemporalKeeper('activesMainMenu','hide','newTemporalKeeper');"
+                                    }
+                            },
+                            {
+                                htmlElement: "a",
+                                classes: "col s4 offset-s1 waves-effect waves-light  z-depth-5 btn-large red darken-4",
                                 value: "Consultas",
                                 type:" ",
                                 id:" ",
+                                permission:"NORMAL",
                                 innerElements:" ",
                                 events:
                                     {

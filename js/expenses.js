@@ -86,7 +86,7 @@ class Expenses{
                     integerOutDate: formatDate(expense.inputs[5].value)
                 });
 
-                database.ref(expense.path + '/pending/' + '/' + promise.key + '/' + formatDate(expense.inputs[5].value)).set({
+                database.ref(expense.path + '/pending/' + '/' + promise.key).set({
                     vehicleName: expense.inputs[0].value,
                     expenseId: promise.key,
                     name: expense.inputs[1].value,

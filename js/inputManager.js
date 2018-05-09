@@ -15,9 +15,17 @@ class InputManager{
     static fillValuesFromInputs(inputsArray){
         for(var input of inputsArray){
             if(input.type == 'input'){
-                input.value = document.getElementById(input.inputName).value;}
+                if(document.getElementById(input.inputName).value != undefined)
+                input.value = document.getElementById(input.inputName).value;
+                else
+                input.value = "No proporcionado";
+            }
             else if(input.type == 'select'){
-                input.value = document.getElementById(input.inputName).innerText;}
+                if(document.getElementById(input.inputName).innerText != undefined)
+                input.value = document.getElementById(input.inputName).innerText;
+                else
+                input.value = "No proporcionado"
+            }
         };
 
         return inputsArray;

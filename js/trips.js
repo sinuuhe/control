@@ -27,6 +27,16 @@ class Trips {
                 value: "",
                 inputName: 'initialKm',
                 type: 'input'
+            },
+            {
+                value: "",
+                inputName: 'selectedTripType',
+                type: 'select'
+            },
+            {
+                value: "",
+                inputName: 'tripOutInfo',
+                type: 'input'
             }
         ];
     };
@@ -41,6 +51,8 @@ class Trips {
             date: trip.inputs[2].value,
             driver: trip.inputs[3].value,
             initialKm: trip.inputs[4].value,
+            tripType: trip.inputs[5].value,
+            tripOutInfo: trip.inputs[6].value,
             id: trip.vehicleId
         }, function (error) {
             setModal('Error al registrar', 'No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
@@ -54,6 +66,8 @@ class Trips {
             date: trip.inputs[2].value,
             driver: trip.inputs[3].value,
             initialKm: trip.inputs[4].value,
+            tripType: trip.inputs[5].value,
+            tripOutInfo: trip.inputs[6].value,
             status: "en curso"
         }, function (error) {
             setModal('Error al registrar', 'No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
@@ -110,6 +124,11 @@ class Trips {
                 value: "",
                 inputName: 'amount',
                 type: 'input'
+            },
+            {
+                value: "",
+                inputName: 'tripInInfo',
+                type: 'input'
             }
         ];
         database.ref('salidas/en curso/' + vehicleId).set(null);
@@ -119,7 +138,8 @@ class Trips {
             finalKm: inputs[0].value,
             voucherNumber: inputs[1].value,
             litres: inputs[2].value,
-            amount: inputs[3].value
+            amount: inputs[3].value,
+            tripInInfo: inputs[4].value
         });
         var trip = database.ref('salidas/todos/' + vehicleId + '/' + tripId);
         var updatedTrip = database.ref('salidas/terminadas/' + vehicleId + '/' + tripId);

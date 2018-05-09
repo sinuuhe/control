@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Usuarios</title>
+    <link rel="stylesheet" href="materialize/css/materialize.min.css" type="text/css" media="screen,projection">
+    <link rel="stylesheet" href="css/colors.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+</head>
+<body>
+        <div id="loading">
+                <div class="container">
+                    <div class="row">
+                        <div class="col s12 offset-col s12 center-align">
+                            <div class="preloader-wrapper big active center-align">
+                                <div class="spinner-layer spinner-blue-only">
+                                    <div class="circle-clipper left">
+                                        <div class="circle"></div>
+                                    </div>
+                                    <div class="gap-patch">
+                                        <div class="circle"></div>
+                                    </div>
+                                    <div class="circle-clipper right">
+                                        <div class="circle"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h2 class="center-align">Cargando...</h2>
+                    </div>
+                </div>
+            </div>
+        <div id="ready" class="hide">
+    <nav>
+        <div class="nav-wrapper">
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li>
+                        <a id="userName"></a>
+                    </li>
+            <li><a href="index.html">Control de Activos</a></li>
+            <li>
+                <a onclick="logout();">Cerrar Sesión</a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div class="container">
+
+<div class="row">
+    <h3>Usuarios</h3>
+</div>
+          <div class="row">
+                <a class="waves-effect waves-light btn col s2 modal-trigger" href="#newUserModal">Nuevo Usuario</a>
+            </div>
+          <div class="row">
+              <h6>Lista de Usuarios:</h6>
+      <ul class="collapsible col s12" id="usersList">
+      </ul>
+    </div>
+    </div>
+</div>
+    <!-- Modal Structure -->
+    <div id="newUserModal" class="modal">
+            <div class="modal-content">
+                <h4>Nuevo Empleado</h4>
+                <div class="row">
+                    <div class="col s6">
+                            <form action="">
+                                    <div  class="input-field">
+                                            <label for="newUserName" class="col s12">Nombre: </label>
+                                            <input type="text" name="newUserName" id="newUserName" class="validate" >
+                                    </div>
+                                    <div id="" class=" input-field">
+                                            <label for="newUserLastname" class="col s12">Apellidos: </label>
+                                            <input type="text" name="newUserLastname" id="newUserLastname" class="datepicker" >
+                                    </div>
+                                    <div  class=" input-field">
+                                            <label for="temporalLocation" class="col s12">Domicilio: </label>
+                                            <input type="text" name="newUserAddress" id="newUserAddress" class="validate" >
+                                    </div>
+                                    <div class=" input-field">
+                                            <label for="newUserPhone" class="col s12">Teléfono: </label>
+                                            <input type="text" name="newUserPhone" id="newUserPhone" class="validate" >
+                                    </div>
+                                    <div  class=" input-field">
+                                            <label for="newUserNickname" class="col s12">Nombre de Usuario (sin espacios): </label>
+                                            <input type="text" name="newUserNickname" id="newUserNickname" class="validate" >
+                                    </div>
+                                    
+                                    <div class=" input-field">
+                                            <p for="userType" class="col s12">Tipo de Usuario: </p>
+                                            <br><br>
+                                            <a href="#!" class="dropdown-button red darken-4 waves-effect waves-green btn-flat" id="selectedNewUserType" data-activates='newUserType'>Tipo de Usuario</a>
+                                            <ul class="dropdown-content" id="newUserType">
+                                                <li class="collection-item" onclick="selectUserType('Administrador','selectedNewUserType');"><a>Administrador</a></li>
+                                                <li class="collection-item" onclick="selectUserType('Normal','selectedNewUserType');"><a>Normal</a></li>
+                                            </ul>
+                                    </div>
+                                    <div  class=" input-field">
+                                            <label for="newUserPassword" class="col s12">Contraseña </label>
+                                            <input type="password" name="newUserPassword" id="newUserPassword" class="validate" >
+                                    </div>
+                                    <div  class=" input-field">
+                                            <label for="newUserConfirmPassword" class="col s12">Confirmar contraseña: </label>
+                                            <input type="password" name="newUserConfirmPassword" id="newUserConfirmPassword" class="validate" >
+                                    </div>
+                                </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                    <a href="#!" class="waves-effect waves-green btn-flat" onclick="newUser();">Aceptar</a>
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Cancelar</a>
+            </div>
+        </div>
+        <!-- Message Modal Structure -->
+    <div id="message" class="modal">
+            <div class="modal-content">
+                <h4 id="modalHeader"></h4>
+                <div class="collection">
+                    <h6 id="modalMessage"></h6>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Aceptar</a>
+            </div>
+        </div>
+            
+      <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+      <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
+      <script src="jquery/jquery-3.3.1.js"></script>
+      <script src="materialize/js/materialize.min.js"></script>
+      <script src="js/users.js"></script>  
+      <script src="js/inputManager.js"></script> 
+</body>
+</html>

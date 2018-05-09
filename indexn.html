@@ -212,33 +212,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Section showed when new Temporal Keeper button is clicked -->
-            <div class="container hide" id="newTemporalKeeper">
-                <div class="row">
-                    <h2>Resguardo Temporal</h2>
-                </div>
-                <div class="row">
-                <div class="input-field col s3">
-                    <label for="temporalActiveInput">Nombre del Activo:</label>
-                    <input type="text" name="temporalActiveInput" id="temporalActiveInput" class="validate">
-                </div>
-                <a href="#!" class="btn waves-effect col s2 offset-s2 waves-green " onclick="newTemporalKeeperSearch('temporalActiveInput');">Buscar</a>
-                        <a href="#!" class="btn waves-effect col s2 offset-s1 waves-green ">Terminar Resguardo</a> 
-
-            </div>
-            <div class="row">
-                <h5 class="col s7 ">Resultados búsqueda:</h5>
-                <h5 class="col s3 offset-s1">Activos seleccionados:</h5>
-            </div>
-            <div class="row">
-                <div class="col s5 grey ">
-                 <table class="" id="newTemporalKeeperResultsTable"></table>
-                </div>
-                <div class="col s5 offset-s1 grey lighten-1">
-                        <table class="" id="selectedTemporalResultsTable"></table>
-                </div>
-            </div>
-            </div>
             <!-- Section showed when new employe button is clicked -->
             <div class="container hide" id="newEmploye">
                 <div class="row">
@@ -429,7 +402,7 @@
                                         <p class="col s12">Seleccionar Estado</p>
                                     <a class="btn  red lighten-1 dropdown-button col s12 " href="#!" data-activates="statusFirstFilterList" id="selectedStatusFirstFilterList">Seleccionar</a>
                                 <ul id="statusFirstFilterList" class="dropdown-content">
-                                    <li><a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusFirstFilterList','activo');">Disponible</a></li>
+                                    <li><a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusFirstFilterList','activo');">Activo</a></li>
                                     <li><a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusFirstFilterList','baja');">Baja</a></li>
                                     <li><a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusFirstFilterList','reparacion');">Reparación</a></li>
                                     <li><a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusFirstFilterList','temporal');">Resguardo Temporal</a></li>
@@ -512,7 +485,7 @@
                                             <p class="col s12">Seleccionar Estado</p>
                                         <a class="btn  red lighten-1 dropdown-button col s12 " href="#!" data-activates="statusSecondFilterList" id="selectedStatusSecondFilterList">Seleccionar</a>
                                     <ul id="statusSecondFilterList" class="dropdown-content">
-                                        <li><a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusSecondFilterList','activo');">Disponible</a></li>
+                                        <li><a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusSecondFilterList','activo');">Activo</a></li>
                                         <li><a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusSecondFilterList','baja');">Baja</a></li>
                                         <li><a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusSecondFilterList','reparacion');">Reparación</a></li>
                                         <li><a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusSecondFilterList','temporal');">Resguardo Temporal</a></li>
@@ -579,7 +552,7 @@
                                 <label for="activeStatus">Status</label>
                                 <ul id="statusSelect" class="dropdown-content ">
                                     <li>
-                                        <a class="collection-item " onclick="selectStatus('status','activo','selectedStatus','activesFilters');">Disponible</a>
+                                        <a class="collection-item " onclick="selectStatus('status','activo','selectedStatus','activesFilters');">Activo</a>
                                     </li>
                                     <li>
                                         <a class="collection-item " onclick="selectStatus('status','reparacion','selectedStatus','activesFilters');">Reparación</a>
@@ -1099,21 +1072,6 @@
             <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Marcar como devuelto</a>
         </div>
     </div>
-    <!-- Finish Temporal Modal Structure -->
-    <div id="confirmTmpModal" class="modal">
-            <div class="modal-content">
-                <h4>Agragar activo</h4>
-                <div class="collection" id="confirmTmpModalModalContent">
-                </div>
-                <div class="input-field col s8">
-                        <label for="activeQuantityTmp">Cantidad:</label>
-                        <input type="number" step="1" min="1" name="activeQuantityTmp" id="activeQuantityTmp" class="validate" required pattern="[0-9]">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <a href="#!"id="confirmTmpModalButton" class="modal-action modal-close waves-effect waves-green btn">Agregar</a>
-            </div>
-        </div>
     <!-- Message Modal Structure -->
     <div id="message" class="modal">
         <div class="modal-content">
