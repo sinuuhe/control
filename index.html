@@ -223,7 +223,7 @@
                     <input type="text" name="temporalActiveInput" id="temporalActiveInput" class="validate">
                 </div>
                 <a href="#!" class="btn waves-effect col s2 offset-s2 waves-green " onclick="newTemporalKeeperSearch('temporalActiveInput');">Buscar</a>
-                        <a href="#!" class="btn waves-effect col s2 offset-s1 waves-green ">Terminar Resguardo</a> 
+                        <a href="#finishTemporalKeeper" class="btn waves-effect col s2 offset-s1 waves-green modal-trigger">Terminar Resguardo</a> 
 
             </div>
             <div class="row">
@@ -1099,7 +1099,37 @@
             <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Marcar como devuelto</a>
         </div>
     </div>
+
     <!-- Finish Temporal Modal Structure -->
+    <div id="finishTemporalKeeper" class="modal">
+        <div class="modal-content">
+            <h4>Finalizar Resguardo Temporal</h4>
+            <form action="">
+                <div class="input-field col s4">
+                    <label for="tmpKeeperName">Nombre del Solicitante</label>
+                    <input type="text" name="tmpKeeperName" id="tmpKeeperName" class="validate">
+                </div>
+                <div class="input-field col s4">
+                    <label for="tmpReceptorName">Nombre de quien recibe:</label>
+                    <input type="text" name="tmpReceptorName" id="tmpReceptorName" class="validate">
+                </div>
+                <div class="input-field col s4">
+                        <label for="tmpReturnDate">Fecha tentativa de devolución:</label>
+                        <input type="text" name="tmpReturnDate" id="tmpReturnDate" class="datepicker">
+                    </div>
+                    <div class="input-field col s4">
+                            <label for="tmpDetails">Observaciones:</label>
+                            <input type="text" name="tmpDetails" id="tmpDetails" class="validate">
+                        </div>
+            </form>
+        </div>
+        <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn red">Volver</a>
+            <a href="#!" class="modal-action modal-close waves-effect waves-green btn green" onclick="finishTemporalKeeper('tmpKeeperName','tmpReceptorName','selectedTemporalResultsTable');">Terminar</a>
+        </div>
+    </div>
+
+    <!-- Confirm Temporal Modal Structure -->
     <div id="confirmTmpModal" class="modal">
             <div class="modal-content">
                 <h4>Agragar activo</h4>
