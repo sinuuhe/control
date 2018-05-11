@@ -99,25 +99,29 @@
                     <h2 class="col s12 center-align">Nuevo Activo</h2>
                 </div>
                 <div class="row">
-                    <form action="" class="col s12">
+                    <form action="" class="col s8 offset-s2" id="newActiveForm">
                         <div class="row">
-                            <div class="input-field col s8">
+                            <div class="input-field col s12 ">
                                 <label for="name">Nombre del activo:</label>
-                                <input type="text" name="name" id="name" class="validate">
+                                <input type="text" name="name" id="name" class="validate" required>
+                                <br><br>
                             </div>
-                            <div class="input-field col s8">
+                            <div class="input-field col s12 ">
                                 <label for="registerDate">Feha de Ingreso:</label>
-                                <input type="text" class="datepicker" id="registerDate">
+                                <input type="text" class="datepicker" id="registerDate" required>
+                                <br><br>
                             </div>
-                            <div class="input-field col s8">
+                            <div class="input-field col s12 ">
                                 <label for="serialNumber">Número de Serie:</label>
-                                <input type="text" name="serialNumber" id="serialNumber" class="validate">
+                                <input type="text" name="serialNumber" id="serialNumber" class="validate" required>
+                                <br><br>
                             </div>
-                            <div class="input-field col s8">
+                            <div class="input-field col s12 ">
                                 <label for="activeQuantity">Cantidad:</label>
-                                <input type="number" step="1" min="1" name="activeQuantity" id="activeQuantity" class="validate" required pattern="[0-9]">
+                                <input type="number" step="1" min="1" name="activeQuantity" id="activeQuantity" class="validate" required pattern="[0-9]" required>
+                                <br><br>
                             </div>
-                            <div class="input-field col s8">
+                            <div class="input-field col s12 ">
                                 <label for="selectedActiveCategory">Categoría:</label>
                                 <br>
                                 <br>
@@ -131,62 +135,71 @@
                                     <li onclick="selectCategory('Equipo de Oficina', 'selectedActiveCategory');">Equipo de Oficina</li>
                                     <li onclick="selectCategory('Mobiliario', 'selectedActiveCategory');">Mobiliario</li>
                                 </ul>
+                                <br><br>
                             </div>
-                            <div class="input-field col s8">
+                            <div class="input-field col s12 ">
                                 <label for="brand">Marca:</label>
-                                <input type="text" name="brand" id="brand" class="validate">
+                                <input type="text" name="brand" id="brand" class="validate" required>
+                                <br><br>
                             </div>
-                            <div class="input-field col s8">
+                            <div class="input-field col s12 ">
                                 <label for="model">Modelo:</label>
-                                <input type="text" name="model" id="model" class="validate">
+                                <input type="text" name="model" id="model" class="validate" required>
+                                <br><br>
                             </div>
-                            
-                            <div class="input-field col s8">
+                            <div class="input-field col s12 ">
                                 <label for="selectedBuilding">Edificio:</label>
                                 <br>
                                 <br>
                                 <ul id="buildingList" class="dropdown-content">
                                 </ul>
                                 <a class="btn red darken-4 dropdown-button col s5 red darken-4" href="#!" data-activates="buildingList" id="selectedBuilding">Seleccionar Ala</a>
+                                <br><br>
                             </div>
                             <div id="normalBuilding">
-                            <div class="input-field col s8">
+                            <div class="input-field col s12 ">
                                 <label for="selectedRoom">Habitación:</label>
                                 <br>
                                 <br>
                                 <ul id="roomsList" class="dropdown-content">
                                 </ul>
                                 <a class="btn red darken-4 dropdown-button col s5 " href="#!" data-activates="roomsList" id="selectedRoom">Seleccionar Habitación</a>
+                                <br><br>
                             </div>
                         </div>
-                        <div id="otherBuildingInput" class="input-field col s8 hide">
+                        <div id="otherBuildingInput" class="input-field col s12 hide">
                                 <label for="model">Otra Ubicación:</label>
                                 <input type="text" name="model" id="otherBuildingInputField" class="validate">
+                                <br><br>
                         </div>
-                            <div class="input-field col s8">
+                            <div class="input-field col s12 ">
                                 <label for="keeperId">Empleado:</label>
                                 <br>
                                 <br>
                                 <ul id="employeeList" class="dropdown-content">
                                 </ul>
                                 <a class="btn red darken-4 dropdown-button col s5 " href="#!" data-activates="employeeList" id="selectedEmployee">Seleccionar Empleado</a>
+                                <br><br>
                             </div>
-                            <div class="input-field col s8">
-                                <label for="maintenanceDate">Fecha de Matenimiento:</label>
+                            <div class="input-field col s12 ">
+                                <label for="maintenanceDate">Fecha de Matenimiento (Opcional):</label>
                                 <input type="text" class="datepicker" id="maintenanceDate">
+                                <br><br>
                             </div>
-                            <div class="input-field col s8">
-                                <label for="warantyDate">Feha Vencimiento de Garantía:</label>
+                            <div class="input-field col s12 ">
+                                <label for="warantyDate">Feha Vencimiento de Garantía (Opcional):</label>
                                 <input type="text" class="datepicker" id="warantyDate">
+                                <br><br>
                             </div>
 
                         </div>
+                        <div class="row">
+                            <input class="col s3  waves-effect waves-light btn-large teal darken-4" type="submit" value="registrar activo" onsubmit="registerActive();"></input>
+                            <a class="col s3 offset-s4 waves-effect waves-light btn-large grey" onclick="actionButton('newActive','hide','activesMainMenu');">Volver al Menú de Activos</a>
+                        </div>
                     </form>
                 </div>
-                <div class="row">
-                    <a class="col s3  waves-effect waves-light btn-large teal darken-4" onclick="registerActive();">Registrar Activo</a>
-                    <a class="col s3 offset-s4 waves-effect waves-light btn-large grey" onclick="actionButton('newActive','hide','activesMainMenu');">Volver al Menú de Activos</a>
-                </div>
+        
                 <!-- Modal Structure -->
                 <div id="employees" class="modal">
                     <div class="modal-content">
@@ -1235,6 +1248,8 @@
     <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
     <script src="jquery/jquery-3.3.1.js"></script>
+    <script src="validation/jquery.validate.min.js"></script>
+    <script src="validation/validation.js"></script>
     <script src="materialize/js/materialize.min.js"></script>
     <script src="js/jspdf.debug.js"></script>
     <script src="js/index.js"></script>

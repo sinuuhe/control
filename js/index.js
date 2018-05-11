@@ -148,12 +148,18 @@ var employeFields = [
 
 $(document).ready(function () {
     $('.tabs').tabs();
+    $("#newActiveForm").submit(function(e) {
+        if(e.result){
+            e.preventDefault(); // prevent page refresh
+            registerActive();
+        }
+    });
     document.getElementById('loading').classList.add('hide');
     document.getElementById('ready').classList.remove('hide');
     // the "href" attribute of the modal trigger must specify the modal ID that wants to be triggered
     $('.modal').modal();
     setModal('AVISO PARA EL GRADUADO! 😎', "Al momento: \n -La búsqueda de activos ya está(Parece, fala que encuentres errores 😛)\n-Se agregó ubicación de Resguardo personal\n-Se agregó ubicación 'otro'\n-Se agregó 'Recepción' a Nogales\n-Salida local y foranea en vehículos\n-Observacionas al salir y volver en salidas\n-Detalles de qué empleado está usando el vehículo\n-ReguardoTemporal\n-Primer Borrador de los pendientes\n\nVienen más cosas lol 💋 (Me avisas si hay que quitar este aviso!!)");
-    $('#message').modal('open').value = "";
+    //$('#message').modal('open').value = "";
     loadEmployees('employe', 'employeeList');
     loadEmployeesFilter('employe', 'activeKeeperFilterSelect');
     loadBuildings('buildingList', 'roomsList', 'selectedRoom', 'selectedBuilding', 'O');
@@ -368,6 +374,8 @@ function showQuery(elementTohide, classToSet, elementToShow) {
     loadDrivers('drivers', 'vehicleDriverList')
 };
 function registerActive() {
+   
+     
     var brand = document.getElementById('brand').value;
     if (document.getElementById('selectedBuilding').innerText != 'OTRO')
         var location = document.getElementById('selectedBuilding').innerText + ', ' + document.getElementById('selectedRoom').innerText;
