@@ -1,13 +1,10 @@
 $(function(){
-    $.validator.addMethod('selectedCombo',function(element){
-        if(element.innerText != "SELECCIONAR") return true;
-    },"Debe elegir una opción");
     jQuery.validator.addMethod("lettersonly", function(value, element) {
-        return this.optional(element) || value == value.match(/^[a-zA-Z]+$/);
+        return this.optional(element) || value == value.match(/^[a-zA-Z\s]+$/);
       }, "Solo se aceptan letras");
-    $.validator.addMethod('optionalCombo',function(element){
-        if(element.innerText != "SELECCIONAR" && element.className == "input-field col s12") return true;
-    },"Debe elegir una opción");
+      jQuery.validator.addMethod("onlyNumbers", function(value, element) {
+        return this.optional(element) || value == value.match(/^[0-9]+$/);
+      }, "Solo se aceptan números");
     $('#newActiveForm').validate({
         errorElement:"span",
         errorClass:"red-text",
@@ -24,10 +21,10 @@ $(function(){
             },
             activeQuantity:{
                 required: true,
-                digits: true
+                onlyNumbers:true
             },
             selectedActiveCategory:{
-                selectedCombo:true
+                required: true
             },
             brand:{
                 required: true
@@ -36,16 +33,16 @@ $(function(){
                 required: true
             },
             selectedBuilding:{
-                selectedCombo: true
+                required: true
             },
             selectedRoom:{
-                selectedCombo: true
+                required: true
             },
             otherBuildingInputField:{
-                optionalCombo:true
+                required:true
             },
             selectedEmployee:{
-                selectedCombo: true
+                required: true
             }
         },
         messages:{
@@ -60,11 +57,10 @@ $(function(){
                 required:'Este campo es requerido'
             },
             activeQuantity:{
-                required:'Este campo es requerido',
-                digits: 'Solo se aceptan números'
+                required:'Este campo es requerido'
             },
             selectedActiveCategory:{
-                selectedCombo:'Debe elegir una opción'
+                required: 'Este campo es requerido'
             },
             brand:{
                 required:'Este campo es requerido'
@@ -73,16 +69,16 @@ $(function(){
                 required:'Este campo es requerido'
             },
             selectedBuilding:{
-                selectedCombo: "Debe elegir una opción"
+                required: 'Este campo es requerido'
             },
             selectedRoom:{
-                selectedCombo: "Debe elegir una opción"
+                required: 'Este campo es requerido'
             },
             otherBuildingInputField:{
-                optionalCombo:"Debe elegir una opción"
+                required: 'Este campo es requerido'
             },
             selectedEmployee:{
-                selectedCombo: "Debe elegir una opción"
+                required: 'Este campo es requerido'
             }
         }
     });
