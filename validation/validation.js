@@ -26,12 +26,6 @@ $(function(){
             selectedActiveCategory:{
                 required: true
             },
-            brand:{
-                required: true
-            },
-            model:{
-                required: true
-            },
             selectedBuilding:{
                 required: true
             },
@@ -61,12 +55,6 @@ $(function(){
             },
             selectedActiveCategory:{
                 required: 'Este campo es requerido'
-            },
-            brand:{
-                required:'Este campo es requerido'
-            },
-            model:{
-                required:'Este campo es requerido'
             },
             selectedBuilding:{
                 required: 'Este campo es requerido'

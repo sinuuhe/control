@@ -143,14 +143,14 @@
                                 <br>
                             </div>
                             <div class="input-field col s12 ">
-                                <label for="brand">Marca:</label>
-                                <input type="text" name="brand" id="brand" class="validate" required>
+                                <label for="brand">Marca (Opcional):</label>
+                                <input type="text" name="brand" id="brand" class="validate">
                                 <br>
                                 <br>
                             </div>
                             <div class="input-field col s12 ">
-                                <label for="model">Modelo:</label>
-                                <input type="text" name="model" id="model" class="validate" required>
+                                <label for="model">Modelo (Opcional):</label>
+                                <input type="text" name="model" id="model" class="validate">
                                 <br>
                                 <br>
                             </div>
@@ -427,71 +427,23 @@
                         <a class="btn red darken-4 dropdown-button col s12" href="#!" data-activates="findableSelect" id="selectedFindable">Seleccionar Elemento a buscar</a>
                     </div>
                     <div class="hide" id="activesNormalSearch">
-                        <div class="row deep-orange lighten-4">
-                            <div class="col s3">
+                        <div class="row">
+                        <div class="col s4 offset-s1 grey lighten-3">
+                            <div class="col s12">
                                 <p class="s12">Primer Filtro</p>
-                                <a class="btn red darken-4 dropdown-button col s12" href="#!" data-activates="activeFilterList" id="firstActiveFilter">Seleccionar</a>
-                                <ul id="activeFilterList" class="dropdown-content">
-                                    <li>
-                                        <a class="collection-item" onclick="selectNormalFilter('firstActiveFilter', 'name', 'Nombre Del Activo','firstFilter','firstActiveFilterInput');">Nombre Del Activo</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item" onclick="firstFilterKeeper('keeperFirstFilter','activeFilterKeeperList','firstActiveFilter','Nombre del Responsable')">Nombre del Responsable</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item" onclick="selectNormalFilter('firstActiveFilter', 'brand', 'Marca del Activo','firstFilter','firstActiveFilterInput');">Marca del Activo</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item" onclick="selectNormalFilter('firstActiveFilter', 'model', 'Modelo del Activo','firstFilter','firstActiveFilterInput');">Modelo del Activo</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item" onclick="useStatusFirstFilter('statusFirstFilter','Estado del Activo','firstActiveFilter');">Estado del Activo</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item" onclick="useStatusFirstFilter('categoryFirstFilter','Categoría del Activo','firstActiveFilter');">Categoría del Activo</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item" onclick="useDateFirstFilter('dateInputsFirstFilter');">Fechas</a>
-                                    </li>
-                                </ul>
-                                <input type="text" name="firstActiveFilterInput" placeholder="Buscar..." id="firstActiveFilterInput" class="validate s12 hide">
-                                <div class="hide col s12" id="keeperFirstFilter">
-                                    <p class="col s12">Seleccionar Empleado</p>
-                                    <p id="firstFilterKeeperId" class="hide"></p>
-                                    <a class="btn  red lighten-1 dropdown-button col s12 " href="#!" data-activates="activeFilterKeeperList" id="firstFilterSelectedKeeper">Seleccionar</a>
-                                    <ul id="activeFilterKeeperList" class="dropdown-content"></ul>
-                                </div>
-                                <div class="hide col s12" id="statusFirstFilter">
-                                    <p class="col s12">Seleccionar Estado</p>
-                                    <a class="btn  red lighten-1 dropdown-button col s12 " href="#!" data-activates="statusFirstFilterList" id="selectedStatusFirstFilterList">Seleccionar</a>
-                                    <ul id="statusFirstFilterList" class="dropdown-content">
-                                        <li>
-                                            <a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusFirstFilterList','activo');">Disponible</a>
-                                        </li>
-                                        <li>
-                                            <a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusFirstFilterList','baja');">Baja</a>
-                                        </li>
-                                        <li>
-                                            <a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusFirstFilterList','reparacion');">Reparación</a>
-                                        </li>
-                                        <li>
-                                            <a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusFirstFilterList','temporal');">Resguardo Temporal</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="hide col s12" id="categoryFirstFilter">
-                                    <p class="col s12">Seleccionar Categoría</p>
-                                    <a class="btn  red lighten-1 dropdown-button col s12 " href="#!" data-activates="categoryFirstFilterList" id="selectedCategoryFirstFilterList">Seleccionar</a>
-                                    <ul id="categoryFirstFilterList" class="dropdown-content">
-                                        <li onclick="selectCategory('Herramientas', 'selectedCategoryFirstFilterList');">Herramientas</li>
-                                        <li onclick="selectCategory('Máquinas Eléctricas', 'selectedCategoryFirstFilterList');">Máquinas Eléctricas</li>
-                                        <li onclick="selectCategory('Maquinaria Pesada', 'selectedCategoryFirstFilterList');">Maquinaria Pesada</li>
-                                        <li onclick="selectCategory('Herramienta Especializada', 'selectedCategoryFirstFilterList');">Herramienta Especializada</li>
-                                        <li onclick="selectCategory('Equipo de Cómputo', 'selectedCategoryFirstFilterList');">Equipo de Cómputo</li>
-                                        <li onclick="selectCategory('Equipo de Oficina', 'selectedCategoryFirstFilterList');">Equipo de Oficina</li>
-                                        <li onclick="selectCategory('Mobiliario', 'selectedCategoryFirstFilterList');">Mobiliario</li>
-                                    </ul>
-                                </div>
+                                <select id="firstActiveFilterSelect" class= "browser-default" required>
+                                    <option value="" disabled selected>Seleccionar...</option>
+                                    <option value="a">Nombre Del Activo</option>
+                                    <option value="b" >Responsable</option>
+                                    <option value="c" >Marca del Activo</option>
+                                    <option value="d" >Modelo del Activo</option>
+                                    <option value="e" >Estado del Activo</option>
+                                    <option value="f" >Categoría del Activo</option>
+                                    <option value="g" >Fechas</option>
+                                </select>
+                                <br>
+                                <select class="s12 browser-default" id="firstFilterSelect"></select>
+                                <input type="text"  placeholder="Buscar..." id="firstFilterInput" onkeyup="fillSearchInput('firstFilterInput', 'firstFilter', 'search')" class="validate s12 hide">       
                             </div>
                             <div class="row hide" id="dateInputsFirstFilter">
                                 <div class="col s12">
@@ -521,77 +473,62 @@
                             </div>
                         </div>
 
-                        <div class="row teal lighten-4">
-                            <div class="col s8 ">
-                                <p class="s12">Segundo Filtro (Opcional)</p>
-                                <a class="btn red darken-4 dropdown-button col s4" href="#!" data-activates="secondActiveFilterList" id="secondActiveFilter">Seleccionar</a>
-                                <a class="btn red darken-4 dropdown-button col s3 offset-s1" href="#!" onclick="removeFilter('secondFilter','secondActiveFilterInput');">Quitar filtro</a>
-                                <ul id="secondActiveFilterList" class="dropdown-content">
-                                    <li>
-                                        <a class="collection-item" onclick="selectNormalFilterSecond('secondActiveFilter', 'name', 'Nombre Del Activo','secondFilter','secondActiveFilterInput');">Nombre Del Activo</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item" onclick="secondFilterKeeper('keeperSecondFilter','secondActiveFilterKeeperList','secondActiveFilter','Nombre del Responsable')">Nombre del Responsable</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item" onclick="selectNormalFilterSecond('secondActiveFilter', 'brand', 'Marca del Activo','secondFilter','secondActiveFilterInput');">Marca del Activo</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item" onclick="selectNormalFilterSecond('secondActiveFilter', 'model', 'Modelo del Activo','secondFilter','secondActiveFilterInput');">Modelo del Activo</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item" onclick="useStatusSecondFilter('statusSecondFilter','Estado del Activo','secondActiveFilter');">Estado del Activo</a>
-                                    </li>
-                                    <li>
-                                        <a class="collection-item" onclick="useStatusSecondFilter('categorySecondFilter','Categoría del Activo','secondActiveFilter');">Categoría del Activo</a>
-                                    </li>
-                                </ul>
-                                <input type="text" name="secondActiveFilterInput" id="secondActiveFilterInput" onkeyup="fillSecondFilter('secondActiveFilterInput');"
-                                    placeholder="Buscar..." class="validate s12 hide">
-                                <div class="hide col s12" id="keeperSecondFilter">
-                                    <p class="col s12">Seleccionar Empleado</p>
-                                    <p id="secondFilterKeeperId" class="hide"></p>
-                                    <a class="btn  red lighten-1 dropdown-button col s12 " href="#!" data-activates="secondActiveFilterKeeperList" id="secondFilterSelectedKeeper">Seleccionar</a>
-                                    <ul id="secondActiveFilterKeeperList" class="dropdown-content"></ul>
-                                </div>
-                                <div class="hide col s12" id="statusSecondFilter">
-                                    <p class="col s12">Seleccionar Estado</p>
-                                    <a class="btn  red lighten-1 dropdown-button col s12 " href="#!" data-activates="statusSecondFilterList" id="selectedStatusSecondFilterList">Seleccionar</a>
-                                    <ul id="statusSecondFilterList" class="dropdown-content">
-                                        <li>
-                                            <a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusSecondFilterList','activo');">Disponible</a>
-                                        </li>
-                                        <li>
-                                            <a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusSecondFilterList','baja');">Baja</a>
-                                        </li>
-                                        <li>
-                                            <a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusSecondFilterList','reparacion');">Reparación</a>
-                                        </li>
-                                        <li>
-                                            <a class="collection-item " onclick="selectFirstFilterStatus('selectedStatusSecondFilterList','temporal');">Resguardo Temporal</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <div class="hide col s12" id="categorySecondFilter">
-                                    <p class="col s12">Seleccionar Categoría</p>
-                                    <a class="btn  red lighten-1 dropdown-button col s12 " href="#!" data-activates="categorySecondFilterList" id="selectedCategorySecondFilterList">Seleccionar</a>
-                                    <ul id="categorySecondFilterList" class="dropdown-content">
-                                        <li onclick="selectCategory('Herramientas', 'selectedCategorySecondFilterList');">Herramientas</li>
-                                        <li onclick="selectCategory('Máquinas Eléctricas', 'selectedCategorySecondFilterList');">Máquinas Eléctricas</li>
-                                        <li onclick="selectCategory('Maquinaria Pesada', 'selectedCategorySecondFilterList');">Maquinaria Pesada</li>
-                                        <li onclick="selectCategory('Herramienta Especializada', 'selectedCategorySecondFilterList');">Herramienta Especializada</li>
-                                        <li onclick="selectCategory('Equipo de Cómputo', 'selectedCategorySecondFilterList');">Equipo de Cómputo</li>
-                                        <li onclick="selectCategory('Equipo de Oficina', 'selectedCategorySecondFilterList');">Equipo de Oficina</li>
-                                        <li onclick="selectCategory('Mobiliario', 'selectedCategorySecondFilterList');">Mobiliario</li>
-                                    </ul>
+                        <div class="col s4 offset-s2 grey lighten-3">
+                            <div class="col s12">
+                                <p id="secFilterTxt"class="col s10">Segundo Filtro (Desactivado)</p>
+                                <a href="#!" class="btn darken-4 col s2 red waves-effect waves-light " onclick=" removeFilter('usingSecFilter', 'secondFilterSelect', 'secondFilterInput','secondFilterDiv','filterIcon');"> <i id="filterIcon" class="material-icons">add</i></a>
+                                <div id="secondFilterDiv"class="hide">
+                                <select id="secondActiveFilterSelect" class= "browser-default"required>
+                                    <option value="" disabled selected>Seleccionar...</option>
+                                    <option value="a">Nombre Del Activo</option>
+                                    <option value="b" >Responsable</option>
+                                    <option value="c" >Marca del Activo</option>
+                                    <option value="d" >Modelo del Activo</option>
+                                    <option value="e" >Estado del Activo</option>
+                                    <option value="f" >Categoría del Activo</option>
+                                    <option value="g" >Fechas</option>
+                                </select>
+                                <br>
+                                <select class="s12 browser-default" id="secondFilterSelect"></select>
+                                <input type="text"  placeholder="Buscar..." id="secondFilterInput" onkeyup="fillSearchInput('secondFilterInput', 'secondFilter', 'search')" class="validate s12 hide">       
+                            </div>
+                            </div>
+                            <div class="row hide" id="dateInputsSecondFilter">
+                                <div class="col s12">
+                                    <div class="row">
+                                        <div class="col s5">
+                                            <input type="radio" id="dateBeforeFirst" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateBeforeSecond','date','dateBeforeInputSecond','secondFilter');"
+                                            />
+                                            <label for="dateBeforeSecond">Antes de: </label>
+                                            <input type="text" name="" id="dateBeforeInputSecond" class="datepicker" placeholder="Seleccionar Fecha..." disabled>
+                                        </div>
+                                        <div class="col s5">
+                                            <input type="radio" id="dateAfterSecond" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateAfterSecond','date','dateAfterInputSecond','secondFilter');"
+                                            />
+                                            <label for="dateAfterSecond">Después de: </label>
+                                            <input type="text" name="" id="dateAfterInputSecond" class="datepicker" placeholder="Seleccionar Fecha..." disabled>
+                                        </div>
+                                        <div class="col s12">
+                                            <input type="radio" id="dateBetweenSecond" class="filled-in col s12" name="group3" onclick="checkboxCheckedDateFirst('dateBetweenSecond','date','dateBetweenInputSecond','secondFilter');"
+                                            />
+                                            <label for="dateBetweenSecond" class="col s12">Entre fechas: </label>
+                                            <input type="text" name="" id="dateBetweenInputASecond" class="datepicker col s3" placeholder="Seleccionar Fecha..." disabled>
+                                            <input type="text" name="" id="dateBetweenInputBSecond" class="datepicker col s3 offset-s2" placeholder="Seleccionar Fecha..."
+                                                disabled>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                         <div class="row">
-                            <a class="btn red darken-4 dropdown-button col s1" href="#!" onclick="simpleSearch('firstActiveFilter','secondActiveFilter','resultsTable');"
+                            <br>
+                            <br>
+                            <a class="col s4 offset-s1 waves-effect btn waves-light hide modal-trigger" href="#printModal" id="printReport" onclick="printReport('printingDepartmentList','selectedPrintingDepartment');">Imprimir Reporte</a>
+                            <a class="btn red darken-4 dropdown-button waves-effect col s4 offset-s2" href="#!" onclick="searchActive('currentQueryResult', 'activeFields','resultsTable','firstFilterInput','secondFilterInput','firstFilterSelect','secondFilterSelect');"
                                 id="firstActiveFilter">Buscar</a>
 
-                            <a class="col s1 offset-s1 waves-effect btn waves-light hide modal-trigger" href="#printModal" id="printReport" onclick="printReport('printingDepartmentList','selectedPrintingDepartment');">Imprimir Reporte</a>
+                            
                         </div>
                     </div>
                     <div id="activesFilter" class="hide">
