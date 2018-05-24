@@ -248,7 +248,7 @@ $(document).ready(function () {
                 selectFilter('firstFilter','firstFilterSelect', 'input', 'name', 'firstFilterInput');
                 break;
             case "b":
-                selectFilter('firstFilter','firstFilterInput', 'option', 'employe', 'firstFilterSelect', false);
+                selectFilter('firstFilter','firstFilterInput', 'option', 'keeperId', 'firstFilterSelect', false,'', 'employe');
                 break;
             case "c":
                 selectFilter('firstFilter','firstFilterSelect', 'input', 'brand', 'firstFilterInput');
@@ -281,7 +281,7 @@ $(document).ready(function () {
                 selectFilter('secondFilter','secondFilterSelect', 'input', 'name', 'secondFilterInput');
                 break;
             case "b":
-                selectFilter('secondFilter','secondFilterInput', 'option', 'employe', 'secondFilterSelect', false);
+                selectFilter('secondFilter','secondFilterInput', 'option', 'keeperId', 'secondFilterSelect', false,'','employe');
                 break;
             case "c":
                 selectFilter('secondFilter','secondFilterSelect', 'input', 'brand', 'secondFilterInput');
@@ -2894,14 +2894,15 @@ function returnTemporal(temporalId) {
 }
 
 
-function selectFilter(filter,toHide, filterType, filterName, inputId, local, propList) {
+function selectFilter(filter,toHide, filterType, filterName, inputId, local, propList, path) {
+    console.log('s ' + path)
     document.getElementById(toHide).classList.add('hide');
     this[filter].propertie = filterName;
     if (filterType == "input") {
         document.getElementById(inputId).classList.remove('hide');
     }
     else {
-        fillOption(inputId, filterName, local, propList, filter);
+        fillOption(inputId, path, local, propList, filter);
     }
 };
 
@@ -2925,6 +2926,7 @@ function fillOption(inputId, path, local, propList, filter) {
                 var option = document.createElement('option');
                 option.innerText = element.name + " " + element.lastname;
                 option.value = element.id;
+                option.setAttribute("onclick","setFilterValue('" + filter + "','" + element.id + "');");
                 input.appendChild(option);
             }
             input.classList.remove('hide');
@@ -2960,16 +2962,37 @@ function searchActive(queryResult, tableFields, tableId, firstInput, secondInput
     var tableFields = this[tableFields];
 
     if(!window.usingSecFilter){
-    for (var active of Object.values(actives)) {
-        if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search.toUpperCase()) != -1)
-            filteredResults.push(active);
-    }
+        if(this.firstFilter.propertie == "keeperId"){
+            for (var active of Object.values(actives)) {
+                if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search) != -1)
+                    filteredResults.push(active);
+            }  
+        }else{
+            for (var active of Object.values(actives)) {
+                if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search.toUpperCase()) != -1)
+                    filteredResults.push(active);
+            }
+        }
+    
     makeTable(filteredResults, tableFields, tableId,firstInput, secondInput, firstSelect, secondSelect);
 }else{
-    for (var active of Object.values(actives)) {
+    if(this.firstFilter.propertie == "keeperId"){
+        for (var active of Object.values(actives)) {
+            if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search) != -1 && active[this.secondFilter.propertie].indexOf(this.secondFilter.search.toUpperCase()) != -1)
+                filteredResults.push(active);
+        } 
+    }else if(this.secondFilter.propertie == "keeperId"){
+        for (var active of Object.values(actives)) {
+            if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search.toUpperCase()) != -1 && active[this.secondFilter.propertie].indexOf(this.secondFilter.search) != -1)
+                filteredResults.push(active);
+        }
+    }else{
+for (var active of Object.values(actives)) {
         if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search.toUpperCase()) != -1 && active[this.secondFilter.propertie].indexOf(this.secondFilter.search.toUpperCase()) != -1)
             filteredResults.push(active);
     }
+    }
+    
     makeTable(filteredResults, tableFields, tableId,firstInput, secondInput, firstSelect, secondSelect);
 }
 };
