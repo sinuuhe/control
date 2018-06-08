@@ -13,6 +13,7 @@
 </head>
 
 <body id="body">
+    <header>
     <div id="loading">
         <div class="container">
             <div class="row">
@@ -86,6 +87,8 @@
                 </div>
             </nav>
         </div>
+    </header>
+    <main>
         <div id="actives" class="col s12">
             <br>
             <br>
@@ -431,7 +434,7 @@
                         <div class="col s4 offset-s1 grey lighten-3">
                             <div class="col s12">
                                 <p class="s12">Primer Filtro</p>
-                                <select id="firstActiveFilterSelect" class= "browser-default" required>
+                                <select id="firstActiveFilterSelect" class= "browser-default" required >
                                     <option value="" disabled selected>Seleccionar...</option>
                                     <option value="a">Nombre Del Activo</option>
                                     <option value="b" >Responsable</option>
@@ -442,7 +445,7 @@
                                     <option value="g" >Fechas</option>
                                 </select>
                                 <br>
-                                <select class="s12 browser-default" id="firstFilterSelect"></select>
+                                <select class="s12 browser-default" id="firstFilterSelect" onchange="fillInfo('firstFilter', 'firstFilterSelect');"></select>
                                 <input type="text"  placeholder="Buscar..." id="firstFilterInput" onkeyup="fillSearchInput('firstFilterInput', 'firstFilter', 'search')" class="validate s12 hide">       
                             </div>
                             <div class="row hide" id="dateInputsFirstFilter">
@@ -478,7 +481,7 @@
                                 <p id="secFilterTxt"class="col s10">Segundo Filtro (Desactivado)</p>
                                 <a href="#!" class="btn darken-4 col s2 red waves-effect waves-light " onclick=" removeFilter('usingSecFilter', 'secondFilterSelect', 'secondFilterInput','secondFilterDiv','filterIcon');"> <i id="filterIcon" class="material-icons">add</i></a>
                                 <div id="secondFilterDiv"class="hide">
-                                <select id="secondActiveFilterSelect" class= "browser-default"required>
+                                <select id="secondActiveFilterSelect" class= "browser-default"required >
                                     <option value="" disabled selected>Seleccionar...</option>
                                     <option value="a">Nombre Del Activo</option>
                                     <option value="b" >Responsable</option>
@@ -489,7 +492,7 @@
                                     <option value="g" >Fechas</option>
                                 </select>
                                 <br>
-                                <select class="s12 browser-default" id="secondFilterSelect"></select>
+                                <select class="s12 browser-default" id="secondFilterSelect" onchange="fillInfo('secondFilter', 'secondFilterSelect');"></select>
                                 <input type="text"  placeholder="Buscar..." id="secondFilterInput" onkeyup="fillSearchInput('secondFilterInput', 'secondFilter', 'search')" class="validate s12 hide">       
                             </div>
                             </div>
@@ -525,7 +528,7 @@
                             <br>
                             <br>
                             <a class="col s4 offset-s1 waves-effect btn waves-light hide modal-trigger" href="#printModal" id="printReport" onclick="printReport('printingDepartmentList','selectedPrintingDepartment');">Imprimir Reporte</a>
-                            <a class="btn red darken-4 dropdown-button waves-effect col s4 offset-s2" href="#!" onclick="searchActive('currentQueryResult', 'activeFields','resultsTable','firstFilterInput','secondFilterInput','firstFilterSelect','secondFilterSelect');"
+                            <a class="btn red darken-4 dropdown-button waves-effect col s4 offset-s2" href="#!" onclick="searchActive('currentQueryResult', 'activeFields','resultsTable','firstFilterInput','secondFilterInput','firstFilterSelect','secondFilterSelect','printReport');"
                                 id="firstActiveFilter">Buscar</a>
 
                             
@@ -1223,7 +1226,8 @@
             <a href="#!" class="modal-action modal-close waves-effect blue waves-green btn-flat">CANCELAR</a>
         </div>
     </div>
-
+</main>
+<footer></footer>
     <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
     <script src="jquery/jquery-3.3.1.js"></script>

@@ -21,6 +21,7 @@ var selectedDepartment = { name: "", id: "" };
 var activesFilters = {};
 var employeFilters = {};
 var useDate;
+var verifiedSN = true;
 var usingSecFilter = false;
 var firstFilter = {
     propertie: "name",
@@ -115,8 +116,8 @@ var activeFields = [
         title: 'Ubicación'
     },
     {
-        propertie: 'quantity',
-        title: 'Cantidad'
+        propertie: 'availableQuantity',
+        title: 'Cant Disponible'
     },
     {
         propertie: 'warantyDate',
@@ -141,7 +142,7 @@ var activeFieldsTmp = [
         title: 'Marca'
     },
     {
-        propertie: 'quantity',
+        propertie: 'availableQuantity',
         title: 'Cantidad'
     },
 ];
@@ -171,7 +172,7 @@ var employeFields = [
 var statusOptions = [
     {
         propertie: 'Disponible',
-        value: "DISPONIBLE"
+        value: "ACTIVO"
     },
     {
         propertie: 'Reparación',
@@ -376,7 +377,12 @@ function finishTemporalKeeper(tmpKeeperName, tmpReceptorName, tableId) {
         document.getElementById('temporalActiveInput').value = "";
         database.ref('actives/temporalKeeper/' + promise.key).update({ id: promise.key });
         makePDFTmpKeeper(tmpKeeperName, tmpReceptorName, tableId);
-        updateActiveStatus(0);
+        var quantities = [];
+        for(active of this.temporalList){
+            var newQ = this.currentQueryResult[active.id].availableQuantity;
+            quantities.push(newQ);
+        }
+        updateActiveStatus(0,quantities);
         actionButton('newTemporalKeeper', 'hide', 'activesMainMenu')
     }, function (error) {
         setModal('ERROR Resguardo Temporal', 'Hubo un problema, inténtelo de nuevo, por favor.');
@@ -385,15 +391,18 @@ function finishTemporalKeeper(tmpKeeperName, tmpReceptorName, tableId) {
 
 }
 
-function updateActiveStatus(index) {
+function updateActiveStatus(index,quantities) {
     if (index < this.temporalList.length) {
-        var prom = database.ref('actives/all/' + this.temporalList[index].id).update({
-            status: 'TEMPORAL'
+        var activeId = this.temporalList[index].id;
+        var newQ = quantities[index];
+        var prom = database.ref('actives/all/' + activeId).update({
+            status: 'TEMPORAL',
+            availableQuantity: newQ
         });
         prom.then(function (r) {
-            updateActiveStatus(index + 1);
+            updateActiveStatus(index + 1,quantities)
         }, function (e) { });
-    } else moveActiveStatus(0);
+    } else return;
 };
 function moveActiveStatus(index) {
     if (index < this.temporalList.length) {
@@ -574,6 +583,7 @@ function registerActive() {
     }
     else {
         if (verifySN(serialNumber.toUpperCase())) {
+            alert(window.verifiedSN)
             var promise = database.ref('actives/all').push({
                 brand: brand.toUpperCase(),
                 keeperId: keeperId,
@@ -592,58 +602,68 @@ function registerActive() {
                 availableQuantity: availableQuantity,
                 warantyDate: warantyDate
             });
+            promise.then(function (response) {
+                database.ref('actives/all/' + promise.key).update({
+                    id: promise.key
+                });
+                database.ref('actives/sn/' + serialNumber.toUpperCase()).set({
+                    activeId: promise.key,
+                    value: serialNumber.toUpperCase()
+                })
+        
+                setModal('Registro Exitoso', 'El activo se registró correctamente.');
+                $('#message').modal('open').value = "";
+                document.getElementById('brand').value = "";
+                document.getElementById('maintenanceDate').value = "";
+                document.getElementById('model').value = "";
+                document.getElementById('name').value = "";
+                document.getElementById('registerDate').value = "";
+                document.getElementById('serialNumber').value = "";
+                document.getElementById('selectedBuilding').innerText = "Seleccionar Ala";
+                document.getElementById('selectedRoom').innerText = "Seleccionar Habitación";
+                document.getElementById('activeQuantity').value = "1";
+                document.getElementById('warantyDate').value = "";
+                this.selectedEmploye.id = "";
+                this.selectedEmploye.name = "";
+                this.selectedBuilding.id = "";
+                this.selectedBuilding.name = "";
+                this.selectedRoom.id = "";
+                this.selectedRoom.name = "";
+                document.getElementById('otherBuildingInputField').value = "";
+                document.getElementById('otherBuildingInput').classList.add('hide');
+        
+        
+            }, function (error) {
+                setModal('Error al registrar', 'No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
+                $('#message').modal('open').value = "";
+            })
         } else {
             setModal('Error al Registrar: Número de serie', 'El número de serie ingresado ya está registrado.');
             $('#message').modal('open').value = "";
         }
     }
 
-    promise.then(function (response) {
-        database.ref('actives/all/' + promise.key).update({
-            id: promise.key
-        });
-        database.ref('actives/sn/' + serialNumber.toUpperCase()).set({
-            activeId: promise.key
-        })
-
-        setModal('Registro Exitoso', 'El activo se registró correctamente.');
-        $('#message').modal('open').value = "";
-        document.getElementById('brand').value = "";
-        document.getElementById('maintenanceDate').value = "";
-        document.getElementById('model').value = "";
-        document.getElementById('name').value = "";
-        document.getElementById('registerDate').value = "";
-        document.getElementById('serialNumber').value = "";
-        document.getElementById('selectedBuilding').innerText = "Seleccionar Ala";
-        document.getElementById('selectedRoom').innerText = "Seleccionar Habitación";
-        document.getElementById('activeQuantity').value = "1";
-        document.getElementById('warantyDate').value = "";
-        this.selectedEmploye.id = "";
-        this.selectedEmploye.name = "";
-        this.selectedBuilding.id = "";
-        this.selectedBuilding.name = "";
-        this.selectedRoom.id = "";
-        this.selectedRoom.name = "";
-        document.getElementById('otherBuildingInputField').value = "";
-        document.getElementById('otherBuildingInput').classList.add('hide');
-
-
-    }, function (error) {
-        setModal('Error al registrar', 'No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
-        $('#message').modal('open').value = "";
-    })
+   
 };
 
 function verifySN(sn) {
+
+    console.log('en el else ' + sn)
     var serialNumbers = database.ref('actives/sn');
     serialNumbers.on('value', function (snap) {
-        var resArray = Object.values(snap.val());
-
+    var resArray = Object.values(snap.val());
         for (var element of resArray) {
-            if (element == sn) return false;
+
+            
+            if (element.value == sn){ 
+                console.log(element.value);
+                window.verifiedSN = false;
+                return window.verifiedSN;
+            }
         }
-        return true;
+        return window.verifiedSN;
     })
+    
 };
 function loadEmployees(path, comboBoxId) {
     var employees = database.ref(path);
@@ -2432,7 +2452,7 @@ function newTemporalKeeper(elementtoHide, classToSet, elementToShow) {
     document.getElementById('newTemporalKeeperResultsTable').innerHTML = "";
     document.getElementById('selectedTemporalResultsTable').innerHTML = "";
     document.getElementById('activeQuantityTmp').value = 1;
-    var actives = database.ref('actives/status/ACTIVO');
+    var actives = database.ref('actives/all');
     actives.on('value', function (s) {
         this.currentQueryResult = s.val();
     })
@@ -2490,6 +2510,7 @@ function temporalKeeperQuery(hideElement, classToSet, showElement) {
     var query = database.ref('actives/temporalKeeper');
     query.on('value', function (s) {
         var result = s.val();
+        this.currentQueryResult = result;
         buildTableTmpKeeper('temporalKeeperResults', this.temporalFields, result);
     })
 }
@@ -2514,7 +2535,7 @@ function buildTableTmpKeeper(elementId, fieldsArray, obj) {
         button.className = "offset-s1 col s3 waves-effect  light-green accent-4 waves-blue btn";
         button.innerText = "Devolver";
         button.href = "#!";
-        button.setAttribute("onclick", "returnTemporal(&quot" + temporal.id + ")")
+        button.setAttribute("onclick", "returnTemporal('" + temporal.id + "')");
         detailsDiv.appendChild(space);
         detailsDiv.appendChild(title);
         detailsDiv.appendChild(button);
@@ -2563,9 +2584,9 @@ function buildTableTmpKeeper(elementId, fieldsArray, obj) {
 
 function unSelectTempActive(activeId) {
     if (this.currentQueryResult[activeId] != undefined) {
-        var prevQ = this.currentQueryResult[activeId].quantity;
-        var newQ = this.tmpActiveList[activeId].quantity;
-        this.currentQueryResult[activeId].quantity = Number(prevQ) + Number(newQ);
+        var prevQ = this.currentQueryResult[activeId].availableQuantity;
+        var newQ = this.tmpActiveList[activeId].availableQuantity;
+        this.currentQueryResult[activeId].availableQuantity = Number(prevQ) + Number(newQ);
     }
     else
         this.currentQueryResult[activeId] = this.tmpActiveList[activeId];
@@ -2578,35 +2599,47 @@ function unSelectTempActive(activeId) {
 function selectTempActive(activeId) {
     this.selectedActive = this.currentQueryResult[activeId]
     document.getElementById('confirmTmpModalModalContent').innerHTML = "";
-    var text = "Nombre: " + this.selectedActive.name + '\nMarca: ' + this.selectedActive.brand + '\nCantidad disponible: ' + this.selectedActive.quantity;
+    var text = "Nombre: " + this.selectedActive.name + '\nMarca: ' + this.selectedActive.brand + '\nCantidad disponible: ' + this.selectedActive.availableQuantity;
     var li = document.createElement('li');
     li.className = 'collection-item';
     li.innerText = text;
     document.getElementById('confirmTmpModalModalContent').appendChild(li);
     document.getElementById('confirmTmpModalButton').setAttribute("onclick", "confirmTempKeeper('" + this.selectedActive.id + "');");
-    document.getElementById('activeQuantityTmp').setAttribute('max', this.selectedActive.quantity);
+    document.getElementById('activeQuantityTmp').setAttribute('max', this.selectedActive.availableQuantity);
 }
 function confirmTempKeeper(activeId) {
+    var quantity = document.getElementById('activeQuantityTmp').value;
     var auxActive = Object.assign({}, this.selectedActive);
-    if (document.getElementById('activeQuantityTmp').value > auxActive.quantity) {
+    if (quantity > auxActive.availableQuantity) {
+        console.log("1");
         setModal('Cantidad incorrecta', 'No se puede prestar una cantidad mayor de la disponible.');
         $('#message').modal('open').value = "";
     } else {
-        if (document.getElementById('activeQuantityTmp').value == auxActive.quantity) {
-            delete this.currentQueryResult[auxActive.id];
+        if (quantity == auxActive.availableQuantity) {
+            console.log("2");
+            this.currentQueryResult[auxActive.id].availableQuantity = 0;
             this.temporalList.push(auxActive);
             this.tmpActiveList[auxActive.id] = auxActive;
+            this.tmpActiveList[auxActive.id].availableQuantity = document.getElementById('activeQuantityTmp').value;
+            this.tmpActiveList[auxActive.id].totalQuantity = document.getElementById('activeQuantityTmp').value;
         } else {
-            if (document.getElementById('activeQuantityTmp').value < this.selectedActive.quantity) {
-                var prevQ = this.currentQueryResult[auxActive.id].quantity;
+            if (quantity < this.selectedActive.availableQuantity && quantity >= 0) {
+                console.log("3");
+                var prevQ = this.currentQueryResult[auxActive.id].availableQuantity;
                 var newQ = document.getElementById('activeQuantityTmp').value;
-                auxActive.quantity = document.getElementById('activeQuantityTmp').value;
+                auxActive.availableQuantity = document.getElementById('activeQuantityTmp').value;
+                auxActive.totalQuantity = document.getElementById('activeQuantityTmp').value;
                 //temporalList is array
                 this.temporalList.push(auxActive);
                 //tmpActiveList is obect
                 this.tmpActiveList[auxActive.id] = auxActive;
 
-                this.currentQueryResult[auxActive.id].quantity = (prevQ - newQ);
+                this.currentQueryResult[auxActive.id].availableQuantity = (prevQ - newQ);
+            }
+            else if (quantity < 0) {
+                console.log("minus");
+                setModal('Cantidad incorrecta', 'No se puede prestar una cantidad negativa.');
+                $('#message').modal('open').value = "";
             }
         }
 
@@ -2880,17 +2913,29 @@ function finishTemporal(finishTemporalModalContent, activeId, path) {
 }
 
 function returnTemporal(temporalId) {
-    var temporal = database.ref('actives/temporalKeeper/' + temporalId);
-    temporal.on('value', function (s) {
-        var result = s.val();
-        var activesArray = Object.values(s);
-        var promise = database.ref('actives/temporalKeeper/' + temporalId).update({
-            status: 'done'
-        })
-            .then(function () {
-
-            })
+    
+    var actives = database.ref('actives/all')
+    avtives.on('value',function(s){
+        var allActivesArray = Object.values(s.val());
+        var temporalArray = Object.values(this.currentQueryResult[temporalId].actives);    
+        returnQuantities(0,temporalArray.length,temporalArray,allActivesArray);
     })
+    
+}
+
+function returnQuantities(index,arrLenght,tmpArray,allActivesArray){
+    if(index < arrLenght){
+        var newQ = tmpArray[index].availableQuantity + allActivesArray[tmpArray[index].id].availableQuantity;
+        var prom = database.ref('actives/all/' + tmpArray[index].id).update({
+            status: 'ACTIVO',
+            availableQuantity: newQ
+        });
+        prom.then(function (r) {
+            returnQuantities(index + 1,temporalArray.length,temporalArray,allActivesArray);
+        }, function (e) { });
+    }else{
+        return;
+    }
 }
 
 
@@ -2943,7 +2988,7 @@ function fillOption(inputId, path, local, propList, filter) {
             var option = document.createElement('option');
             option.innerText = _option.propertie;
             option.value = _option.value;
-            option.setAttribute("onclick","setFilterValue('" + filter + "','" + _option.value + "');");
+            //option.setAttribute("onclick","setFilterValue('" + filter + "','" + _option.value + "');");
             input.appendChild(option);
         }
         input.classList.remove('hide');
@@ -2952,16 +2997,18 @@ function fillOption(inputId, path, local, propList, filter) {
 
 };
 function setFilterValue(filter , value){
-    console.log(filter)
+    
     this[filter].search = value;
 };
 
-function searchActive(queryResult, tableFields, tableId, firstInput, secondInput,firstSelect, secondSelect) {
+function searchActive(queryResult, tableFields, tableId, firstInput, secondInput,firstSelect, secondSelect,printButton) {
     var actives = this[queryResult];
     var filteredResults = [];
     var tableFields = this[tableFields];
-
+    if(document.getElementById(printButton) != undefined)
+    document.getElementById(printButton).classList.remove('hide');
     if(!window.usingSecFilter){
+        
         if(this.firstFilter.propertie == "keeperId"){
             for (var active of Object.values(actives)) {
                 if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search) != -1)
@@ -2997,6 +3044,13 @@ for (var active of Object.values(actives)) {
 }
 };
 
+function fillInfo(filterName, input){
+    
+    var filter = this[filterName];
+    var input = document.getElementById(input).value;
+    
+    filter.search = input;
+};
 function makeTable(filteredResults, tableFields, tableId, firstInput, secondInput, firstSelect, secondSelect) {
     if (filteredResults.length <= 0) {
         document.getElementById(tableId).innerHTML = "<h3>No se encontaron resultados</h3>"
