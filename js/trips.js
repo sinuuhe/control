@@ -26,7 +26,7 @@ class Trips {
             {
                 value: "",
                 inputName: 'initialKm',
-                type: 'input'
+                type: 'select'
             },
             {
                 value: "",
@@ -44,7 +44,7 @@ class Trips {
     newTrip(trip) {
         trip.inputs = InputManager.fillValuesFromInputs(trip.inputs);
 
-        var promise = database.ref(trip.path + '/en curso/' + trip.vehicleId).set({
+        var promise = database.ref(trip.path + '/todos/').push({
             vehicleId: trip.vehicleId,
             vehicle: trip.inputs[0].value,
             issue: trip.inputs[1].value,
@@ -53,57 +53,30 @@ class Trips {
             initialKm: trip.inputs[4].value,
             tripType: trip.inputs[5].value,
             tripOutInfo: trip.inputs[6].value,
-            id: trip.vehicleId
+            status:"current",
+            driverId: document.getElementById('driverTripId').innerText
+
         }, function (error) {
             setModal('Error al registrar', 'No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
             $('#message').modal('open').value = "";
         });
 
-        var prom = database.ref(trip.path + '/todos/' + trip.vehicleId).push({
-            vehicleId: trip.vehicleId,
-            vehicle: trip.inputs[0].value,
-            issue: trip.inputs[1].value,
-            date: trip.inputs[2].value,
-            driver: trip.inputs[3].value,
-            initialKm: trip.inputs[4].value,
-            tripType: trip.inputs[5].value,
-            tripOutInfo: trip.inputs[6].value,
-            status: "en curso"
-        }, function (error) {
-            setModal('Error al registrar', 'No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
-            $('#message').modal('open').value = "";
-        });
-        prom.then(function (response) {
-            database.ref(trip.path + '/todos/' + trip.vehicleId + '/' + prom.key).update({
-                id: prom.key
-            });
-
-            database.ref(trip.path + '/en curso/' + trip.vehicleId + '/').update({
-                tripId: prom.key
-            });
-
+        promise.then(function(){
+            database.ref(trip.path + '/todos/' + promise.key).update({
+                id: promise.key
+            })
             database.ref('vehicles/todos/' + trip.vehicleId).update({
-                status: "en uso"
+                status: "EN USO"
             });
-            database.ref('vehicles/disponible/' + trip.vehicleId).set(null);
-
-            var usedVehicle = database.ref('vehicles/todos/' + trip.vehicleId);
-            usedVehicle.on('value', function (snapshot) {
-                database.ref('vehicles/en uso/' + trip.vehicleId).set(snapshot.val());
-            }, {});
-
             trip.inputs = InputManager.cleanValuesFromInputs(trip.inputs);
             setModal('Registro Exitoso', 'El registro se llevó a cabo correctamente.');
             $('#message').modal('open').value = "";
             actionButton('newTrip', 'hide', 'vehiclesQuery');
             vehiclesQuery('vehicles', vehiclesFields, 'vehiclesResultsTable', 'selectedDriverVehicleStatus', 'disponible');
-        }, function (error) {
-            setModal('Error al registrar', 'No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
-            $('#message').modal('open').value = "";
         })
     };
 
-    static finisTrip(vehicleId, tripId) {
+    static finisTrip(vehicleId, tripId, initialKm) {
         var inputs = [
             {
                 value: "",
@@ -131,55 +104,46 @@ class Trips {
                 type: 'input'
             }
         ];
-        database.ref('salidas/en curso/' + vehicleId).set(null);
+
         inputs = InputManager.fillValuesFromInputs(inputs);
-        database.ref('salidas/todos/' + vehicleId + '/' + tripId).update({
-            status: 'terminado',
+        console.log(initialKm)
+        var promise = database.ref('salidas/todos/' + tripId).update({
+            status: 'done',
             finalKm: inputs[0].value,
             voucherNumber: inputs[1].value,
             litres: inputs[2].value,
             amount: inputs[3].value,
-            tripInInfo: inputs[4].value
+            tripInInfo: inputs[4].value,
+            totalKm:(Number(inputs[0].value) - Number(initialKm)),
+            consumption: ((Number(inputs[0].value) - Number(initialKm)) / Number(inputs[2].value))
         });
-        var trip = database.ref('salidas/todos/' + vehicleId + '/' + tripId);
-        var updatedTrip = database.ref('salidas/terminadas/' + vehicleId + '/' + tripId);
+        
 
-        trip.on('value', function (snapshot) {
-            updatedTrip.set(snapshot.val());
-            var _trip = snapshot.val();
-            database.ref('expenses/date/' + getMonth(_trip.date).toLowerCase() + '/combustible/' + tripId).set({
-                cost: _trip.amount,
-                details: 'Compra de Combustible',
-                expenseId: tripId,
-                inDate: _trip.date,
-                integerInDate: formatDate(_trip.date),
-                name: 'combustible',
-                vehicleId: vehicleId,
-                vehicleName: _trip.vehicle
+        promise.then(function(){
+            var _trip = database.ref('salidas/todos/' + tripId).on('value',function(snap){
+                var tr = snap.val();
+                database.ref('expenses/' + tripId).set({
+                    cost: tr.amount,
+                    details: 'Compra de Combustible',
+                    expenseId: tripId,
+                    inDate: tr.date,
+                    integerInDate: formatDate(tr.date),
+                    name: 'combustible',
+                    vehicleId: vehicleId,
+                    vehicleName: tr.vehicle
+                })
+    
+                database.ref('vehicles/todos/' + vehicleId).update({
+                    status: "DISPONIBLE",
+                    km:(Number(inputs[0].value) + Number(initialKm))
+                });
             })
-
-        })
-        database.ref('vehicles/todos/' + vehicleId).update({
-            status: "disponible"
-        });
-        database.ref('vehicles/en uso/' + vehicleId).set(null);
-        var vehicle = database.ref('vehicles/todos/' + vehicleId);
-        var updatedVehicle = database.ref('vehicles/disponible/' + vehicleId);
-
-        vehicle.on('value', function (snapshot) {
-            updatedVehicle.set(snapshot.val());
+            
             inputs = InputManager.cleanValuesFromInputs(inputs);
             setModal('Registro Exitoso', 'El registro se llevó a cabo correctamente.');
             $('#message').modal('open').value = "";
             actionButton('finishTrip', 'hide', 'vehiclesQuery');
             vehiclesQuery('vehicles', vehiclesFields, 'vehiclesResultsTable', 'selectedDriverVehicleStatus', 'disponible');
-        });
-
-
-
-
-
-
-
+        })
     };
 }

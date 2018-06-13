@@ -10,8 +10,11 @@ var config = {
 };
 firebase.initializeApp(config);
 
+
 //Reference to the db
+
 var database = firebase.database();
+
 
 var cu;
 var selectedEmploye = { name: "", id: "" };
@@ -35,6 +38,7 @@ var secondSearch = "";
 var temporalList = [];
 var selectedActive = {};
 var currentQueryResult = undefined;
+var currentQueryResultAux = undefined;
 var tmpActiveList = {};
 var temporalFields = [
     {
@@ -42,12 +46,12 @@ var temporalFields = [
         title: "Activo"
     },
     {
-        propertie: 'model',
-        title: "Modelo"
-    },
-    {
         propertie: 'brand',
         title: "Marca"
+    },
+    {
+        propertie: 'model',
+        title: "Modelo"
     }
 ];
 var expensesFields = [
@@ -223,7 +227,7 @@ $(document).ready(function () {
     $("#newActiveForm").submit(function (e) {
         if (e.result) {
             e.preventDefault(); // prevent page refresh
-            registerActive();
+            verifySN('serialNumber');
         }
     });
     $('select').material_select();
@@ -246,22 +250,22 @@ $(document).ready(function () {
         var select = document.getElementById('firstActiveFilterSelect').value;
         switch (select) {
             case "a":
-                selectFilter('firstFilter','firstFilterSelect', 'input', 'name', 'firstFilterInput');
+                selectFilter('firstFilter', 'firstFilterSelect', 'input', 'name', 'firstFilterInput');
                 break;
             case "b":
-                selectFilter('firstFilter','firstFilterInput', 'option', 'keeperId', 'firstFilterSelect', false,'', 'employe');
+                selectFilter('firstFilter', 'firstFilterInput', 'option', 'keeperId', 'firstFilterSelect', false, '', 'employe');
                 break;
             case "c":
-                selectFilter('firstFilter','firstFilterSelect', 'input', 'brand', 'firstFilterInput');
+                selectFilter('firstFilter', 'firstFilterSelect', 'input', 'brand', 'firstFilterInput');
                 break;
             case "d":
-                selectFilter('firstFilter','firstFilterSelect', 'input', 'model', 'firstFilterInput');
+                selectFilter('firstFilter', 'firstFilterSelect', 'input', 'model', 'firstFilterInput');
                 break;
             case "e":
-                selectFilter('firstFilter','firstFilterInput', 'option', 'status', 'firstFilterSelect', true, statusOptions);
+                selectFilter('firstFilter', 'firstFilterInput', 'option', 'status', 'firstFilterSelect', true, statusOptions);
                 break;
             case "f":
-                selectFilter('firstFilter','firstFilterInput', 'option', 'category', 'firstFilterSelect', true, activesCategories);
+                selectFilter('firstFilter', 'firstFilterInput', 'option', 'category', 'firstFilterSelect', true, activesCategories);
                 break;
             case "g":
                 //dates
@@ -270,7 +274,7 @@ $(document).ready(function () {
     });
     $('#secondActiveFilterSelect').on('change', function (e) {
         window.usingSecFilter = true;
-        if(!window.usingSecFilter)
+        if (!window.usingSecFilter)
             document.getElementById('secFilterTxt').innerText = "Segundo filtro (Desactivado)"
         else
             document.getElementById('secFilterTxt').innerText = "Segundo filtro (Activado)"
@@ -279,22 +283,22 @@ $(document).ready(function () {
         console.log(this.usingSecFilter)
         switch (select) {
             case "a":
-                selectFilter('secondFilter','secondFilterSelect', 'input', 'name', 'secondFilterInput');
+                selectFilter('secondFilter', 'secondFilterSelect', 'input', 'name', 'secondFilterInput');
                 break;
             case "b":
-                selectFilter('secondFilter','secondFilterInput', 'option', 'keeperId', 'secondFilterSelect', false,'','employe');
+                selectFilter('secondFilter', 'secondFilterInput', 'option', 'keeperId', 'secondFilterSelect', false, '', 'employe');
                 break;
             case "c":
-                selectFilter('secondFilter','secondFilterSelect', 'input', 'brand', 'secondFilterInput');
+                selectFilter('secondFilter', 'secondFilterSelect', 'input', 'brand', 'secondFilterInput');
                 break;
             case "d":
-                selectFilter('secondFilter','secondFilterSelect', 'input', 'model', 'secondFilterInput');
+                selectFilter('secondFilter', 'secondFilterSelect', 'input', 'model', 'secondFilterInput');
                 break;
             case "e":
-                selectFilter('secondFilter','secondFilterInput', 'option', 'status', 'secondFilterSelect', true, statusOptions);
+                selectFilter('secondFilter', 'secondFilterInput', 'option', 'status', 'secondFilterSelect', true, statusOptions);
                 break;
             case "f":
-                selectFilter('secondFilter','secondFilterInput', 'option', 'category', 'secondFilterSelect', true, activesCategories);
+                selectFilter('secondFilter', 'secondFilterInput', 'option', 'category', 'secondFilterSelect', true, activesCategories);
                 break;
             case "g":
                 //dates
@@ -378,11 +382,11 @@ function finishTemporalKeeper(tmpKeeperName, tmpReceptorName, tableId) {
         database.ref('actives/temporalKeeper/' + promise.key).update({ id: promise.key });
         makePDFTmpKeeper(tmpKeeperName, tmpReceptorName, tableId);
         var quantities = [];
-        for(active of this.temporalList){
+        for (active of this.temporalList) {
             var newQ = this.currentQueryResult[active.id].availableQuantity;
             quantities.push(newQ);
         }
-        updateActiveStatus(0,quantities);
+        updateActiveStatus(0, quantities);
         actionButton('newTemporalKeeper', 'hide', 'activesMainMenu')
     }, function (error) {
         setModal('ERROR Resguardo Temporal', 'Hubo un problema, inténtelo de nuevo, por favor.');
@@ -391,7 +395,7 @@ function finishTemporalKeeper(tmpKeeperName, tmpReceptorName, tableId) {
 
 }
 
-function updateActiveStatus(index,quantities) {
+function updateActiveStatus(index, quantities) {
     if (index < this.temporalList.length) {
         var activeId = this.temporalList[index].id;
         var newQ = quantities[index];
@@ -400,7 +404,7 @@ function updateActiveStatus(index,quantities) {
             availableQuantity: newQ
         });
         prom.then(function (r) {
-            updateActiveStatus(index + 1,quantities)
+            updateActiveStatus(index + 1, quantities)
         }, function (e) { });
     } else return;
 };
@@ -521,6 +525,12 @@ function actionButton(elementtoHide, classToSet, elementToShow) {
     document.getElementById(elementtoHide).classList.add(classToSet);
     document.getElementById(elementToShow).classList.remove('hide');
     document.getElementById('printReport').classList.add('hide');
+    if (elementToShow == 'newActive') {
+        var sn = database.ref('actives/sn');
+        sn.on('value', function (s) {
+            this.currentQueryResult = s.val();
+        })
+    }
 };
 
 function showQuery(elementTohide, classToSet, elementToShow) {
@@ -528,9 +538,9 @@ function showQuery(elementTohide, classToSet, elementToShow) {
     document.getElementById(elementToShow).classList.remove('hide');
     loadDrivers('drivers', 'vehicleDriverList')
 };
-function registerActive() {
+function registerActive(validSN) {
 
-
+    console.log('this is valid in register ' + validSN)
     var brand = document.getElementById('brand').value;
     if (document.getElementById('selectedBuilding').innerText != 'OTRO')
         var location = document.getElementById('selectedBuilding').innerText + ', ' + document.getElementById('selectedRoom').innerText;
@@ -582,8 +592,7 @@ function registerActive() {
         });
     }
     else {
-        if (verifySN(serialNumber.toUpperCase())) {
-            alert(window.verifiedSN)
+        if (validSN) {
             var promise = database.ref('actives/all').push({
                 brand: brand.toUpperCase(),
                 keeperId: keeperId,
@@ -610,7 +619,7 @@ function registerActive() {
                     activeId: promise.key,
                     value: serialNumber.toUpperCase()
                 })
-        
+
                 setModal('Registro Exitoso', 'El activo se registró correctamente.');
                 $('#message').modal('open').value = "";
                 document.getElementById('brand').value = "";
@@ -631,8 +640,11 @@ function registerActive() {
                 this.selectedRoom.name = "";
                 document.getElementById('otherBuildingInputField').value = "";
                 document.getElementById('otherBuildingInput').classList.add('hide');
-        
-        
+                var sn = database.ref('actives/sn');
+                sn.on('value', function (s) {
+                    this.currentQueryResult = s.val();
+                })
+
             }, function (error) {
                 setModal('Error al registrar', 'No se pudo llevar a cabo el registro. Por favor inténtelo de nuevo.');
                 $('#message').modal('open').value = "";
@@ -643,27 +655,19 @@ function registerActive() {
         }
     }
 
-   
+
 };
 
-function verifySN(sn) {
-
-    console.log('en el else ' + sn)
-    var serialNumbers = database.ref('actives/sn');
-    serialNumbers.on('value', function (snap) {
-    var resArray = Object.values(snap.val());
-        for (var element of resArray) {
-
-            
-            if (element.value == sn){ 
-                console.log(element.value);
-                window.verifiedSN = false;
-                return window.verifiedSN;
-            }
-        }
-        return window.verifiedSN;
-    })
-    
+function verifySN(snID) {
+    var sn = document.getElementById(snID).value;
+    var snArray = Object.values(this.currentQueryResult);
+    var valid = true;
+    for (element of snArray) {
+        console.log('element ' + element.value + ' sn ' + sn.toUpperCase())
+        if (element.value == sn.toUpperCase())
+            valid = false;
+    }
+    registerActive(valid)
 };
 function loadEmployees(path, comboBoxId) {
     var employees = database.ref(path);
@@ -981,11 +985,10 @@ function vehiclesQuery(findablePath, fieldsArray, tableId, filterId, search) {
     document.getElementById('loadingVehiclesQuery').classList.remove('hide');
     document.getElementById(tableId).classList.add('hide')
     var filter;
-    if (search != undefined) filter = search.toLocaleLowerCase();
-    else filter = document.getElementById(filterId).innerText.toLocaleLowerCase();
-    var result = database.ref(findablePath + '/' + filter);
+    if (search != undefined) filter = search.toUpperCase();
+    else filter = document.getElementById(filterId).innerText.toUpperCase();
+    var result = database.ref(findablePath + '/todos');
     var resultArray;
-    var table = document.getElementById(tableId);
     var table = document.getElementById(tableId);
     table.innerHTML = "";
 
@@ -1002,9 +1005,13 @@ function vehiclesQuery(findablePath, fieldsArray, tableId, filterId, search) {
             for (var field of fieldsArray) {
                 tableHead += "<th>" + field.title + "</th>";
             };
-            tableHead += "</tr></thead>"
+            if(resultArray.length > 0){
+                var count = 0;
+                tableHead += "</tr></thead>"
             for (var element of resultArray) {
-                tableBody += '<tr>';
+                if(element.status == filter){
+                    count ++;
+                    tableBody += '<tr>';
                 for (var field of fieldsArray) {
                     if (element[field.propertie] == undefined) {
                         tableBody += "<td>NA</td>"
@@ -1028,6 +1035,40 @@ function vehiclesQuery(findablePath, fieldsArray, tableId, filterId, search) {
 
 
                 tableBody += '</tr>';
+                }
+
+
+                if(filter == "TODOS"){
+                    tableBody += '<tr>';
+                for (var field of fieldsArray) {
+                    if (element[field.propertie] == undefined) {
+                        tableBody += "<td>NA</td>"
+                    } else {
+                        tableBody += "<td>" + element[field.propertie] + "</td>";
+                    }
+                };
+                if (filter.toLowerCase() == 'disponible') {
+                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick='deleteVehicle( &quot;" + element.id + "&quot; , &quot;unsubscribeContent&quot; , &quot;deleteButton&quot; );'>Baja</a>  </td>";
+
+                    tableBody += "<td><a class='waves-effect waves-light btn lime darken-4' onclick='newExpense(&quot;" + element.id + "&quot;,&quot;vehiclesExpenses&quot;,&quot;vehiclesQuery&quot;,&quot;expensesTitle&quot;);'>Nvo. Gasto</a>  </td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn blue' onclick='useVehicle(&quot;" + element.id + "&quot;)'>Usar</a>  </td>";
+                }
+                if (filter.toLowerCase() == 'en uso') {
+                    tableBody += "<td><a class='waves-effect waves-light btn lime darken-4 '  onclick='finishTrip(&quot;" + element.id + "&quot;);'>Terminar salida/Detalles</a>  </td>";
+                }
+                if (filter.toLowerCase() == 'reparacion') {
+                    tableBody += "<td><a class='waves-effect waves-light btn orange modal-trigger' href='#modalInfo' onclick='repairingDetails(&quot;" + element.id + "&quot;);'> Detalles</a></td>";
+                    tableBody += "<td><a class='waves-effect waves-light btn green' >Reparacion Lista</a></td>";
+                }
+
+
+                tableBody += '</tr>';
+                }
+            }
+            if(count == 0)
+                tableBody += "<h3>No hay resultados</h3>";
+            }else{
+                tableBody += "<h3>No hay resultados</h3>";
             }
             tableBody += "</tbody>";
             table.innerHTML += tableHead + tableBody;
@@ -1845,6 +1886,7 @@ function useVehicle(vehicleId) {
     actionButton('vehiclesQuery', 'hide', 'newTrip');
     document.getElementById('vehicleTripId').innerText = vehicleId;
     document.getElementById('tripTitle').innerText = this.currentQueryResult[vehicleId].brand + " " + this.currentQueryResult[vehicleId].model + " " + this.currentQueryResult[vehicleId].year;
+    document.getElementById('km').innerHTML = "<div class='card grey darken-4'><div class='card-content white-text'><span class=''>Kilometraje inicial: </span><span id = 'initialKm'>" + this.currentQueryResult[vehicleId].km + "</span>Km.<span></span></div></div>"
 }
 
 function confirmTrip(vehicleId) {
@@ -1856,19 +1898,28 @@ function confirmTrip(vehicleId) {
 
 function finishTrip(vehicleId) {
     actionButton('vehiclesQuery', 'hide', 'finishTrip');
-    var trip = database.ref('salidas/en curso/' + vehicleId);
+    var trip = database.ref('salidas/todos/' );
     var objectTrip;
     trip.on('value', function (snapshot) {
         objectTrip = snapshot.val();
-        if (objectTrip != undefined) {
-            document.getElementById('finishTripTitle').innerHTML = "<div class='row center-align'><div class='col s8 offset-s2'><div class='card blue-grey darken-1'><div class='card-content white-text'><span class='card-title'>Detalles de Salida</span><h6>Vehiculo: " + objectTrip.vehicle + "</h6><h6>Fecha salida: " + objectTrip.date + "</h6><h6>Motivo salida: " + objectTrip.issue + "</h6><h6>Tipo de Salida: " + objectTrip.tripType + "</h6><h6>Conductor: " + objectTrip.driver + "</h6><br></div></div></div></div>";
-            document.getElementById('confirmFinishButton').setAttribute("onclick", "confirmFinishTrip('" + objectTrip.vehicleId + "','" + objectTrip.tripId + "');");
+        //one car cant be in two trips at the same time
+
+        arrayTrip = Object.values(objectTrip);
+        var filteredTrip = {};
+        for(var trip of arrayTrip){
+            console.log('looool ' + trip.status)
+            if(trip.vehicleId == vehicleId && trip.status == "current")
+            filteredTrip = trip;
+        }
+        if (filteredTrip != undefined) {
+            document.getElementById('finishTripTitle').innerHTML = "<div class='row center-align'><div class='col s8 offset-s2'><div class='card blue-grey darken-1'><div class='card-content white-text'><span class='card-title'>Detalles de Salida</span><h6>Vehiculo: " + filteredTrip.vehicle + "</h6><h6>Fecha salida: " + filteredTrip.date + "</h6><h6>Motivo salida: " + filteredTrip.issue + "</h6><h6>Tipo de Salida: " + filteredTrip.tripType + "</h6><h6>Conductor: " + filteredTrip.driver + "</h6><br></div></div></div></div>";
+            document.getElementById('confirmFinishButton').setAttribute("onclick", "confirmFinishTrip('" + filteredTrip.vehicleId + "','" + filteredTrip.id + "'," + filteredTrip.initialKm + ");");
         }
     });
 };
 
-function confirmFinishTrip(vehicleId, tripId) {
-    Trips.finisTrip(vehicleId, tripId);
+function confirmFinishTrip(vehicleId, tripId, initialKm) {
+    Trips.finisTrip(vehicleId, tripId, initialKm);
 };
 
 function searchExpenses(filterId, selectedMonthId) {
@@ -2057,30 +2108,30 @@ function selectNormalFilterSecond(comboId, filter, selectedValue, filterName, in
     document.getElementById('statusSecondFilter').classList.add('hide');
     document.getElementById('categorySecondFilter').classList.add('hide');
 }
-function removeFilter(secondFilter, selectInput, secondInput, secondFilterDiv,iconId) {
-    if(window[secondFilter]){
+function removeFilter(secondFilter, selectInput, secondInput, secondFilterDiv, iconId) {
+    if (window[secondFilter]) {
         window[secondFilter] = false;
-    console.log(this.usingSecFilter)
-    document.getElementById(secondFilterDiv).classList.add('hide');
+        console.log(this.usingSecFilter)
+        document.getElementById(secondFilterDiv).classList.add('hide');
 
-    if(!window.usingSecFilter){
-        document.getElementById(iconId).innerText = "add"
-        document.getElementById('secFilterTxt').innerText = "Segundo filtro (Desactivado)"
+        if (!window.usingSecFilter) {
+            document.getElementById(iconId).innerText = "add"
+            document.getElementById('secFilterTxt').innerText = "Segundo filtro (Desactivado)"
+        }
+        else {
+            document.getElementById(iconId).innerText = "clear"
+            document.getElementById('secFilterTxt').innerText = "Segundo filtro (Activado)"
+        }
     }
-    else{
-        document.getElementById(iconId).innerText = "clear"
-        document.getElementById('secFilterTxt').innerText = "Segundo filtro (Activado)"
-    }
-    }
-    else{
+    else {
         window[secondFilter] = true;
-    console.log(this.usingSecFilter)
-    document.getElementById(secondFilterDiv).classList.remove('hide');
+        console.log(this.usingSecFilter)
+        document.getElementById(secondFilterDiv).classList.remove('hide');
 
-    if(!window.usingSecFilter)
-        document.getElementById('secFilterTxt').innerText = "Segundo filtro (Desactivado)"
-    else
-        document.getElementById('secFilterTxt').innerText = "Segundo filtro (Activado)"
+        if (!window.usingSecFilter)
+            document.getElementById('secFilterTxt').innerText = "Segundo filtro (Desactivado)"
+        else
+            document.getElementById('secFilterTxt').innerText = "Segundo filtro (Activado)"
     }
 }
 
@@ -2511,14 +2562,21 @@ function temporalKeeperQuery(hideElement, classToSet, showElement) {
     query.on('value', function (s) {
         var result = s.val();
         this.currentQueryResult = result;
-        buildTableTmpKeeper('temporalKeeperResults', this.temporalFields, result);
+        //buildTableTmpKeeper('temporalKeeperResults', this.temporalFields, result);
+    })
+    var query2 = database.ref('actives/all');
+    query2.on('value', function (s) {
+        var result = s.val();
+        this.currentQueryResultAux = result;
     })
 }
 
 function buildTableTmpKeeper(elementId, fieldsArray, obj) {
     var temporalsArray = Object.values(obj);
     var results = document.getElementById(elementId);
+    results.innerHTML = "";
 
+if(temporalsArray.length > 0){
     for (var temporal of temporalsArray) {
         var wrapperDiv = document.createElement('div');
         wrapperDiv.className = "row z-depth-5";
@@ -2531,11 +2589,18 @@ function buildTableTmpKeeper(elementId, fieldsArray, obj) {
             title.innerText = "Préstamo a: " + temporal.requester + " Otorgado por: " + temporal.user.userName + " " + temporal.user.lastname + "\nFecha: " + temporal.outDate + "\nFeche tentativa de devolución: " + temporal.returnDate;
         else
             title.innerText = "NA";
-        var button = document.createElement('a');
+        if(temporal.status == "current"){
+            var button = document.createElement('a');
         button.className = "offset-s1 col s3 waves-effect  light-green accent-4 waves-blue btn";
         button.innerText = "Devolver";
         button.href = "#!";
         button.setAttribute("onclick", "returnTemporal('" + temporal.id + "')");
+        }else{
+            var button = document.createElement('a');
+        button.className = "offset-s1 col s3 waves-effect disabled light-green accent-4 waves-blue btn";
+        button.innerText = "Devolver";
+
+        }
         detailsDiv.appendChild(space);
         detailsDiv.appendChild(title);
         detailsDiv.appendChild(button);
@@ -2578,6 +2643,9 @@ function buildTableTmpKeeper(elementId, fieldsArray, obj) {
         results.appendChild(wrapperDiv);
 
     }
+}else{
+    results.innerHTML = "<h3>No hay resultados</h3>"
+}
 
 
 };
@@ -2913,33 +2981,40 @@ function finishTemporal(finishTemporalModalContent, activeId, path) {
 }
 
 function returnTemporal(temporalId) {
-    
-    var actives = database.ref('actives/all')
-    avtives.on('value',function(s){
-        var allActivesArray = Object.values(s.val());
-        var temporalArray = Object.values(this.currentQueryResult[temporalId].actives);    
-        returnQuantities(0,temporalArray.length,temporalArray,allActivesArray);
-    })
-    
+    console.log('return tmp ' + temporalId)
+    var allActives = this.currentQueryResultAux;
+    var temporalArray = Object.values(this.currentQueryResult[temporalId].actives);
+    returnQuantities(0, temporalArray.length, temporalArray, allActives, temporalId);
+
 }
 
-function returnQuantities(index,arrLenght,tmpArray,allActivesArray){
-    if(index < arrLenght){
-        var newQ = tmpArray[index].availableQuantity + allActivesArray[tmpArray[index].id].availableQuantity;
+function returnQuantities(index, arrLenght, tmpArray, allActives, temporalId) {
+    console.log('return quantities ' + temporalId)
+    if (index < arrLenght) {
+
+        var newQ = Number(tmpArray[0].availableQuantity) + Number(allActives[tmpArray[0].id].availableQuantity);
         var prom = database.ref('actives/all/' + tmpArray[index].id).update({
             status: 'ACTIVO',
             availableQuantity: newQ
         });
         prom.then(function (r) {
-            returnQuantities(index + 1,temporalArray.length,temporalArray,allActivesArray);
+
+            returnQuantities(Number(index) + 1, tmpArray.length, tmpArray, allActives, temporalId);
         }, function (e) { });
-    }else{
-        return;
+    } else {
+        
+        updateTemporalStatus(temporalId);
     }
 }
 
-
-function selectFilter(filter,toHide, filterType, filterName, inputId, local, propList, path) {
+function updateTemporalStatus(temporalId) {
+    console.log('update tmp ' + temporalId)
+    database.ref('actives/temporalKeeper/' + temporalId).update({
+        status: "done"
+    })
+    return;
+}
+function selectFilter(filter, toHide, filterType, filterName, inputId, local, propList, path) {
     console.log('s ' + path)
     document.getElementById(toHide).classList.add('hide');
     this[filter].propertie = filterName;
@@ -2964,14 +3039,14 @@ function fillOption(inputId, path, local, propList, filter) {
             input.innerHTML = "";
             var option = document.createElement('option');
             option.innerText = "Seleccionar...";
-            option.setAttribute("selected","");
+            option.setAttribute("selected", "");
             input.appendChild(option);
             for (var element of resultArray) {
                 console.log(element)
                 var option = document.createElement('option');
                 option.innerText = element.name + " " + element.lastname;
                 option.value = element.id;
-                option.setAttribute("onclick","setFilterValue('" + filter + "','" + element.id + "');");
+                option.setAttribute("onclick", "setFilterValue('" + filter + "','" + element.id + "');");
                 input.appendChild(option);
             }
             input.classList.remove('hide');
@@ -2982,7 +3057,7 @@ function fillOption(inputId, path, local, propList, filter) {
         input.innerHTML = "";
         var option = document.createElement('option');
         option.innerText = "Seleccionar...";
-        option.setAttribute("selected","");
+        option.setAttribute("selected", "");
         input.appendChild(option);
         for (var _option of propList) {
             var option = document.createElement('option');
@@ -2996,59 +3071,59 @@ function fillOption(inputId, path, local, propList, filter) {
     }
 
 };
-function setFilterValue(filter , value){
-    
+function setFilterValue(filter, value) {
+
     this[filter].search = value;
 };
 
-function searchActive(queryResult, tableFields, tableId, firstInput, secondInput,firstSelect, secondSelect,printButton) {
+function searchActive(queryResult, tableFields, tableId, firstInput, secondInput, firstSelect, secondSelect, printButton) {
     var actives = this[queryResult];
     var filteredResults = [];
     var tableFields = this[tableFields];
-    if(document.getElementById(printButton) != undefined)
-    document.getElementById(printButton).classList.remove('hide');
-    if(!window.usingSecFilter){
-        
-        if(this.firstFilter.propertie == "keeperId"){
+    if (document.getElementById(printButton) != undefined)
+        document.getElementById(printButton).classList.remove('hide');
+    if (!window.usingSecFilter) {
+
+        if (this.firstFilter.propertie == "keeperId") {
             for (var active of Object.values(actives)) {
                 if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search) != -1)
                     filteredResults.push(active);
-            }  
-        }else{
+            }
+        } else {
             for (var active of Object.values(actives)) {
                 if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search.toUpperCase()) != -1)
                     filteredResults.push(active);
             }
         }
-    
-    makeTable(filteredResults, tableFields, tableId,firstInput, secondInput, firstSelect, secondSelect);
-}else{
-    if(this.firstFilter.propertie == "keeperId"){
-        for (var active of Object.values(actives)) {
-            if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search) != -1 && active[this.secondFilter.propertie].indexOf(this.secondFilter.search.toUpperCase()) != -1)
-                filteredResults.push(active);
-        } 
-    }else if(this.secondFilter.propertie == "keeperId"){
-        for (var active of Object.values(actives)) {
-            if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search.toUpperCase()) != -1 && active[this.secondFilter.propertie].indexOf(this.secondFilter.search) != -1)
-                filteredResults.push(active);
+
+        makeTable(filteredResults, tableFields, tableId, firstInput, secondInput, firstSelect, secondSelect);
+    } else {
+        if (this.firstFilter.propertie == "keeperId") {
+            for (var active of Object.values(actives)) {
+                if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search) != -1 && active[this.secondFilter.propertie].indexOf(this.secondFilter.search.toUpperCase()) != -1)
+                    filteredResults.push(active);
+            }
+        } else if (this.secondFilter.propertie == "keeperId") {
+            for (var active of Object.values(actives)) {
+                if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search.toUpperCase()) != -1 && active[this.secondFilter.propertie].indexOf(this.secondFilter.search) != -1)
+                    filteredResults.push(active);
+            }
+        } else {
+            for (var active of Object.values(actives)) {
+                if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search.toUpperCase()) != -1 && active[this.secondFilter.propertie].indexOf(this.secondFilter.search.toUpperCase()) != -1)
+                    filteredResults.push(active);
+            }
         }
-    }else{
-for (var active of Object.values(actives)) {
-        if (active[this.firstFilter.propertie].indexOf(this.firstFilter.search.toUpperCase()) != -1 && active[this.secondFilter.propertie].indexOf(this.secondFilter.search.toUpperCase()) != -1)
-            filteredResults.push(active);
+
+        makeTable(filteredResults, tableFields, tableId, firstInput, secondInput, firstSelect, secondSelect);
     }
-    }
-    
-    makeTable(filteredResults, tableFields, tableId,firstInput, secondInput, firstSelect, secondSelect);
-}
 };
 
-function fillInfo(filterName, input){
-    
+function fillInfo(filterName, input) {
+
     var filter = this[filterName];
     var input = document.getElementById(input).value;
-    
+
     filter.search = input;
 };
 function makeTable(filteredResults, tableFields, tableId, firstInput, secondInput, firstSelect, secondSelect) {
@@ -3086,10 +3161,34 @@ function makeTable(filteredResults, tableFields, tableId, firstInput, secondInpu
     document.getElementById(secondInput).value = "";
     var select1 = document.getElementById(firstSelect).options;
     var select2 = document.getElementById(secondSelect).options;
-    for(var option of select1){
+    for (var option of select1) {
         option.selected = false;
     }
-    for(var option of select2){
+    for (var option of select2) {
         option.selected = false;
     }
+};
+
+
+function showTemporal(tableId, selectId) {
+    
+    var type = document.getElementById(selectId).value;
+    var filteredResults = [];
+    var temporalsArray = Object.values(this.currentQueryResult);
+    console.log(tableId)
+    for (var element of temporalsArray) {
+        console.log(element.status + ' ' + type)
+        if (element.status == type) {
+            filteredResults.push(element);
+        }
+    }
+    var result = {};
+    for(var element of filteredResults){
+        result[element.id] = element;
+    }
+    console.log('array')
+    console.log(filteredResults)
+    console.log('obnj')
+    console.log(result)
+    buildTableTmpKeeper(tableId, this.temporalFields,result)
 };

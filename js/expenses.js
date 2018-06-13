@@ -42,7 +42,7 @@ class Expenses{
         expense.inputs = InputManager.fillValuesFromInputs(expense.inputs); 
         //using dates
         if(expense.inputs[5].value != "" && expense.inputs[5].value.length > 0){
-            var promise = database.ref(expense.path + '/todos').push({
+            var promise = database.ref(expense.path + '/').push({
                 vehicleName: expense.inputs[0].value,
                 name: expense.inputs[1].value,
                 vehicleId: expense.vehicleId,
@@ -58,35 +58,10 @@ class Expenses{
             });
 
             promise.then(function (response) {
-                database.ref(expense.path + '/todos/' + promise.key).update({
+                database.ref(expense.path + '/' + promise.key).update({
                     id: promise.key
                 });
-                database.ref(expense.path + '/' + expense.inputs[1].value.toLowerCase() + '/' + promise.key).set({
-                    vehicleName: expense.inputs[0].value,
-                    expenseId: promise.key,
-                    vehicleId: expense.vehicleId,
-                    name: expense.inputs[1].value,
-                    cost:  expense.inputs[2].value,
-                    details: expense.inputs[3].value,
-                    inDate: expense.inputs[4].value,
-                    outDate: expense.inputs[5].value,
-                    integerInDate: formatDate(expense.inputs[4].value),
-                    integerOutDate: formatDate(expense.inputs[5].value)
-                });
-                database.ref(expense.path + '/date/' +  getMonth(expense.inputs[4].value).toLowerCase() + '/' + expense.inputs[1].value.toLowerCase() + '/' + promise.key).set({
-                    vehicleName: expense.inputs[0].value,
-                    expenseId: promise.key,
-                    vehicleId: expense.vehicleId,
-                    name: expense.inputs[1].value,
-                    cost:  expense.inputs[2].value,
-                    details: expense.inputs[3].value,
-                    inDate: expense.inputs[4].value,
-                    outDate: expense.inputs[5].value,
-                    integerInDate: formatDate(expense.inputs[4].value),
-                    integerOutDate: formatDate(expense.inputs[5].value)
-                });
-
-                database.ref(expense.path + '/pending/' + '/' + promise.key).set({
+               database.ref(expense.path + '/pending/' + '/' + promise.key).set({
                     vehicleName: expense.inputs[0].value,
                     expenseId: promise.key,
                     name: expense.inputs[1].value,
@@ -101,7 +76,7 @@ class Expenses{
 
                 if(expense.inputs[1].value.toLowerCase() == 'reparacion'){
                     database.ref('vehicles/todos/' + expense.vehicleId).update({
-                        status: 'reparacion',
+                        status: 'REPARACION',
                         details: expense.inputs[3].value,
                         inDate: expense.inputs[4].value,
                         cost:  expense.inputs[2].value,
@@ -109,19 +84,8 @@ class Expenses{
                     integerInDate: formatDate(expense.inputs[4].value),
                     integerOutDate: formatDate(expense.inputs[5].value)
                     }); 
-                    database.ref('vehicles/disponible/' + expense.vehicleId).update({
-                        status: 'reparacion',
-                        details: expense.inputs[3].value
-                    }); 
-                    database.ref('vehicles/disponible/' + expense.vehicleId).set(null); 
-                    var vehicle = database.ref('vehicles/todos/' + expense.vehicleId);
-                    var repVehicle = database.ref('vehicles/reparacion/' + expense.vehicleId);
-                    vehicle.on('value',function(snapshot){
-                        repVehicle.set(snapshot.val());
-                    },function (error){
-                        console.log("error",error);
-                    });
-                };
+                    
+                }
                 expense.inputs = InputManager.cleanValuesFromInputs(expense.inputs);
                 setModal('Registro Exitoso', 'El registro se llevó a cabo correctamente.');
                 $('#message').modal('open').value = "";
@@ -132,7 +96,7 @@ class Expenses{
                 $('#message').modal('open').value = "";
             })
         }else{//without dates
-            var promise = database.ref(expense.path + '/todos/').push({
+            var promise = database.ref(expense.path + '/').push({
                 vehicleName: expense.inputs[0].value,
                 vehicleId: expense.vehicleId,
                 name: expense.inputs[1].value,
@@ -147,31 +111,9 @@ class Expenses{
 
             promise.then(function (response) {
                 
-                database.ref(expense.path + '/todos/' + promise.key).update({
+                database.ref(expense.path + '/' + promise.key).update({
                     id: promise.key
                 });
-                database.ref(expense.path + '/' + expense.inputs[1].value.toLowerCase() + '/' + promise.key).set({
-                    vehicleName: expense.inputs[0].value,
-                    expenseId: promise.key,
-                    name: expense.inputs[1].value,
-                    cost: expense.inputs[2].value,
-                    vehicleId: expense.vehicleId,
-                    details: expense.inputs[3].value,
-                    inDate: expense.inputs[4].value,
-                    integerInDate: formatDate(expense.inputs[4].value)
-                });
-
-                database.ref(expense.path + '/date/' + getMonth(expense.inputs[4].value).toLowerCase() + '/' + expense.inputs[1].value.toLowerCase() + '/' + promise.key).set({
-                    vehicleName: expense.inputs[0].value,
-                    expenseId: promise.key,
-                    name: expense.inputs[1].value,
-                    cost: expense.inputs[2].value,
-                    vehicleId: expense.vehicleId,
-                    details: expense.inputs[3].value,
-                    inDate: expense.inputs[4].value,
-                    integerInDate: formatDate(expense.inputs[4].value)
-                });
-
                 expense.inputs = InputManager.cleanValuesFromInputs(expense.inputs);
                 setModal('Registro Exitoso', 'El registro se llevó a cabo correctamente.');
                 $('#message').modal('open').value = "";

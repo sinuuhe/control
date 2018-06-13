@@ -14,79 +14,80 @@
 
 <body id="body">
     <header>
-    <div id="loading">
-        <div class="container">
-            <div class="row">
-                <div class="col s12 offset-col s12 center-align">
-                    <div class="preloader-wrapper big active center-align">
-                        <div class="spinner-layer spinner-blue-only">
-                            <div class="circle-clipper left">
-                                <div class="circle"></div>
-                            </div>
-                            <div class="gap-patch">
-                                <div class="circle"></div>
-                            </div>
-                            <div class="circle-clipper right">
-                                <div class="circle"></div>
+        <div id="loading">
+            <div class="container">
+                <div class="row">
+                    <div class="col s12 offset-col s12 center-align">
+                        <div class="preloader-wrapper big active center-align">
+                            <div class="spinner-layer spinner-blue-only">
+                                <div class="circle-clipper left">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="gap-patch">
+                                    <div class="circle"></div>
+                                </div>
+                                <div class="circle-clipper right">
+                                    <div class="circle"></div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <h2 class="center-align">Cargando...</h2>
+                <div class="row">
+                    <h2 class="center-align">Cargando...</h2>
+                </div>
             </div>
         </div>
-    </div>
-    <div id="ready" class="hide">
-        <div class="navbar-fixed grey darken-4">
-            <nav class="nav-extended grey darken-4">
-                <div class="nav-wrapper">
-                    <a href="#" class="brand-logo">Mulcon</a>
-                    <a href="#" data-activates="mobile-demo" class="button-collapse">
-                        <i class="material-icons">menu</i>
-                    </a>
-                    <ul id="nav-mobile" class="right hide-on-med-and-down">
-                        <li>
-                            <a id="userName"></a>
-                        </li>
-                        <li>
-                            <a href="users.html">Usuarios</a>
-                        </li>
-                        <li>
-                            <a onclick="logout();">Cerrar Sesión</a>
-                        </li>
-                    </ul>
-                    <ul class="side-nav" id="mobile-demo">
-                        <li>
-                            <a href="sass.html">Sass</a>
-                        </li>
-                        <li>
-                            <a href="badges.html">Components</a>
-                        </li>
-                        <li>
-                            <a href="collapsible.html">JavaScript</a>
-                        </li>
-                    </ul>
-                </div>
-                <div class="nav-content">
-                    <ul class="tabs tabs-transparent " id="tabMenu">
-                        <li class="tab">
-                            <a class="active" href="#actives" id="activeTab">Activos</a>
-                        </li>
-                        <li class="tab">
-                            <a href="#vehicles" id="vehiclesTab" onclick="loadDepartments('driverDepartmentList', 'selectedDriverDepartment');">Vehículos</a>
-                        </li>
-                        <li class="tab">
-                            <a href="#material" id="materialTab">Materiales</a>
-                        </li>
-                        <li class="tab" id="pendingTab">
-                            <a href="#pending" class="">PENDIENTES</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
+        <div id="ready" class="hide">
+            <div class="navbar-fixed grey darken-4">
+                <nav class="nav-extended grey darken-4">
+                    <div class="nav-wrapper">
+                        <a href="#" class="brand-logo">Mulcon</a>
+                        <a href="#" data-activates="mobile-demo" class="button-collapse">
+                            <i class="material-icons">menu</i>
+                        </a>
+                        <ul id="nav-mobile" class="right hide-on-med-and-down">
+                            <li>
+                                <a id="userName"></a>
+                            </li>
+                            <li>
+                                <a href="users.html">Usuarios</a>
+                            </li>
+                            <li>
+                                <a onclick="logout();">Cerrar Sesión</a>
+                            </li>
+                        </ul>
+                        <ul class="side-nav" id="mobile-demo">
+                            <li>
+                                <a href="sass.html">Sass</a>
+                            </li>
+                            <li>
+                                <a href="badges.html">Components</a>
+                            </li>
+                            <li>
+                                <a href="collapsible.html">JavaScript</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="nav-content">
+                        <ul class="tabs tabs-transparent " id="tabMenu">
+                            <li class="tab">
+                                <a class="active" href="#actives" id="activeTab">Activos</a>
+                            </li>
+                            <li class="tab">
+                                <a href="#vehicles" id="vehiclesTab" onclick="loadDepartments('driverDepartmentList', 'selectedDriverDepartment');">Vehículos</a>
+                            </li>
+                            <li class="tab">
+                                <a href="#material" id="materialTab">Materiales</a>
+                            </li>
+                            <li class="tab" id="pendingTab">
+                                <a href="#pending" class="">PENDIENTES</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </nav>
+            </div>
     </header>
     <main>
         <div id="actives" class="col s12">
@@ -97,12 +98,14 @@
             </div>
 
             <!-- Section showed when new active button is clicked -->
+
             <div class="container hide" id="newActive">
                 <div class="row">
-                    <h2 class="col s12 center-align">Nuevo Activo</h2>
+                    <a class="col s3 offset-s2  waves-effect waves-light btn large red darken-4" onclick="actionButton('newActive','hide','activesMainMenu');">
+                        Volver al Menú</a>
                 </div>
                 <div class="row">
-                        <a class="col s3 offset-s2  waves-effect waves-light btn grey" onclick="actionButton('newActive','hide','activesMainMenu');">Volver al Menú de Activos</a>
+                    <h2 class="col s12 center-align">Nuevo Activo</h2>
                 </div>
                 <div class="row">
                     <form action="" class="col s8 offset-s2" id="newActiveForm">
@@ -210,8 +213,7 @@
 
                         </div>
                         <div class="row">
-                            <a class="col s4  waves-effect waves-light btn-large grey" onclick="actionButton('newActive','hide','activesMainMenu');">Volver al Menú de Activos</a>
-                            <input class="col s3 offset-s4 waves-effect waves-light btn-large teal darken-4" type="submit" value="registrar activo" onsubmit="registerActive();"></input>
+                            <input class="col s3 offset-s4 waves-effect waves-light btn-large teal darken-4" type="submit" value="registrar activo"></input>
                         </div>
                     </form>
                 </div>
@@ -243,6 +245,7 @@
             </div>
             <!-- Section showed when new Temporal Keeper button is clicked -->
             <div class="container hide" id="newTemporalKeeper">
+                <a class="btn waves-effect col s2 offset-s2 waves-green red darken-1" onclick="actionButton('newTemporalKeeper','hide','activesMainMenu')">Volver al Menú</a>
                 <div class="row">
                     <h2>Resguardo Temporal</h2>
                 </div>
@@ -252,7 +255,7 @@
                         <input type="text" name="temporalActiveInput" id="temporalActiveInput" class="validate">
                     </div>
                     <a href="#!" class="btn waves-effect col s2 offset-s1 waves-green " onclick="newTemporalKeeperSearch('temporalActiveInput');">Buscar</a>
-                    <a  class="btn waves-effect col s2 offset-s2 waves-green red darken-1" onclick="actionButton('newTemporalKeeper','hide','activesMainMenu')">Volver al Menú</a>
+
                     <a href="#finishTemporalKeeper" class="btn waves-effect col s2 offset-s1 waves-green modal-trigger">Terminar Resguardo</a>
                 </div>
                 <div class="row">
@@ -270,16 +273,24 @@
             </div>
             <!-- Section showed when new Temporal Keeper  query is clicked -->
             <div class="container hide" id="temporalKeeperQuery">
-                    <div class="row">
-                        <h2>Consulta Resguardos Temporales</h2>
-                        <br>
-                    </div>
-                    <div id = "temporalKeeperResults">
-                     
-                    </div>
+                <a class="col s3 offset-s2 waves-effect waves-light btn-large" onclick="actionButton('temporalKeeperQuery','hide','activesMainMenu');">Volver al Menú de Activos</a>
+                <div class="row">
+                    <h2>Consulta Resguardos Temporales</h2>
+                    <br>
                 </div>
+                <div class="row">
+                    <select name="temporalType" id="temporalType" class="browser-default" onchange="showTemporal('temporalKeeperResults','temporalType')">
+                        <option value="current">Activos</option>
+                        <option value="done">Pasados</option>
+                    </select>
+                </div>
+                <div id="temporalKeeperResults">
+
+                </div>
+            </div>
             <!-- Section showed when new employe button is clicked -->
             <div class="container hide" id="newEmploye">
+                <a class="col s3 offset-s2 waves-effect waves-light btn-large" onclick="actionButton('newEmploye','hide','activesMainMenu');">Volver al Menú de Activos</a>
                 <div class="row">
                     <h2 class="col s12 center-align">Nuevo Trabajador</h2>
                 </div>
@@ -345,7 +356,7 @@
                 </div>
                 <div class="row">
                     <a class="col s3  waves-effect waves-light btn-large" onclick="registerEmploye();">Registrar Empleado</a>
-                    <a class="col s3 offset-s2 waves-effect waves-light btn-large" onclick="actionButton('newEmploye','hide','activesMainMenu');">Volver al Menú de Activos</a>
+
                 </div>
             </div>
             <!-- Section showed when repairing is clicked -->
@@ -413,6 +424,9 @@
                 </div>
             </div>
             <div class="hide" id="query">
+                <div class="row">
+                    <a class="col s3 offset-s2 waves-effect waves-light btn-large" onclick="actionButton('query','hide','activesMainMenu');">Volver al Menú de Activos</a>
+                </div>
                 <div class="container">
                     <div class="row">
                         <h2 class="col s12 center-align">Consultas</h2>
@@ -431,99 +445,103 @@
                     </div>
                     <div class="hide" id="activesNormalSearch">
                         <div class="row">
-                        <div class="col s4 offset-s1 grey lighten-3">
-                            <div class="col s12">
-                                <p class="s12">Primer Filtro</p>
-                                <select id="firstActiveFilterSelect" class= "browser-default" required >
-                                    <option value="" disabled selected>Seleccionar...</option>
-                                    <option value="a">Nombre Del Activo</option>
-                                    <option value="b" >Responsable</option>
-                                    <option value="c" >Marca del Activo</option>
-                                    <option value="d" >Modelo del Activo</option>
-                                    <option value="e" >Estado del Activo</option>
-                                    <option value="f" >Categoría del Activo</option>
-                                    <option value="g" >Fechas</option>
-                                </select>
-                                <br>
-                                <select class="s12 browser-default" id="firstFilterSelect" onchange="fillInfo('firstFilter', 'firstFilterSelect');"></select>
-                                <input type="text"  placeholder="Buscar..." id="firstFilterInput" onkeyup="fillSearchInput('firstFilterInput', 'firstFilter', 'search')" class="validate s12 hide">       
-                            </div>
-                            <div class="row hide" id="dateInputsFirstFilter">
+                            <div class="col s4 offset-s1 grey lighten-3">
                                 <div class="col s12">
-                                    <div class="row">
-                                        <div class="col s5">
-                                            <input type="radio" id="dateBeforeFirst" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateBeforeFirst','date','dateBeforeInputFirst','firstFilter');"
-                                            />
-                                            <label for="dateBeforeFirst">Antes de: </label>
-                                            <input type="text" name="" id="dateBeforeInputFirst" class="datepicker" placeholder="Seleccionar Fecha..." disabled>
-                                        </div>
-                                        <div class="col s5">
-                                            <input type="radio" id="dateAfterFirst" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateAfterFirst','date','dateAfterInputFirst','firstFilter');"
-                                            />
-                                            <label for="dateAfterFirst">Después de: </label>
-                                            <input type="text" name="" id="dateAfterInputFirst" class="datepicker" placeholder="Seleccionar Fecha..." disabled>
-                                        </div>
-                                        <div class="col s12">
-                                            <input type="radio" id="dateBetweenFirst" class="filled-in col s12" name="group3" onclick="checkboxCheckedDateFirst('dateBetweenFirst','date','dateBetweenInputFirst','firstFilter');"
-                                            />
-                                            <label for="dateBetweenFirst" class="col s12">Entre fechas: </label>
-                                            <input type="text" name="" id="dateBetweenInputAFirst" class="datepicker col s3" placeholder="Seleccionar Fecha..." disabled>
-                                            <input type="text" name="" id="dateBetweenInputBFirst" class="datepicker col s3 offset-s2" placeholder="Seleccionar Fecha..."
-                                                disabled>
+                                    <p class="s12">Primer Filtro</p>
+                                    <select id="firstActiveFilterSelect" class="browser-default" required>
+                                        <option value="" disabled selected>Seleccionar...</option>
+                                        <option value="a">Nombre Del Activo</option>
+                                        <option value="b">Responsable</option>
+                                        <option value="c">Marca del Activo</option>
+                                        <option value="d">Modelo del Activo</option>
+                                        <option value="e">Estado del Activo</option>
+                                        <option value="f">Categoría del Activo</option>
+                                        <option value="g">Fechas</option>
+                                    </select>
+                                    <br>
+                                    <select class="s12 browser-default" id="firstFilterSelect" onchange="fillInfo('firstFilter', 'firstFilterSelect');"></select>
+                                    <input type="text" placeholder="Buscar..." id="firstFilterInput" onkeyup="fillSearchInput('firstFilterInput', 'firstFilter', 'search')"
+                                        class="validate s12 hide">
+                                </div>
+                                <div class="row hide" id="dateInputsFirstFilter">
+                                    <div class="col s12">
+                                        <div class="row">
+                                            <div class="col s5">
+                                                <input type="radio" id="dateBeforeFirst" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateBeforeFirst','date','dateBeforeInputFirst','firstFilter');"
+                                                />
+                                                <label for="dateBeforeFirst">Antes de: </label>
+                                                <input type="text" name="" id="dateBeforeInputFirst" class="datepicker" placeholder="Seleccionar Fecha..." disabled>
+                                            </div>
+                                            <div class="col s5">
+                                                <input type="radio" id="dateAfterFirst" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateAfterFirst','date','dateAfterInputFirst','firstFilter');"
+                                                />
+                                                <label for="dateAfterFirst">Después de: </label>
+                                                <input type="text" name="" id="dateAfterInputFirst" class="datepicker" placeholder="Seleccionar Fecha..." disabled>
+                                            </div>
+                                            <div class="col s12">
+                                                <input type="radio" id="dateBetweenFirst" class="filled-in col s12" name="group3" onclick="checkboxCheckedDateFirst('dateBetweenFirst','date','dateBetweenInputFirst','firstFilter');"
+                                                />
+                                                <label for="dateBetweenFirst" class="col s12">Entre fechas: </label>
+                                                <input type="text" name="" id="dateBetweenInputAFirst" class="datepicker col s3" placeholder="Seleccionar Fecha..." disabled>
+                                                <input type="text" name="" id="dateBetweenInputBFirst" class="datepicker col s3 offset-s2" placeholder="Seleccionar Fecha..."
+                                                    disabled>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="col s4 offset-s2 grey lighten-3">
-                            <div class="col s12">
-                                <p id="secFilterTxt"class="col s10">Segundo Filtro (Desactivado)</p>
-                                <a href="#!" class="btn darken-4 col s2 red waves-effect waves-light " onclick=" removeFilter('usingSecFilter', 'secondFilterSelect', 'secondFilterInput','secondFilterDiv','filterIcon');"> <i id="filterIcon" class="material-icons">add</i></a>
-                                <div id="secondFilterDiv"class="hide">
-                                <select id="secondActiveFilterSelect" class= "browser-default"required >
-                                    <option value="" disabled selected>Seleccionar...</option>
-                                    <option value="a">Nombre Del Activo</option>
-                                    <option value="b" >Responsable</option>
-                                    <option value="c" >Marca del Activo</option>
-                                    <option value="d" >Modelo del Activo</option>
-                                    <option value="e" >Estado del Activo</option>
-                                    <option value="f" >Categoría del Activo</option>
-                                    <option value="g" >Fechas</option>
-                                </select>
-                                <br>
-                                <select class="s12 browser-default" id="secondFilterSelect" onchange="fillInfo('secondFilter', 'secondFilterSelect');"></select>
-                                <input type="text"  placeholder="Buscar..." id="secondFilterInput" onkeyup="fillSearchInput('secondFilterInput', 'secondFilter', 'search')" class="validate s12 hide">       
-                            </div>
-                            </div>
-                            <div class="row hide" id="dateInputsSecondFilter">
+                            <div class="col s4 offset-s2 grey lighten-3">
                                 <div class="col s12">
-                                    <div class="row">
-                                        <div class="col s5">
-                                            <input type="radio" id="dateBeforeFirst" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateBeforeSecond','date','dateBeforeInputSecond','secondFilter');"
-                                            />
-                                            <label for="dateBeforeSecond">Antes de: </label>
-                                            <input type="text" name="" id="dateBeforeInputSecond" class="datepicker" placeholder="Seleccionar Fecha..." disabled>
-                                        </div>
-                                        <div class="col s5">
-                                            <input type="radio" id="dateAfterSecond" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateAfterSecond','date','dateAfterInputSecond','secondFilter');"
-                                            />
-                                            <label for="dateAfterSecond">Después de: </label>
-                                            <input type="text" name="" id="dateAfterInputSecond" class="datepicker" placeholder="Seleccionar Fecha..." disabled>
-                                        </div>
-                                        <div class="col s12">
-                                            <input type="radio" id="dateBetweenSecond" class="filled-in col s12" name="group3" onclick="checkboxCheckedDateFirst('dateBetweenSecond','date','dateBetweenInputSecond','secondFilter');"
-                                            />
-                                            <label for="dateBetweenSecond" class="col s12">Entre fechas: </label>
-                                            <input type="text" name="" id="dateBetweenInputASecond" class="datepicker col s3" placeholder="Seleccionar Fecha..." disabled>
-                                            <input type="text" name="" id="dateBetweenInputBSecond" class="datepicker col s3 offset-s2" placeholder="Seleccionar Fecha..."
-                                                disabled>
+                                    <p id="secFilterTxt" class="col s10">Segundo Filtro (Desactivado)</p>
+                                    <a href="#!" class="btn darken-4 col s2 red waves-effect waves-light " onclick=" removeFilter('usingSecFilter', 'secondFilterSelect', 'secondFilterInput','secondFilterDiv','filterIcon');">
+                                        <i id="filterIcon" class="material-icons">add</i>
+                                    </a>
+                                    <div id="secondFilterDiv" class="hide">
+                                        <select id="secondActiveFilterSelect" class="browser-default" required>
+                                            <option value="" disabled selected>Seleccionar...</option>
+                                            <option value="a">Nombre Del Activo</option>
+                                            <option value="b">Responsable</option>
+                                            <option value="c">Marca del Activo</option>
+                                            <option value="d">Modelo del Activo</option>
+                                            <option value="e">Estado del Activo</option>
+                                            <option value="f">Categoría del Activo</option>
+                                            <option value="g">Fechas</option>
+                                        </select>
+                                        <br>
+                                        <select class="s12 browser-default" id="secondFilterSelect" onchange="fillInfo('secondFilter', 'secondFilterSelect');"></select>
+                                        <input type="text" placeholder="Buscar..." id="secondFilterInput" onkeyup="fillSearchInput('secondFilterInput', 'secondFilter', 'search')"
+                                            class="validate s12 hide">
+                                    </div>
+                                </div>
+                                <div class="row hide" id="dateInputsSecondFilter">
+                                    <div class="col s12">
+                                        <div class="row">
+                                            <div class="col s5">
+                                                <input type="radio" id="dateBeforeFirst" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateBeforeSecond','date','dateBeforeInputSecond','secondFilter');"
+                                                />
+                                                <label for="dateBeforeSecond">Antes de: </label>
+                                                <input type="text" name="" id="dateBeforeInputSecond" class="datepicker" placeholder="Seleccionar Fecha..." disabled>
+                                            </div>
+                                            <div class="col s5">
+                                                <input type="radio" id="dateAfterSecond" class="filled-in" name="group3" onclick="checkboxCheckedDateFirst('dateAfterSecond','date','dateAfterInputSecond','secondFilter');"
+                                                />
+                                                <label for="dateAfterSecond">Después de: </label>
+                                                <input type="text" name="" id="dateAfterInputSecond" class="datepicker" placeholder="Seleccionar Fecha..." disabled>
+                                            </div>
+                                            <div class="col s12">
+                                                <input type="radio" id="dateBetweenSecond" class="filled-in col s12" name="group3" onclick="checkboxCheckedDateFirst('dateBetweenSecond','date','dateBetweenInputSecond','secondFilter');"
+                                                />
+                                                <label for="dateBetweenSecond" class="col s12">Entre fechas: </label>
+                                                <input type="text" name="" id="dateBetweenInputASecond" class="datepicker col s3" placeholder="Seleccionar Fecha..." disabled>
+                                                <input type="text" name="" id="dateBetweenInputBSecond" class="datepicker col s3 offset-s2" placeholder="Seleccionar Fecha..."
+                                                    disabled>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
                         <div class="row">
                             <br>
                             <br>
@@ -531,7 +549,7 @@
                             <a class="btn red darken-4 dropdown-button waves-effect col s4 offset-s2" href="#!" onclick="searchActive('currentQueryResult', 'activeFields','resultsTable','firstFilterInput','secondFilterInput','firstFilterSelect','secondFilterSelect','printReport');"
                                 id="firstActiveFilter">Buscar</a>
 
-                            
+
                         </div>
                     </div>
                     <div id="activesFilter" class="hide">
@@ -677,9 +695,7 @@
                         <table class="striped" id="resultsTable"></table>
                     </div>
                 </div>
-                <div class="row">
-                    <a class="col s3 offset-s2 waves-effect waves-light btn-large" onclick="actionButton('query','hide','activesMainMenu');">Volver al Menú de Activos</a>
-                </div>
+
             </div>
         </div>
 
@@ -700,6 +716,8 @@
             </div>
             <div class="hide" id="newVehicle">
                 <div class="container">
+                    <br>
+                        <a class="col s3 offset-s4 waves-effect waves-light btn-large" onclick="actionButton('newVehicle','hide','vehiclesMainMenu');">Volver al Menú</a>
                     <h1>
                         Nuevo Vehículo
                     </h1>
@@ -729,11 +747,15 @@
                                     <li onclick="selectCategory('Diesel', 'selectedVehicleEngine');" class="collection-item">Diesel</li>
                                 </ul>
                             </div>
+                            <div class="input-field col s8">
+                                    <label for="vehicleKm">Kilometraje Actual:</label>
+                                    <input type="number" step="0.1" min="1" name="vehicleKm" id="vehicleKm" class="validate" required >
+                            </div>
                         </div>
                     </form>
                     <div class="row">
-                        <a class="col s3  waves-effect waves-light btn-large" onclick="registerVehicle();">Registrar Vehiculo</a>
-                        <a class="col s3 offset-s4 waves-effect waves-light btn-large" onclick="actionButton('newVehicle','hide','vehiclesMainMenu');">Volver</a>
+                        <a class="col s3  offset-s5 waves-effect waves-light btn-large" onclick="registerVehicle();">Registrar Vehiculo</a>
+                        
                     </div>
                 </div>
 
@@ -860,12 +882,21 @@
             </div>
             <div id="newTrip" class="hide">
                 <div class="container">
+                    <div class="row">
+                        <br><br>
+                            <a class="col s3  waves-effect waves-light btn-large" onclick="actionButton('newTrip','hide','vehiclesQuery');">Volver</a>
+                    </div>
                     <form action="" class="col s12">
-                        <p id="vehicleTripId" class="hide"></p>
-                        <p id="driverTripId" class="hide"></p>
-                        <h5>Vehículo Seleccionado:</h5>
-                        <h4 id="tripTitle"></h4>
                         <div class="row">
+                        <div class="card grey col ">
+                                <p id="vehicleTripId" class="hide"></p>
+                                <p id="driverTripId" class="hide"></p>
+                                <h5>Vehículo Seleccionado:</h5>
+                                <h4 id="tripTitle"></h4>
+                        </div>
+                    </div>
+                        <div class="row">
+                            <h4>Detalles de la salida:</h4>
                             <div class="input-field col s8">
                                 <label for="selectedVehicleTrip">Motivo Salida:</label>
                                 <br>
@@ -902,8 +933,8 @@
                                 </ul>
                             </div>
                             <div class="input-field col s8">
-                                <label for="initialKm">Kilometraje Inicial:</label>
-                                <input type="number" name="initialKm" id="initialKm" class="validate">
+                                
+                                <div name="km" id="km" > </div>
                             </div>
                             <div class="input-field col s8">
                                 <label for="tripOutInfo">Observaciones de Salida:</label>
@@ -912,7 +943,7 @@
                         </div>
                         <div class="input-field col s8">
                             <a class="col s3 offset-s2 waves-effect waves-light orange btn-large" onclick="confirmTrip('vehicleTripId');">Confirmar Salida</a>
-                            <a class="col s3  waves-effect waves-light btn-large" onclick="actionButton('newTrip','hide','vehiclesQuery');">Volver</a>
+                            
                         </div>
 
                     </form>
@@ -1068,166 +1099,166 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div id="material" class="col s12">
-        <br>
-
-    </div>
-    <div id="pending" class="col s12">
-        <br>
-        <br>
-        <div class="container">
-            <h2>Pendientes</h2>
-            <ul class="collapsible" data-collapsible="accordion" id="pendingList">
-
-            </ul>
         </div>
-    </div>
-    <!-- Finish Temporal Modal Structure -->
-    <div id="finishTemporal" class="modal">
-        <div class="modal-content">
-            <h4 id="modalTemporalHeader"></h4>
-            <div class="collection" id="finishTemporalModalContent">
+        <div id="material" class="col s12">
+            <br>
+
+        </div>
+        <div id="pending" class="col s12">
+            <br>
+            <br>
+            <div class="container">
+                <h2>Pendientes</h2>
+                <ul class="collapsible" data-collapsible="accordion" id="pendingList">
+
+                </ul>
             </div>
         </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Marcar como devuelto</a>
-        </div>
-    </div>
-
-    <!-- Finish Temporal Modal Structure -->
-    <div id="finishTemporalKeeper" class="modal">
-        <div class="modal-content">
-            <h4>Finalizar Resguardo Temporal</h4>
-            <form action="">
-                <div class="input-field col s4">
-                    <label for="tmpKeeperName">Nombre del Solicitante</label>
-                    <input type="text" name="tmpKeeperName" id="tmpKeeperName" class="validate">
+        <!-- Finish Temporal Modal Structure -->
+        <div id="finishTemporal" class="modal">
+            <div class="modal-content">
+                <h4 id="modalTemporalHeader"></h4>
+                <div class="collection" id="finishTemporalModalContent">
                 </div>
-                <div class="input-field col s4">
-                    <label for="tmpReceptorName">Nombre de quien recibe:</label>
-                    <input type="text" name="tmpReceptorName" id="tmpReceptorName" class="validate">
-                </div>
-                <div class="input-field col s4">
-                    <label for="tmpReturnDate">Fecha tentativa de devolución:</label>
-                    <input type="text" name="tmpReturnDate" id="tmpReturnDate" class="datepicker">
-                </div>
-                <div class="input-field col s4">
-                    <label for="tmpDetails">Observaciones:</label>
-                    <input type="text" name="tmpDetails" id="tmpDetails" class="validate">
-                </div>
-            </form>
-        </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-action modal-close waves-effect waves-green btn red">Volver</a>
-            <a href="#!" class="modal-action modal-close waves-effect waves-green btn green" onclick="finishTemporalKeeper('tmpKeeperName','tmpReceptorName','selectedTemporalResultsTable');">Terminar</a>
-        </div>
-    </div>
-
-    <!-- Confirm Temporal Modal Structure -->
-    <div id="confirmTmpModal" class="modal">
-        <div class="modal-content">
-            <h4>Agragar activo</h4>
-            <div class="collection" id="confirmTmpModalModalContent">
             </div>
-            <div class="input-field col s8">
-                <label for="activeQuantityTmp">Cantidad:</label>
-                <input type="number" step="1" min="1" name="activeQuantityTmp" id="activeQuantityTmp" class="validate" required pattern="[0-9]">
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Marcar como devuelto</a>
             </div>
         </div>
-        <div class="modal-footer">
-            <a href="#!" id="confirmTmpModalButton" class="modal-action modal-close waves-effect waves-green btn">Agregar</a>
-        </div>
-    </div>
-    <!-- Message Modal Structure -->
-    <div id="message" class="modal">
-        <div class="modal-content">
-            <h4 id="modalHeader"></h4>
-            <div class="collection">
-                <h6 id="modalMessage"></h6>
-            </div>
-        </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Aceptar</a>
-        </div>
-    </div>
-    <!-- Print Modal Structure -->
-    <div id="printModal" class="modal">
-        <div class="modal-content">
-            <h4>Confirmar Impresión</h4>
 
-            <form>
-                <div class="row">
-                    <div class="input-field col s8">
-                        <label for="reportName">Nombre del reporte:</label>
-                        <input type="text" name="reportName" id="reportName" class="validate">
+        <!-- Finish Temporal Modal Structure -->
+        <div id="finishTemporalKeeper" class="modal">
+            <div class="modal-content">
+                <h4>Finalizar Resguardo Temporal</h4>
+                <form action="">
+                    <div class="input-field col s4">
+                        <label for="tmpKeeperName">Nombre del Solicitante</label>
+                        <input type="text" name="tmpKeeperName" id="tmpKeeperName" class="validate">
                     </div>
-                    <div class="input-field col s8">
-                        <label for="printingDepartmentList">Departamento:</label>
-                        <br>
-                        <br>
-                        <ul id="printingDepartmentList" class="dropdown-content">
-                        </ul>
-                        <a class="btn red darken-4 dropdown-button col s12" href="#!" data-activates="printingDepartmentList" id="selectedPrintingDepartment">Seleccionar Departamento</a>
+                    <div class="input-field col s4">
+                        <label for="tmpReceptorName">Nombre de quien recibe:</label>
+                        <input type="text" name="tmpReceptorName" id="tmpReceptorName" class="validate">
                     </div>
+                    <div class="input-field col s4">
+                        <label for="tmpReturnDate">Fecha tentativa de devolución:</label>
+                        <input type="text" name="tmpReturnDate" id="tmpReturnDate" class="datepicker">
+                    </div>
+                    <div class="input-field col s4">
+                        <label for="tmpDetails">Observaciones:</label>
+                        <input type="text" name="tmpDetails" id="tmpDetails" class="validate">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn red">Volver</a>
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn green" onclick="finishTemporalKeeper('tmpKeeperName','tmpReceptorName','selectedTemporalResultsTable');">Terminar</a>
+            </div>
+        </div>
+
+        <!-- Confirm Temporal Modal Structure -->
+        <div id="confirmTmpModal" class="modal">
+            <div class="modal-content">
+                <h4>Agragar activo</h4>
+                <div class="collection" id="confirmTmpModalModalContent">
                 </div>
-            </form>
-
-        </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat" onclick="confirmPrinting('selectedPrintingDepartment','reportName');">Confirmar</a>
-        </div>
-    </div>
-    <!-- Modal InfoStructure -->
-    <div id="modalInfoPending" class="modal  orange darken-4">
-        <div class="modal-content">
-            <h4 id="modalInfoTitlePending">Hay algunos pendientes próximos a vencer. Ve a la sección de pendientes para verlos</h4>
-        </div>
-        <div class="modal-footer  orange darken-3">
-            <a href="#!" class="modal-action modal-close waves-effect waves-green orange lighten-3 btn-flat">OK</a>
-        </div>
-    </div>
-
-    <!-- Modal InfoStructure -->
-    <div id="modalInfo" class="modal">
-        <div class="modal-content">
-            <h4 id="modalInfoTitle">Estado de la reparación</h4>
-            <div class="collection" id="modalInfoContent">
+                <div class="input-field col s8">
+                    <label for="activeQuantityTmp">Cantidad:</label>
+                    <input type="number" step="1" min="1" name="activeQuantityTmp" id="activeQuantityTmp" class="validate" required pattern="[0-9]">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" id="confirmTmpModalButton" class="modal-action modal-close waves-effect waves-green btn">Agregar</a>
             </div>
         </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-action modal-close waves-effect waves-green orange btn-flat">Cerrar</a>
-            <a href="#!" class="modal-action modal-close waves-effect waves-green green btn-flat" id="repairingDoneButton">Reparación Terminada</a>
-        </div>
-    </div>
-    <!-- Modal ChangeKeeperStructure -->
-    <div id="changeKeeper" class="modal">
-        <div class="modal-content">
-            <h5>Cambiar Responsable</h5>
-            <h6 id="newKeeper" class=" orange-text text-darken-4"></h6>
-            <div class="collection" id="changeKeeperModalContent">
+        <!-- Message Modal Structure -->
+        <div id="message" class="modal">
+            <div class="modal-content">
+                <h4 id="modalHeader"></h4>
+                <div class="collection">
+                    <h6 id="modalMessage"></h6>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Aceptar</a>
             </div>
         </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-action modal-close waves-effect waves-green orange btn-flat">Cerrar</a>
-            <a href="#!" class="modal-action modal-close waves-effect waves-green green btn-flat" id="confirmChange">Confirmar cambio</a>
-        </div>
-    </div>
-    <!-- Unsubscribe Modal Structure -->
-    <div id="unsubscribe" class="modal">
-        <div class="modal-content" id="unsubscribeContent">
-            <h4 id="modalHeader">Confirmar Baja de Activo</h4>
-            <div class="collection" id="unsubscribeModalMessage">
+        <!-- Print Modal Structure -->
+        <div id="printModal" class="modal">
+            <div class="modal-content">
+                <h4>Confirmar Impresión</h4>
+
+                <form>
+                    <div class="row">
+                        <div class="input-field col s8">
+                            <label for="reportName">Nombre del reporte:</label>
+                            <input type="text" name="reportName" id="reportName" class="validate">
+                        </div>
+                        <div class="input-field col s8">
+                            <label for="printingDepartmentList">Departamento:</label>
+                            <br>
+                            <br>
+                            <ul id="printingDepartmentList" class="dropdown-content">
+                            </ul>
+                            <a class="btn red darken-4 dropdown-button col s12" href="#!" data-activates="printingDepartmentList" id="selectedPrintingDepartment">Seleccionar Departamento</a>
+                        </div>
+                    </div>
+                </form>
 
             </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat" onclick="confirmPrinting('selectedPrintingDepartment','reportName');">Confirmar</a>
+            </div>
         </div>
-        <div class="modal-footer">
-            <a href="#!" class="modal-action modal-close waves-effect red waves-red btn-flat" id="deleteButton">BORRAR</a>
-            <a href="#!" class="modal-action modal-close waves-effect blue waves-green btn-flat">CANCELAR</a>
+        <!-- Modal InfoStructure -->
+        <div id="modalInfoPending" class="modal  orange darken-4">
+            <div class="modal-content">
+                <h4 id="modalInfoTitlePending">Hay algunos pendientes próximos a vencer. Ve a la sección de pendientes para verlos</h4>
+            </div>
+            <div class="modal-footer  orange darken-3">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green orange lighten-3 btn-flat">OK</a>
+            </div>
         </div>
-    </div>
-</main>
-<footer></footer>
+
+        <!-- Modal InfoStructure -->
+        <div id="modalInfo" class="modal">
+            <div class="modal-content">
+                <h4 id="modalInfoTitle">Estado de la reparación</h4>
+                <div class="collection" id="modalInfoContent">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green orange btn-flat">Cerrar</a>
+                <a href="#!" class="modal-action modal-close waves-effect waves-green green btn-flat" id="repairingDoneButton">Reparación Terminada</a>
+            </div>
+        </div>
+        <!-- Modal ChangeKeeperStructure -->
+        <div id="changeKeeper" class="modal">
+            <div class="modal-content">
+                <h5>Cambiar Responsable</h5>
+                <h6 id="newKeeper" class=" orange-text text-darken-4"></h6>
+                <div class="collection" id="changeKeeperModalContent">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect waves-green orange btn-flat">Cerrar</a>
+                <a href="#!" class="modal-action modal-close waves-effect waves-green green btn-flat" id="confirmChange">Confirmar cambio</a>
+            </div>
+        </div>
+        <!-- Unsubscribe Modal Structure -->
+        <div id="unsubscribe" class="modal">
+            <div class="modal-content" id="unsubscribeContent">
+                <h4 id="modalHeader">Confirmar Baja de Activo</h4>
+                <div class="collection" id="unsubscribeModalMessage">
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-action modal-close waves-effect red waves-red btn-flat" id="deleteButton">BORRAR</a>
+                <a href="#!" class="modal-action modal-close waves-effect blue waves-green btn-flat">CANCELAR</a>
+            </div>
+        </div>
+    </main>
+    <footer></footer>
     <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
     <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
     <script src="jquery/jquery-3.3.1.js"></script>
