@@ -766,41 +766,55 @@
                         <h2>Reportes Vehículos</h2>
                         <div class="row">
                             <div class="col s3">
-                                <label for="selectedVehicleFilter">Seleccionar Filtro:</label>
-                                <a class="btn red darken-4 dropdown-button blue" href="#!" data-activates="vehicleFilters" id="selectedVehicleFilter">Seleccionar</a>
-                                <ul id="vehicleFilters" class="dropdown-content">
-                                    <li onclick="selectCategory('Repuestos', 'selectedVehicleFilter');" class="collection-item">Repuestos</li>
-                                    <li onclick="selectCategory('Aceite', 'selectedVehicleFilter');" class="collection-item">Aceite</li>
-                                    <li onclick="selectCategory('Mantenimiento Gral', 'selectedVehicleFilter');" class="collection-item">Mantenimiento Gral.</li>
-                                    <li onclick="selectCategory('Multas', 'selectedVehicleFilter');" class="collection-item">Multas</li>
-                                    <li onclick="selectCategory('Llantas', 'selectedVehicleFilter');" class="collection-item">Llantas</li>
-                                    <li onclick="selectCategory('Seguro', 'selectedVehicleFilter');" class="collection-item">Seguro</li>
-                                    <li onclick="selectCategory('Lavado', 'selectedVehicleFilter');" class="collection-item">Lavado</li>
-                                    <li onclick="selectCategory('Reparacion', 'selectedVehicleFilter');" class="collection-item">Reparación</li>
-                                    <li onclick="selectCategory('Combustible', 'selectedVehicleFilter');" class="collection-item">Combustible</li>
-                                    <li onclick="selectCategory('Otros', 'selectedVehicleFilter');" class="collection-item">Otros</li>
-                                </ul>
+                                <label for="selectedVehicleFilter">Filtrar por gasto:</label>
+                                <select name="expenseFilter" class = "browser-default"id="expenseFilter" onchange="fillExpenseFilter('vehiclesFilter', 'expense', 'expenseFilter')">
+                                        <option value="ninguno"  selected>Ninguno</option>
+                                        <option value="repuestos">Repuestos</option>
+                                        <option value="aceite">Aceite</option>
+                                        <option value="mantenimiento gral">Mantenimiento Gral.</option>
+                                        <option value="multas">Multas</option>
+                                        <option value="llantas">Llantas</option>
+                                        <option value="seguro">Seguro</option>
+                                        <option value="lavado">Lavado</option>
+                                        <option value="reparacion">Reparación</option>
+                                        <option value="combustible">Combustible</option>
+                                        <option value="otros">Otros</option>
+                                        <option value="todos">Todos</option>
+                                </select>
                             </div>
                             <div class="col s3">
-                                <label for="selectedVehicleMonth">Seleccionar Mes:</label>
-                                <a class="btn red darken-4 dropdown-button blue" href="#!" data-activates="vehicleMonths" id="selectedVehicleMonth">Seleccionar</a>
-                                <ul id="vehicleMonths" class="dropdown-content">
-                                    <li onclick="selectCategory('Enero', 'selectedVehicleMonth');" class="collection-item">Enero</li>
-                                    <li onclick="selectCategory('Febrero', 'selectedVehicleMonth');" class="collection-item">Febrero</li>
-                                    <li onclick="selectCategory('Marzo', 'selectedVehicleMonth');" class="collection-item">Marzo</li>
-                                    <li onclick="selectCategory('Abril', 'selectedVehicleMonth');" class="collection-item">Abril</li>
-                                    <li onclick="selectCategory('Mayo', 'selectedVehicleMonth');" class="collection-item">Mayo</li>
-                                    <li onclick="selectCategory('Junio', 'selectedVehicleMonth');" class="collection-item">Junio</li>
-                                    <li onclick="selectCategory('Julio', 'selectedVehicleMonth');" class="collection-item">Julio</li>
-                                    <li onclick="selectCategory('Agosto', 'selectedVehicleMonth');" class="collection-item">Agosto</li>
-                                    <li onclick="selectCategory('Septiembre', 'selectedVehicleMonth');" class="collection-item">Septiembre</li>
-                                    <li onclick="selectCategory('Octubre', 'selectedVehicleMonth');" class="collection-item">Octubre</li>
-                                    <li onclick="selectCategory('Noviembre', 'selectedVehicleMonth');" class="collection-item">Noviembre</li>
-                                    <li onclick="selectCategory('Diciembre', 'selectedVehicleMonth');" class="collection-item">Diciembre</li>
-                                </ul>
+                                <label for="dateFilter">Filtrar por Fecha:</label>
+                                <select name="dateFilter" class = "browser-default"id="dateFilter" onchange="dateVehicleFilter('vehiclesDate','dateFilter','vehiclesDateTwo')">
+                                        <option value="ninguno"  selected>Ninguno</option>
+                                       <option value="mes">Mes</option>
+                                       <option value="año">Año</option>
+                                       <option value="dia">Día</option>
+                                       <option value="antes">Antes de</option>
+                                       <option value="despues">Después de</option>
+                                       <option value="entre">Entre Fechas</option>
+                                       <option value="todo">Todo</option>
+                                </select>
                             </div>
                             <div class="col s3">
-                                <a class="btn red darken-4 waves-effect waves-light green " id="searchVehicles" onclick="searchExpenses('selectedVehicleFilter','selectedVehicleMonth');">Buscar</a>
+                                <div class="input-field">
+                                    <label for="vehiclesDate">Fecha Principal</label>
+                                    <input type="text" class="datepicker" disabled name="vehiclesDate" id="vehiclesDate" placeholder="Seleccione">
+                                </div>
+                            </div>
+                            <div class="col s3 " id="secondDate">
+                                    <div class="input-field">
+                                            <label for="vehiclesDateTwo">Fecha Secundaria</label>
+                                        <input type="text" class="datepicker" disabled name="vehiclesDateTwo" id="vehiclesDateTwo" placeholder="Seleccione">
+                                    </div>
+                                </div>
+                            <div class="col s3">
+                                    <label for="vehicleFilter">Filtrar por Vehículo:</label>
+                                    <select name="vehicleFilter" class = "browser-default"id="vehicleFilter">
+                                          
+                                    </select>
+                                </div>
+                            <div class="col s3 offset-s9">
+                                <a class="btn red darken-4 waves-effect waves-light green " id="searchVehicles" onclick="searchVehicleReport('expenseFilter','dateFilter','vehicleFilter','vehiclesDate','vehiclesDateTwo');">Buscar</a>
                             </div>
                         </div>
                     </div>

@@ -26,6 +26,7 @@ var employeFilters = {};
 var useDate;
 var verifiedSN = true;
 var usingSecFilter = false;
+var vehiclesFilter = {};
 var firstFilter = {
     propertie: "name",
     search: "---------------------"
@@ -245,7 +246,8 @@ $(document).ready(function () {
     loadRooms('A', 'roomsListEmploye');
     loadDepartments('employeDepartmentList', 'selectedDepartment');
     setCurrentDate('registerDate');
-    checkPending();
+    loadVehicles('vehicles/todos', 'vehicleFilter');
+    //checkPending();
     $('#firstActiveFilterSelect').on('change', function (e) {
         var select = document.getElementById('firstActiveFilterSelect').value;
         switch (select) {
@@ -530,6 +532,12 @@ function actionButton(elementtoHide, classToSet, elementToShow) {
         sn.on('value', function (s) {
             this.currentQueryResult = s.val();
         })
+    }
+    if(elementToShow == 'vehicleReports'){
+        var vehicles = database.ref('expenses');
+        vehicles.on('value', function (s) {
+            this.currentQueryResult = s.val();
+        }) 
     }
 };
 
@@ -1005,69 +1013,69 @@ function vehiclesQuery(findablePath, fieldsArray, tableId, filterId, search) {
             for (var field of fieldsArray) {
                 tableHead += "<th>" + field.title + "</th>";
             };
-            if(resultArray.length > 0){
+            if (resultArray.length > 0) {
                 var count = 0;
                 tableHead += "</tr></thead>"
-            for (var element of resultArray) {
-                if(element.status == filter){
-                    count ++;
-                    tableBody += '<tr>';
-                for (var field of fieldsArray) {
-                    if (element[field.propertie] == undefined) {
-                        tableBody += "<td>NA</td>"
-                    } else {
-                        tableBody += "<td>" + element[field.propertie] + "</td>";
+                for (var element of resultArray) {
+                    if (element.status == filter) {
+                        count++;
+                        tableBody += '<tr>';
+                        for (var field of fieldsArray) {
+                            if (element[field.propertie] == undefined) {
+                                tableBody += "<td>NA</td>"
+                            } else {
+                                tableBody += "<td>" + element[field.propertie] + "</td>";
+                            }
+                        };
+                        if (filter.toLowerCase() == 'disponible') {
+                            tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick='deleteVehicle( &quot;" + element.id + "&quot; , &quot;unsubscribeContent&quot; , &quot;deleteButton&quot; );'>Baja</a>  </td>";
+
+                            tableBody += "<td><a class='waves-effect waves-light btn lime darken-4' onclick='newExpense(&quot;" + element.id + "&quot;,&quot;vehiclesExpenses&quot;,&quot;vehiclesQuery&quot;,&quot;expensesTitle&quot;);'>Nvo. Gasto</a>  </td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn blue' onclick='useVehicle(&quot;" + element.id + "&quot;)'>Usar</a>  </td>";
+                        }
+                        if (filter.toLowerCase() == 'en uso') {
+                            tableBody += "<td><a class='waves-effect waves-light btn lime darken-4 '  onclick='finishTrip(&quot;" + element.id + "&quot;);'>Terminar salida/Detalles</a>  </td>";
+                        }
+                        if (filter.toLowerCase() == 'reparacion') {
+                            tableBody += "<td><a class='waves-effect waves-light btn orange modal-trigger' href='#modalInfo' onclick='repairingDetails(&quot;" + element.id + "&quot;);'> Detalles</a></td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn green' >Reparacion Lista</a></td>";
+                        }
+
+
+                        tableBody += '</tr>';
                     }
-                };
-                if (filter.toLowerCase() == 'disponible') {
-                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick='deleteVehicle( &quot;" + element.id + "&quot; , &quot;unsubscribeContent&quot; , &quot;deleteButton&quot; );'>Baja</a>  </td>";
-
-                    tableBody += "<td><a class='waves-effect waves-light btn lime darken-4' onclick='newExpense(&quot;" + element.id + "&quot;,&quot;vehiclesExpenses&quot;,&quot;vehiclesQuery&quot;,&quot;expensesTitle&quot;);'>Nvo. Gasto</a>  </td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn blue' onclick='useVehicle(&quot;" + element.id + "&quot;)'>Usar</a>  </td>";
-                }
-                if (filter.toLowerCase() == 'en uso') {
-                    tableBody += "<td><a class='waves-effect waves-light btn lime darken-4 '  onclick='finishTrip(&quot;" + element.id + "&quot;);'>Terminar salida/Detalles</a>  </td>";
-                }
-                if (filter.toLowerCase() == 'reparacion') {
-                    tableBody += "<td><a class='waves-effect waves-light btn orange modal-trigger' href='#modalInfo' onclick='repairingDetails(&quot;" + element.id + "&quot;);'> Detalles</a></td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn green' >Reparacion Lista</a></td>";
-                }
 
 
-                tableBody += '</tr>';
-                }
+                    if (filter == "TODOS") {
+                        tableBody += '<tr>';
+                        for (var field of fieldsArray) {
+                            if (element[field.propertie] == undefined) {
+                                tableBody += "<td>NA</td>"
+                            } else {
+                                tableBody += "<td>" + element[field.propertie] + "</td>";
+                            }
+                        };
+                        if (filter.toLowerCase() == 'disponible') {
+                            tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick='deleteVehicle( &quot;" + element.id + "&quot; , &quot;unsubscribeContent&quot; , &quot;deleteButton&quot; );'>Baja</a>  </td>";
+
+                            tableBody += "<td><a class='waves-effect waves-light btn lime darken-4' onclick='newExpense(&quot;" + element.id + "&quot;,&quot;vehiclesExpenses&quot;,&quot;vehiclesQuery&quot;,&quot;expensesTitle&quot;);'>Nvo. Gasto</a>  </td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn blue' onclick='useVehicle(&quot;" + element.id + "&quot;)'>Usar</a>  </td>";
+                        }
+                        if (filter.toLowerCase() == 'en uso') {
+                            tableBody += "<td><a class='waves-effect waves-light btn lime darken-4 '  onclick='finishTrip(&quot;" + element.id + "&quot;);'>Terminar salida/Detalles</a>  </td>";
+                        }
+                        if (filter.toLowerCase() == 'reparacion') {
+                            tableBody += "<td><a class='waves-effect waves-light btn orange modal-trigger' href='#modalInfo' onclick='repairingDetails(&quot;" + element.id + "&quot;);'> Detalles</a></td>";
+                            tableBody += "<td><a class='waves-effect waves-light btn green' >Reparacion Lista</a></td>";
+                        }
 
 
-                if(filter == "TODOS"){
-                    tableBody += '<tr>';
-                for (var field of fieldsArray) {
-                    if (element[field.propertie] == undefined) {
-                        tableBody += "<td>NA</td>"
-                    } else {
-                        tableBody += "<td>" + element[field.propertie] + "</td>";
+                        tableBody += '</tr>';
                     }
-                };
-                if (filter.toLowerCase() == 'disponible') {
-                    tableBody += "<td><a class='waves-effect waves-light btn red modal-trigger' href='#unsubscribe' onclick='deleteVehicle( &quot;" + element.id + "&quot; , &quot;unsubscribeContent&quot; , &quot;deleteButton&quot; );'>Baja</a>  </td>";
-
-                    tableBody += "<td><a class='waves-effect waves-light btn lime darken-4' onclick='newExpense(&quot;" + element.id + "&quot;,&quot;vehiclesExpenses&quot;,&quot;vehiclesQuery&quot;,&quot;expensesTitle&quot;);'>Nvo. Gasto</a>  </td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn blue' onclick='useVehicle(&quot;" + element.id + "&quot;)'>Usar</a>  </td>";
                 }
-                if (filter.toLowerCase() == 'en uso') {
-                    tableBody += "<td><a class='waves-effect waves-light btn lime darken-4 '  onclick='finishTrip(&quot;" + element.id + "&quot;);'>Terminar salida/Detalles</a>  </td>";
-                }
-                if (filter.toLowerCase() == 'reparacion') {
-                    tableBody += "<td><a class='waves-effect waves-light btn orange modal-trigger' href='#modalInfo' onclick='repairingDetails(&quot;" + element.id + "&quot;);'> Detalles</a></td>";
-                    tableBody += "<td><a class='waves-effect waves-light btn green' >Reparacion Lista</a></td>";
-                }
-
-
-                tableBody += '</tr>';
-                }
-            }
-            if(count == 0)
-                tableBody += "<h3>No hay resultados</h3>";
-            }else{
+                if (count == 0)
+                    tableBody += "<h3>No hay resultados</h3>";
+            } else {
                 tableBody += "<h3>No hay resultados</h3>";
             }
             tableBody += "</tbody>";
@@ -1806,6 +1814,20 @@ function formatDateToSpanish(day, month, year) {
     return formatedDate
 };
 
+function subMonthAndYear(date,request){
+    switch(request){
+        case "mes":
+        return date.substr(3,date.length - 1);
+        break;
+        case "año":
+        return date.substr(-4);
+        break;
+        case "dia":
+        return date;
+        break;
+    }
+    
+};
 
 
 function registerVehicle() {
@@ -1898,7 +1920,7 @@ function confirmTrip(vehicleId) {
 
 function finishTrip(vehicleId) {
     actionButton('vehiclesQuery', 'hide', 'finishTrip');
-    var trip = database.ref('salidas/todos/' );
+    var trip = database.ref('salidas/todos/');
     var objectTrip;
     trip.on('value', function (snapshot) {
         objectTrip = snapshot.val();
@@ -1906,10 +1928,10 @@ function finishTrip(vehicleId) {
 
         arrayTrip = Object.values(objectTrip);
         var filteredTrip = {};
-        for(var trip of arrayTrip){
+        for (var trip of arrayTrip) {
             console.log('looool ' + trip.status)
-            if(trip.vehicleId == vehicleId && trip.status == "current")
-            filteredTrip = trip;
+            if (trip.vehicleId == vehicleId && trip.status == "current")
+                filteredTrip = trip;
         }
         if (filteredTrip != undefined) {
             document.getElementById('finishTripTitle').innerHTML = "<div class='row center-align'><div class='col s8 offset-s2'><div class='card blue-grey darken-1'><div class='card-content white-text'><span class='card-title'>Detalles de Salida</span><h6>Vehiculo: " + filteredTrip.vehicle + "</h6><h6>Fecha salida: " + filteredTrip.date + "</h6><h6>Motivo salida: " + filteredTrip.issue + "</h6><h6>Tipo de Salida: " + filteredTrip.tripType + "</h6><h6>Conductor: " + filteredTrip.driver + "</h6><br></div></div></div></div>";
@@ -2018,7 +2040,7 @@ function makePDFReport() {
         doc.setTextColor(40);
         doc.setFontStyle('normal');
         //doc.addImage(headerImgData, 'JPEG', data.settings.margin.left, 20, 50, 50);
-        doc.text("Reporte de " + document.getElementById('selectedVehicleFilter').innerText + " al " + date.toLocaleDateString(), data.settings.margin.left, 20);
+        doc.text("Reporte de " + document.getElementById('expenseFilter').innerText + " al " + date.toLocaleDateString(), data.settings.margin.left, 20);
     };
 
     var options = {
@@ -2576,76 +2598,76 @@ function buildTableTmpKeeper(elementId, fieldsArray, obj) {
     var results = document.getElementById(elementId);
     results.innerHTML = "";
 
-if(temporalsArray.length > 0){
-    for (var temporal of temporalsArray) {
-        var wrapperDiv = document.createElement('div');
-        wrapperDiv.className = "row z-depth-5";
-        var detailsDiv = document.createElement('div');
-        detailsDiv.className = "row";
-        var space = document.createElement('br');
-        var title = document.createElement('h5');
-        title.className = "col s4 offset-s1";
-        if (temporal.user != undefined)
-            title.innerText = "Préstamo a: " + temporal.requester + " Otorgado por: " + temporal.user.userName + " " + temporal.user.lastname + "\nFecha: " + temporal.outDate + "\nFeche tentativa de devolución: " + temporal.returnDate;
-        else
-            title.innerText = "NA";
-        if(temporal.status == "current"){
-            var button = document.createElement('a');
-        button.className = "offset-s1 col s3 waves-effect  light-green accent-4 waves-blue btn";
-        button.innerText = "Devolver";
-        button.href = "#!";
-        button.setAttribute("onclick", "returnTemporal('" + temporal.id + "')");
-        }else{
-            var button = document.createElement('a');
-        button.className = "offset-s1 col s3 waves-effect disabled light-green accent-4 waves-blue btn";
-        button.innerText = "Devolver";
+    if (temporalsArray.length > 0) {
+        for (var temporal of temporalsArray) {
+            var wrapperDiv = document.createElement('div');
+            wrapperDiv.className = "row z-depth-5";
+            var detailsDiv = document.createElement('div');
+            detailsDiv.className = "row";
+            var space = document.createElement('br');
+            var title = document.createElement('h5');
+            title.className = "col s4 offset-s1";
+            if (temporal.user != undefined)
+                title.innerText = "Préstamo a: " + temporal.requester + " Otorgado por: " + temporal.user.userName + " " + temporal.user.lastname + "\nFecha: " + temporal.outDate + "\nFeche tentativa de devolución: " + temporal.returnDate;
+            else
+                title.innerText = "NA";
+            if (temporal.status == "current") {
+                var button = document.createElement('a');
+                button.className = "offset-s1 col s3 waves-effect  light-green accent-4 waves-blue btn";
+                button.innerText = "Devolver";
+                button.href = "#!";
+                button.setAttribute("onclick", "returnTemporal('" + temporal.id + "')");
+            } else {
+                var button = document.createElement('a');
+                button.className = "offset-s1 col s3 waves-effect disabled light-green accent-4 waves-blue btn";
+                button.innerText = "Devolver";
 
-        }
-        detailsDiv.appendChild(space);
-        detailsDiv.appendChild(title);
-        detailsDiv.appendChild(button);
-
-        var tableWrapper = document.createElement('div');
-        tableWrapper.className = "row";
-
-        var table = document.createElement('table');
-        table.className = "grey lighten-1 striped col s10 offset-s1";
-
-        var _tr = document.createElement('tr');
-        _tr.className = "red darken-4 white-text";
-        var head1 = document.createElement('th');
-        head1.innerText = "ACTIVO"
-        var head2 = document.createElement('th');
-        head2.innerText = "MARCA"
-        var head3 = document.createElement('th');
-        head3.innerText = "MODELO"
-        _tr.appendChild(head1);
-        _tr.appendChild(head2);
-        _tr.appendChild(head3);
-
-        table.appendChild(_tr);
-        //fill data
-        for (var active of Object.values(temporal.actives)) {
-            var tr = document.createElement('tr');
-            for (var propertie of Object.values(this.temporalFields)) {
-                var td = document.createElement('td');
-                td.innerText = active[propertie.propertie];
-                tr.appendChild(td);
             }
-            table.appendChild(tr)
+            detailsDiv.appendChild(space);
+            detailsDiv.appendChild(title);
+            detailsDiv.appendChild(button);
+
+            var tableWrapper = document.createElement('div');
+            tableWrapper.className = "row";
+
+            var table = document.createElement('table');
+            table.className = "grey lighten-1 striped col s10 offset-s1";
+
+            var _tr = document.createElement('tr');
+            _tr.className = "red darken-4 white-text";
+            var head1 = document.createElement('th');
+            head1.innerText = "ACTIVO"
+            var head2 = document.createElement('th');
+            head2.innerText = "MARCA"
+            var head3 = document.createElement('th');
+            head3.innerText = "MODELO"
+            _tr.appendChild(head1);
+            _tr.appendChild(head2);
+            _tr.appendChild(head3);
+
+            table.appendChild(_tr);
+            //fill data
+            for (var active of Object.values(temporal.actives)) {
+                var tr = document.createElement('tr');
+                for (var propertie of Object.values(this.temporalFields)) {
+                    var td = document.createElement('td');
+                    td.innerText = active[propertie.propertie];
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr)
+            }
+
+            tableWrapper.appendChild(table);
+
+
+            wrapperDiv.appendChild(detailsDiv);
+            wrapperDiv.appendChild(tableWrapper);
+            results.appendChild(wrapperDiv);
+
         }
-
-        tableWrapper.appendChild(table);
-
-
-        wrapperDiv.appendChild(detailsDiv);
-        wrapperDiv.appendChild(tableWrapper);
-        results.appendChild(wrapperDiv);
-
+    } else {
+        results.innerHTML = "<h3>No hay resultados</h3>"
     }
-}else{
-    results.innerHTML = "<h3>No hay resultados</h3>"
-}
 
 
 };
@@ -3002,7 +3024,7 @@ function returnQuantities(index, arrLenght, tmpArray, allActives, temporalId) {
             returnQuantities(Number(index) + 1, tmpArray.length, tmpArray, allActives, temporalId);
         }, function (e) { });
     } else {
-        
+
         updateTemporalStatus(temporalId);
     }
 }
@@ -3171,7 +3193,7 @@ function makeTable(filteredResults, tableFields, tableId, firstInput, secondInpu
 
 
 function showTemporal(tableId, selectId) {
-    
+
     var type = document.getElementById(selectId).value;
     var filteredResults = [];
     var temporalsArray = Object.values(this.currentQueryResult);
@@ -3183,12 +3205,275 @@ function showTemporal(tableId, selectId) {
         }
     }
     var result = {};
-    for(var element of filteredResults){
+    for (var element of filteredResults) {
         result[element.id] = element;
     }
     console.log('array')
     console.log(filteredResults)
     console.log('obnj')
     console.log(result)
-    buildTableTmpKeeper(tableId, this.temporalFields,result)
+    buildTableTmpKeeper(tableId, this.temporalFields, result)
 };
+
+function fillExpenseFilter(filterName, propertie, selectId) {
+    var search = document.getElementById(selectId).value;
+    var filterName = this[filterName];
+    var filter = {}
+    filter['propertie'] = propertie
+    filter['search'] = search
+    filterName[propertie] = filter;
+
+}
+
+function dateVehicleFilter(input,selectId, secondInput){
+    var value = document.getElementById(selectId).value;
+    var secondInput = document.getElementById(secondInput);
+    var input = document.getElementById(input);
+    input.removeAttribute('disabled');
+    
+
+    if(value == 'ninguno' || value == 'todo'){
+        input.setAttribute('disabled','');
+        input.value = '';
+        secondInput.value = '';
+    }
+    if(value == 'entre'){
+        secondInput.removeAttribute('disabled');
+    }
+    if(value != 'entre'){
+        secondInput.setAttribute('disabled','');
+        secondInput.value = '';
+    }
+}
+
+function loadVehicles(path, comboBoxId) {
+    var vehicles = database.ref(path);
+    vehicles.on('value', function (snapshot) {
+        var vehiclesList = document.getElementById(comboBoxId);
+
+        //Create array of options to be added
+        var vehicleObject = snapshot.val();
+        var vehicleArray = Object.values(vehicleObject);
+
+        var option = document.createElement('option');
+        option.value = 'todo'
+        option.text = 'Todo'
+        option.setAttribute("selected", "");
+        vehiclesList.appendChild(option);
+
+        for (var element of vehicleArray) {
+            
+            var option = document.createElement('option');
+            option.value = element.id;
+            option.text = element.brand + ' ' + element.model;
+            vehiclesList.appendChild(option);
+        }
+    });
+};
+
+
+function searchVehicleReport(expenseComboId,dateComboId,vehicleComboId, dateInputId, secondDateInput){
+    var expense = document.getElementById(expenseComboId).value;
+    var date = document.getElementById(dateComboId).value;
+    var vehicle = document.getElementById(vehicleComboId).value;
+    var expensesArray = Object.values(this.currentQueryResult);
+    var filteredResults = [];
+console.log(expense + ' - ' + date + ' - ' + vehicle)
+    //expense-y date-n  vehicle-n
+    if(expense != 'ninguno' && date == 'ninguno' && vehicle == 'todo'){
+        for(var veh of expensesArray){
+            if(expense != 'todos'){
+                if(veh.name.toUpperCase() == expense.toUpperCase()){
+                    filteredResults.push(veh);
+                }
+            }else{
+                filteredResults.push(veh);
+            }
+        }
+    }
+    
+    
+    else
+    //expense-n date-y  vehicle-n--------------------------------------------------------------------------------------
+    //-----------------------------------------------------------------------------------------------------------------
+    if(expense == 'ninguno' && date != 'ninguno' && vehicle == 'todo'){
+        var dateValue = document.getElementById(dateInputId).value;
+
+        if(date != 'todo' && date != 'entre' && date != 'antes' && date != 'despues'){
+            dateValue = subMonthAndYear(dateValue,date);
+            for(var veh of expensesArray){
+                var inDate = subMonthAndYear(veh.inDate,date)
+                console.log(dateValue + ' ' + inDate)
+                if(inDate == dateValue){
+                    filteredResults.push(veh);
+                }
+            }
+        }
+        
+        else
+        if(date == 'todo'){
+            filteredResults = expensesArray;
+        }
+
+        else
+        if(date == 'antes'){
+            var _dateValue = formatDate(dateValue);
+            for(var veh of expensesArray){
+                console.log(veh.integerInDate + ' ' + _dateValue)
+                if(veh.integerInDate <= _dateValue){
+                    filteredResults.push(veh);
+                }
+            }
+        }
+
+        else
+        if(date == 'despues'){
+            var _dateValue = formatDate(dateValue);
+            for(var veh of expensesArray){
+                console.log(veh.integerInDate + ' ' + _dateValue)
+                if(veh.integerInDate >= _dateValue){
+                    filteredResults.push(veh);
+                }
+            }
+        }
+
+        else
+        if(date == 'entre'){
+            var _dateValue = formatDate(dateValue);
+            var secondDate = document.getElementById(secondDateInput).value;
+            var _secondDate = formatDate(secondDate);
+            for(var veh of expensesArray){
+                console.log(_dateValue + ' ' + veh.integerInDate + ' ' + _secondDate)
+                if(_dateValue <= veh.integerInDate && veh.integerInDate <= _secondDate){
+                    filteredResults.push(veh);
+                }
+            }
+        }
+    }
+    //-----------------------------------------------------------------------------------------------------------------
+
+    else
+    //expense-n date-n  vehicle-y
+    if(expense == 'ninguno' && date == 'ninguno' && vehicle != 'todo'){
+        for(var veh of expensesArray){
+            if(veh.vehicleId == vehicle){
+                filteredResults.push(veh);
+            }
+        }
+    }
+
+
+    else
+    //expense-y date-y  vehicle-n
+    if(expense != 'ninguno' && date != 'ninguno' && vehicle == 'todo'){
+        var dateValue = document.getElementById(dateInputId).value;
+        if(date != 'todo' && date != 'entre' && date != 'antes' && date != 'despues'){
+            dateValue = subMonthAndYear(dateValue,date);
+            for(var veh of expensesArray){
+                var inDate = subMonthAndYear(veh.inDate,date)
+                if(inDate == dateValue && veh.name.toUpperCase() == expense.toUpperCase()){
+                    filteredResults.push(veh);
+                }
+            }
+        }
+        
+        else
+        if(date == 'todo'){
+            for(var veh of expensesArray){
+                var inDate = subMonthAndYear(veh.inDate,date)
+                if(veh.name.toUpperCase() == expense.toUpperCase()){
+                    filteredResults.push(veh);
+                }
+            }
+        }
+
+        else
+        if(date == 'antes'){
+            var _dateValue = formatDate(dateValue);
+            for(var veh of expensesArray){
+                console.log(veh.integerInDate + ' <= ' + _dateValue + ' -- ' + veh.name.toUpperCase() + ' ' + expense.toUpperCase())
+                if(veh.integerInDate < _dateValue && (veh.name.toUpperCase() == expense.toUpperCase())){
+                    filteredResults.push(veh);
+                }
+            }
+        }
+
+        else
+        if(date == 'despues'){
+            var _dateValue = formatDate(dateValue);
+            for(var veh of expensesArray){
+                console.log(veh.integerInDate + ' ' + _dateValue)
+                if(veh.integerInDate > _dateValue && veh.name.toUpperCase() == expense.toUpperCase()){
+                    filteredResults.push(veh);
+                }
+            }
+        }
+
+        else
+        if(date == 'entre'){
+            var _dateValue = formatDate(dateValue);
+            var secondDate = document.getElementById(secondDateInput).value;
+            var _secondDate = formatDate(secondDate);
+            for(var veh of expensesArray){
+                console.log(_dateValue + ' ' + veh.integerInDate + ' ' + _secondDate)
+                if(_dateValue <= veh.integerInDate && veh.integerInDate <= _secondDate && veh.name.toUpperCase() == expense.toUpperCase()){
+                    filteredResults.push(veh);
+                }
+            }
+        }
+    }
+
+
+    else
+    //expense-n date-y  vehicle-y
+    if(expense == 'ninguno' && date != 'ninguno' && vehicle != 'todo'){}
+
+
+    else
+    //expense-y date-y  vehicle-y
+    if(expense != 'ninguno' && date != 'ninguno' && vehicle != 'todo'){}
+    buildTableVehicles(filteredResults, 'vehiclesFiltersResultsTable', Object.values( this.expensesFields))
+    console.log(filteredResults)
+}
+function buildTableVehicles(resObject, tableId, fieldsArray){
+    var total = 0;
+    var table = document.getElementById(tableId);
+    table.innerHTML = "";
+    var tableHead, tableBody;
+    tableHead = "<thead><tr>"
+    tableBody = "<tbody>"
+    if (resObject == null) {
+        table.innerHTML = "<h3>No se encontraron resultados</h3>";
+    }
+    else {
+        if (resObject.length > 0) {
+            //without filters
+            for (var field of fieldsArray) {
+                tableHead += "<th>" + field.title + "</th>";
+            };
+            tableHead += "</tr></thead>"
+            for (var element of resObject) {
+                total += Number(element.cost)
+                tableBody += '<tr>';
+                for (var field of fieldsArray) {
+                    if (element[field.propertie] == undefined) {
+                        tableBody += "<td>NA</td>"
+                    } else {
+                        tableBody += "<td>" + element[field.propertie] + "</td>";
+                    }
+                };
+              
+                tableBody += '</tr>';
+            }
+            tableBody += "<tr></td><td> </td><td> </td><td></td><td></tr><td> </td><td> </td><td> </td><td>Total: $ " + total + "</td>"
+            tableBody += "</tbody>";
+            table.innerHTML += tableHead + tableBody;
+
+        } else {
+            if (this.temporalList.length == 0)
+                table.innerHTML = "<h3>Vacío</h3>";
+            else
+                table.innerHTML = "<h3>No se encontraron resultasdfsgfdos</h3>";
+        }
+    }
+}

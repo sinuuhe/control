@@ -61,7 +61,7 @@ class Expenses{
                 database.ref(expense.path + '/' + promise.key).update({
                     id: promise.key
                 });
-               database.ref(expense.path + '/pending/' + '/' + promise.key).set({
+               database.ref('pending/' + '/' + promise.key).set({
                     vehicleName: expense.inputs[0].value,
                     expenseId: promise.key,
                     name: expense.inputs[1].value,
